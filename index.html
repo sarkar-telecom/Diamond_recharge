@@ -3,81 +3,88 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Sarkar Telecom – Diamond Portal (All-in-One)</title>
+<title>Sarkar Telecom – Diamond Portal</title>
+<meta name="theme-color" content="#121212">
 <style>
   :root{
-    --bg:#0f1115;--card:#171922;--line:#24283b;--muted:#97a0b5;
-    --brand:#4cafef;--good:#22c55e;--bad:#ef4444;--wait:#f59e0b;
+    --bg:#0f1115;--card:#171a21;--muted:#a7b0c0;--line:#242938;--brand:#4cafef;
+    --good:#2ecc71;--bad:#e74c3c;--wait:#f1c40f;--txt:#e9eef7;
   }
   *{box-sizing:border-box}
-  body{margin:0;background:var(--bg);color:#e9eef6;font:14px/1.45 system-ui,Segoe UI,Roboto,Helvetica,Arial}
-  a{color:var(--brand);text-decoration:none}
+  html,body{height:100%}
+  body{margin:0;background:var(--bg);color:var(--txt);font-family:Inter,system-ui,Segoe UI,Arial,Helvetica,sans-serif}
+  a{color:inherit}
   /* Header */
-  header{position:fixed;inset:0 0 auto 0;height:56px;background:var(--card);border-bottom:1px solid var(--line);
-    display:flex;align-items:center;justify-content:space-between;padding:0 12px;z-index:50}
+  header{position:fixed;top:0;left:0;right:0;height:56px;background:var(--card);
+    display:flex;align-items:center;justify-content:space-between;padding:0 12px;border-bottom:1px solid var(--line);z-index:60}
   .left{display:flex;align-items:center;gap:10px}
-  .menu-btn{border:0;background:transparent;color:#fff;font-size:22px;cursor:pointer}
-  .brand{font-weight:800;color:#cfe9ff}
-  .right{display:flex;align-items:center;gap:10px}
-  .pill{background:#111525;border:1px solid var(--line);padding:4px 10px;border-radius:999px;font-size:12px}
-  .user-chip{display:flex;align-items:center;gap:8px;background:#111525;border:1px solid var(--line);padding:4px 8px;border-radius:10px}
-  .user-chip img{width:24px;height:24px;border-radius:50%;object-fit:cover;border:1px solid var(--line)}
+  .brand{font-weight:800;color:var(--brand)}
+  .menu-btn{border:none;background:transparent;color:#fff;font-size:20px;cursor:pointer}
+  .right{display:flex;align-items:center;gap:8px}
+  .pill{font-size:12px;color:#fff;background:#111;border:1px solid var(--line);padding:4px 10px;border-radius:999px}
+  .user-chip{display:flex;align-items:center;gap:8px;background:#111;border:1px solid var(--line);padding:4px 8px;border-radius:10px}
+  .user-chip img{width:24px;height:24px;border-radius:50%;object-fit:cover;border:1px solid var(--line);background:#222}
   /* Drawer */
-  .drawer{position:fixed;inset:0 0 0 auto;width:0;transition:width .25s ease;z-index:60}
+  .drawer{position:fixed;top:0;left:0;bottom:0;width:0;overflow:hidden;z-index:70}
   .drawer.open{width:260px}
-  .drawer .panel{position:absolute;top:0;right:0;height:100%;width:260px;background:var(--card);border-left:1px solid var(--line);display:flex;flex-direction:column}
-  .drawer .links a{display:block;padding:12px 16px;border-bottom:1px solid var(--line);color:#e9eef6}
-  .drawer .links a:hover{background:#1c2030}
-  .scrim{position:fixed;inset:0;background:#0008;opacity:0;pointer-events:none;transition:opacity .2s;z-index:55}
-  .drawer.open + .scrim{opacity:1;pointer-events:auto}
+  .drawer .panel{width:260px;height:100%;background:var(--card);border-right:1px solid var(--line);display:flex;flex-direction:column}
+  .nav a{display:block;padding:12px 16px;color:#cfd7e6;text-decoration:none;border-bottom:1px solid var(--line);font-size:14px}
+  .nav a:hover,.nav a.active{background:#232838}
+  .scrim{position:fixed;inset:0;background:#0008;opacity:0;pointer-events:none;transition:opacity .2s;z-index:65}
+  .drawer.open ~ .scrim{opacity:1;pointer-events:auto}
   /* Main */
-  main{max-width:1100px;margin:0 auto;padding:72px 12px 80px}
+  main{padding:72px 12px 80px;max-width:1100px;margin:0 auto}
+  h2{font-size:18px;margin:8px 0 12px}
   .section{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:14px}
-  h2{margin:0 0 12px;font-size:18px}
   .row{display:flex;flex-wrap:wrap;gap:10px}
   .field{display:flex;flex-direction:column;gap:6px;flex:1 1 220px}
   .field label{font-size:12px;color:var(--muted)}
-  input,select,button,textarea{font:inherit}
-  input,select,textarea{background:#0f1322;color:#e9eef6;border:1px solid var(--line);border-radius:10px;padding:10px}
-  .btn{background:var(--brand);color:#02121c;border:0;border-radius:10px;padding:10px 14px;cursor:pointer}
-  .btn:disabled{opacity:.5;cursor:not-allowed}
-  .btn.outline{background:transparent;color:var(--brand);border:1px solid var(--brand)}
-  .btn.danger{background:var(--bad);color:#fff}
-  .btn.good{background:var(--good);color:#02150c}
-  .btn.wait{background:var(--wait);color:#2b1900}
-  .small{font-size:12px;color:var(--muted)}
-  .w100{width:100%}
-  .center{text-align:center}
-  .hide{display:none !important}
+  input,select,textarea,button{font:inherit}
+  input,select,textarea{background:#11161f;color:#fff;border:1px solid var(--line);border-radius:10px;padding:10px}
+  .btn{background:var(--brand);color:#fff;border:none;border-radius:10px;padding:10px 14px;cursor:pointer}
+  .btn:disabled{opacity:.6;cursor:not-allowed}
+  .btn.outline{background:transparent;border:1px solid var(--brand);color:var(--brand)}
+  .btn.danger{background:var(--bad)}
+  .btn.good{background:var(--good)}
+  .btn.wait{background:var(--wait);color:#222}
   /* Gift grid */
-  .gift-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
-  .gift{background:#0f1322;border:2px solid transparent;border-radius:12px;padding:14px;text-align:center;cursor:pointer}
-  .gift.selected{border-color:var(--brand);background:#12162a}
-  .gift .price{font-weight:800}
-  /* Tables */
+  .gift-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .gift{background:#11161f;border:2px solid transparent;border-radius:12px;padding:14px;text-align:center;cursor:pointer;user-select:none}
+  .gift.selected{border-color:var(--brand);background:#1a2130}
+  .gift .price{font-weight:700}
+  /* Table */
   .table-wrap{overflow:auto;border:1px solid var(--line);border-radius:12px}
-  table{width:100%;border-collapse:collapse;background:#0f1322}
-  th,td{padding:10px;border-bottom:1px solid #20243a;text-align:center;font-size:13px;white-space:nowrap}
-  th{position:sticky;top:0;background:#12162a;color:#cfe9ff;z-index:1}
-  .status{display:inline-block;padding:4px 10px;border-radius:8px;font-weight:800;font-size:12px}
-  .status.waiting{background:var(--wait);color:#2b1900}
-  .status.completed{background:var(--good);color:#04140a}
+  table{width:100%;border-collapse:collapse;background:#11161f}
+  th,td{padding:10px;border-bottom:1px solid #1f2534;text-align:center;font-size:13px}
+  th{position:sticky;top:0;background:#1a2130;color:#cde9ff;z-index:1}
+  .status{display:inline-block;padding:4px 8px;border-radius:6px;font-weight:700;font-size:12px;color:#111}
+  .status.waiting{background:var(--wait)}
+  .status.completed{background:var(--good);color:#fff}
   .status.cancelled{background:var(--bad);color:#fff}
   /* Footer */
-  footer{position:fixed;inset:auto 0 0 0;height:56px;background:var(--card);border-top:1px solid var(--line);
-    display:flex;align-items:center;justify-content:space-between;padding:0 12px;z-index:40}
-  /* Responsive */
-  @media (max-width:720px){
+  footer{position:fixed;left:0;right:0;bottom:0;height:56px;background:var(--card);border-top:1px solid var(--line);
+    display:flex;align-items:center;justify-content:space-between;padding:0 12px;z-index:50}
+  .small{font-size:12px;color:var(--muted)}
+  .pill.badge{background:#11161f}
+  /* Utils */
+  .hide{display:none !important}
+  .center{text-align:center}
+  .nowrap{white-space:nowrap}
+  .spacer{height:8px}
+  .w100{width:100%}
+  @media (max-width:640px){
     .gift-grid{grid-template-columns:repeat(3,1fr)}
     th,td{font-size:12px;padding:8px}
+    .user-chip span{display:none}
   }
 </style>
 </head>
 <body>
 
+<!-- Header -->
 <header>
   <div class="left">
-    <button id="menuBtn" class="menu-btn" aria-label="Menu">☰</button>
+    <button id="menuBtn" class="menu-btn" aria-label="Open menu">☰</button>
     <div class="brand">Sarkar Telecom</div>
   </div>
   <div class="right">
@@ -85,16 +92,16 @@
     <span id="hdrRole" class="pill">—</span>
     <span id="hdrBalance" class="pill">💎 0</span>
     <div class="user-chip">
-      <img id="hdrAvatar" alt="avatar" />
+      <img id="hdrAvatar" alt="avatar"/>
       <span id="hdrName">Not logged in</span>
     </div>
   </div>
 </header>
 
 <!-- Drawer -->
-<div id="drawer" class="drawer">
+<aside id="drawer" class="drawer" aria-hidden="true">
   <div class="panel">
-    <div class="links">
+    <nav id="navLinks" class="nav">
       <a href="#/login">🔐 Login</a>
       <a href="#/register">📝 Register</a>
       <a href="#/dashboard">🏠 Dashboard</a>
@@ -104,9 +111,9 @@
       <a href="#/admin">🛠 Admin Panel</a>
       <a href="#/profile">👤 Profile</a>
       <a href="#/logout">🚪 Logout</a>
-    </div>
+    </nav>
   </div>
-</div>
+</aside>
 <div id="scrim" class="scrim"></div>
 
 <main>
@@ -114,59 +121,66 @@
   <section id="view-login" class="section">
     <h2>Login</h2>
     <div class="row">
-      <div class="field"><label>Email</label><input id="loginEmail" type="email" placeholder="admin@sarkar.com" /></div>
-      <div class="field"><label>Password</label><input id="loginPass" type="password" placeholder="••••••••" /></div>
+      <div class="field"><label>Email</label><input id="loginEmail" type="email" placeholder="you@example.com"></div>
+      <div class="field"><label>Password</label><input id="loginPass" type="password" placeholder="••••••••"></div>
     </div>
     <div class="row">
-      <button id="btnLogin" class="btn">Login</button>
+      <button class="btn" id="btnLogin">Login</button>
       <button class="btn outline" onclick="go('#/register')">Create account</button>
+      <a class="btn outline" href="https://accounts.google.com/signin/recovery" target="_blank" rel="noopener">Forgot Password?</a>
     </div>
-    <p class="small">Demo admin user: <b>admin@sarkar.com / Admin@123</b> (আগে Users শিটে যোগ করে রাখুন)</p>
+    <p class="small">নতুন ইউজার রেজিস্টার করলে অ্যাডমিন অ্যাপ্রুভ করার পর লগইন করতে পারবে।</p>
   </section>
 
   <!-- REGISTER -->
   <section id="view-register" class="section hide">
     <h2>Register</h2>
     <div class="row">
-      <div class="field"><label>Email</label><input id="regEmail" type="email" placeholder="you@example.com" /></div>
-      <div class="field"><label>Password</label><input id="regPass" type="password" /></div>
-      <div class="field"><label>Full Name</label><input id="regName" type="text" placeholder="Your Name" /></div>
-      <div class="field"><label>Phone</label><input id="regPhone" type="tel" placeholder="+880..." /></div>
+      <div class="field"><label>Email</label><input id="regEmail" type="email"></div>
+      <div class="field"><label>Password</label><input id="regPass" type="password"></div>
+      <div class="field"><label>Full Name</label><input id="regName" type="text"></div>
+      <div class="field"><label>Phone</label><input id="regPhone" type="tel" placeholder="+880..."></div>
     </div>
     <div class="row">
-      <button id="btnRegister" class="btn">Submit for Approval</button>
+      <button class="btn" id="btnRegister">Submit for Approval</button>
       <button class="btn outline" onclick="go('#/login')">Back to Login</button>
     </div>
-    <p class="small">Note: Admin approval না পাওয়া পর্যন্ত লগইন হবে না।</p>
+    <p class="small">রেজিস্ট্রেশন করলে <b>Users</b> শিটে <code>approved=false</code> যাবে; অ্যাডমিন অ্যাপ্রুভ করলে ইউজার লগইন করতে পারবে।</p>
   </section>
 
   <!-- DASHBOARD -->
   <section id="view-dashboard" class="section hide">
     <h2>Welcome to Sarkar Telecom</h2>
     <div class="row">
-      <div class="field"><label>User</label><input id="dbUser" disabled/></div>
-      <div class="field"><label>Role</label><input id="dbRole" disabled/></div>
-      <div class="field"><label>Balance</label><input id="dbBal" disabled/></div>
-      <div class="field"><label>Weekly Total (BD)</label><input id="dbWeekly" disabled/></div>
-      <div class="field"><label>Reward Tier</label><input id="dbTier" disabled/></div>
-    </div>
-    <div class="row">
-      <button class="btn" onclick="go('#/order')">➕ Create Order</button>
-      <button class="btn outline" onclick="go('#/history')">📑 Order History</button>
-      <button class="btn outline" onclick="go('#/profile')">👤 Profile</button>
-      <button class="btn outline" onclick="go('#/users')">👥 Users</button>
-      <button class="btn outline" onclick="go('#/admin')">🛠 Admin</button>
+      <div class="section w100">
+        <div class="row">
+          <div class="field"><label>User</label><input id="dbUser" disabled></div>
+          <div class="field"><label>Role</label><input id="dbRole" disabled></div>
+          <div class="field"><label>Balance</label><input id="dbBal" disabled></div>
+          <div class="field"><label>This Week (BD)</label><input id="dbWeekly" disabled></div>
+          <div class="field"><label>Reward Tier</label><input id="dbTier" disabled></div>
+        </div>
+        <div class="row">
+          <button class="btn" onclick="go('#/order')">➕ Create Order</button>
+          <button class="btn outline" onclick="go('#/history')">📑 Order History</button>
+          <button class="btn outline" onclick="go('#/profile')">👤 Profile</button>
+          <button class="btn outline" onclick="go('#/users')">👥 Users</button>
+          <button class="btn outline" onclick="go('#/admin')">🛠 Admin (if allowed)</button>
+        </div>
+      </div>
     </div>
   </section>
 
-  <!-- ORDER CREATE -->
+  <!-- ORDER -->
   <section id="view-order" class="section hide">
     <h2>Create Order</h2>
     <div class="field">
       <label>Gift Recipient (Number / Profile ID)</label>
-      <input id="recipient" type="number" inputmode="numeric" placeholder="Enter Profile ID or Number" oninput="checkOrderForm()"/>
+      <input id="recipient" type="text" inputmode="numeric" placeholder="Enter Profile ID or Number" oninput="checkOrderForm()">
     </div>
-    <div class="row gift-grid" id="giftGrid"></div>
+    <div class="spacer"></div>
+    <div id="giftGrid" class="gift-grid"></div>
+    <div class="spacer"></div>
     <div class="row">
       <button id="btnConfirm" class="btn" disabled>Order Confirm</button>
       <button class="btn outline" onclick="go('#/history')">View Order History</button>
@@ -174,21 +188,20 @@
     </div>
   </section>
 
-  <!-- HISTORY -->
+  <!-- ORDER HISTORY -->
   <section id="view-history" class="section hide">
     <h2>Order History</h2>
     <div class="row">
-      <div class="field"><label>Search</label><input id="histSearch" placeholder="Order ID / Client ID / Amount / Time"/></div>
-      <div class="field">
-        <label>Status</label>
+      <div class="field"><label>Search</label><input id="histSearch" placeholder="Order ID / Client ID / Amount / Time"></div>
+      <div class="field"><label>Status</label>
         <select id="histStatus">
           <option value="">All</option>
-          <option value="waiting">Waiting</option>
-          <option value="completed">Completed</option>
-          <option value="cancelled">Cancelled</option>
+          <option value="WAITING">Waiting</option>
+          <option value="COMPLETED">Completed</option>
+          <option value="CANCELLED">Cancelled</option>
         </select>
       </div>
-      <div class="field"><label>Weekly Total (BD)</label><input id="histWeekly" disabled/></div>
+      <div class="field"><label>Weekly Total (BD)</label><input id="histWeekly" disabled></div>
     </div>
     <div class="table-wrap">
       <table>
@@ -196,10 +209,10 @@
         <tbody id="histBody"></tbody>
       </table>
     </div>
-    <div id="histPager" class="row"></div>
+    <div id="histPager" class="row" style="justify-content:center;gap:6px;margin-top:8px"></div>
     <div class="row">
       <button class="btn" onclick="go('#/order')">➕ Create New Order</button>
-      <div class="pill" id="tierBadge">Tier: –</div>
+      <div id="tierBadge" class="pill badge">Tier: –</div>
     </div>
   </section>
 
@@ -207,7 +220,7 @@
   <section id="view-users" class="section hide">
     <h2>Registered Users</h2>
     <div class="row">
-      <div class="field"><label>Find user</label><input id="userSearch" placeholder="Email / Name / Phone"/></div>
+      <div class="field"><label>Find user</label><input id="userSearch" placeholder="Email / Name / Phone"></div>
       <div class="field"><label>Role</label>
         <select id="userRoleFilter">
           <option value="">All</option>
@@ -219,37 +232,39 @@
     </div>
     <div class="table-wrap">
       <table>
-        <thead><tr><th>Logo</th><th>Name</th><th>Email</th><th>Phone</th><th>Role</th><th>Balance</th><th>Weekly</th><th>Tier</th><th>Actions</th></tr></thead>
+        <thead>
+          <tr><th>Logo</th><th>Name</th><th>Email</th><th>Phone</th><th>Role</th><th>Approved</th><th>Balance</th><th>Weekly</th><th>Action</th></tr>
+        </thead>
         <tbody id="usersBody"></tbody>
       </table>
     </div>
-    <div class="small">Only admins can approve/reject/edit/role/balance.</div>
+    <div class="small">Only admins can approve/reject, edit, change role, and add balance.</div>
   </section>
 
   <!-- ADMIN -->
   <section id="view-admin" class="section hide">
     <h2>Admin Panel</h2>
     <div class="row">
-      <div class="field"><label>Admin Balance</label><input id="adminBal" disabled/></div>
-      <div class="field"><label>Pending Registrations</label><input id="adminPend" disabled/></div>
-      <div class="field"><label>Weekly Reset (BD)</label><input id="adminResetInfo" disabled/></div>
+      <div class="field"><label>Admin Balance (self)</label><input id="adminBal" disabled></div>
+      <div class="field"><label>Pending Registrations</label><input id="adminPend" disabled></div>
+      <div class="field"><label>Weekly Reset (BD)</label><input id="adminResetInfo" disabled></div>
     </div>
-    <div class="row">
-      <button id="btnManualReset" class="btn">Manual Weekly Reset</button>
-      <button class="btn outline" onclick="go('#/users')">Manage Users</button>
-    </div>
+
     <div class="section">
       <h2>Manage All Orders</h2>
       <div class="row">
-        <div class="field w100"><label>Search Orders</label><input id="admOrderSearch" placeholder="Order ID / Client ID / Email / Amount / Time"/></div>
+        <div class="field w100">
+          <label>Search Orders</label>
+          <input id="admOrderSearch" placeholder="Order ID / Client ID / Email / Amount / Time">
+        </div>
       </div>
       <div class="table-wrap">
         <table>
-          <thead><tr><th>Order ID</th><th>User</th><th>Client ID</th><th>Amount</th><th>Status</th><th>Time</th><th>Action</th></tr></thead>
+          <thead><tr><th>Order ID</th><th>User</th><th>Client</th><th>Amount</th><th>Status</th><th>Time</th><th>Action</th></tr></thead>
           <tbody id="admOrdersBody"></tbody>
         </table>
       </div>
-      <div id="admPager" class="row"></div>
+      <div id="admPager" class="row" style="justify-content:center;gap:6px;margin-top:8px"></div>
     </div>
   </section>
 
@@ -259,17 +274,17 @@
     <div class="row">
       <div class="field">
         <label>Logo</label>
-        <input id="avatarFile" type="file" accept="image/*"/>
-        <div class="small">Square image best</div>
-        <img id="profAvatar" alt="avatar" style="width:72px;height:72px;border-radius:50%;border:1px solid var(--line);object-fit:cover;margin-top:8px"/>
+        <input type="file" id="avatarFile" accept="image/*">
+        <div class="spacer"></div>
+        <img id="profAvatar" alt="avatar" style="width:72px;height:72px;border-radius:50%;border:1px solid var(--line);object-fit:cover;background:#222"/>
       </div>
-      <div class="field"><label>Name</label><input id="profName"/></div>
-      <div class="field"><label>Email (read-only)</label><input id="profEmail" disabled/></div>
-      <div class="field"><label>Phone</label><input id="profPhone" placeholder="+880..."/></div>
-      <div class="field"><label>Password</label><input id="profPass" type="password" placeholder="Change password"/></div>
+      <div class="field"><label>Name</label><input id="profName"></div>
+      <div class="field"><label>Email (read-only)</label><input id="profEmail" disabled></div>
+      <div class="field"><label>Phone</label><input id="profPhone" placeholder="+880..."></div>
+      <div class="field"><label>Password</label><input id="profPass" type="password" placeholder="Change password"></div>
     </div>
     <div class="row">
-      <button id="btnSaveProfile" class="btn">Save</button>
+      <button class="btn" id="btnSaveProfile">Save</button>
       <button class="btn outline" onclick="go('#/dashboard')">Back</button>
     </div>
   </section>
@@ -277,96 +292,119 @@
   <!-- LOGOUT -->
   <section id="view-logout" class="section hide center">
     <h2>Logging out…</h2>
-    <p class="small">You will be redirected to Login.</p>
+    <p class="small">You will be redirected to Login in 3 seconds.</p>
   </section>
 </main>
 
 <footer>
-  <div class="small">© 2025 Sarkar Telecom</div>
+  <div class="small">© 2025 Sarkar Telecom • All rights reserved</div>
   <div class="right">
-    <span id="fReward" class="pill">Tier: –</span>
-    <span id="fBalance" class="pill">💎 0</span>
+    <span id="fReward" class="pill badge">Tier: –</span>
+    <span id="fWeekly" class="pill badge">Week: 0</span>
+    <span id="fBalance" class="pill badge">💎 0</span>
   </div>
 </footer>
 
 <script>
-/* ================== HARD-CODED CONFIG ================== */
-const API = 'https://sheetdb.io/api/v1/olia09hyw73k1';
-const SHEETS = { users:'Users', orders:'Orders', settings:'Settings' };
+/* ================== CONFIG (HARD-CODED) ================== */
+const SHEETDB_BASE = "https://sheetdb.io/api/v1/olia09hyw73k1";
+const SHEET_USERS = "Users";
+const SHEET_ORDERS = "Orders";
 
-/* ================== UTIL (TIME / ID) ================== */
+/* Users headers:
+email, pass, name, phone, role, approved, balance, weeklyDiamonds, avatar
+Orders headers:
+id, clientId, amount, status, userEmail, timestamp, autoCancelAt
+*/
+
+/* ================== HELPERS ================== */
+const LS = {
+  current:'st_current_user',
+  lastReset:'st_last_reset_bd'
+};
+function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
+function fmt(n){ return Number(n||0).toLocaleString(); }
 function now(){ return Date.now(); }
-function bdNow(){ return new Date(Date.now() + 6*3600*1000); }
+function bdNow(){ return new Date(Date.now()+6*3600*1000); }
 function lastThursday22BD(ms=bdNow().getTime()){
-  const d = new Date(ms);
-  const day = d.getUTCDay(); // 0..6
-  const diffDays = (((day - 4) + 7) % 7);
-  const lastThu = new Date(ms - diffDays*86400000);
+  const d = new Date(ms); const day = d.getUTCDay();
+  const diff = (((day-4)+7)%7); // days since Thu
+  const lastThu = new Date(ms - diff*86400000);
   lastThu.setUTCHours(22,0,0,0);
-  if (lastThu.getTime() > ms) lastThu.setTime(lastThu.getTime()-7*86400000);
+  if(lastThu.getTime()>ms) lastThu.setTime(lastThu.getTime()-7*86400000);
   return lastThu.getTime();
 }
-function uid(){ return 'ORD' + Math.random().toString(36).slice(2,6).toUpperCase() + Date.now().toString().slice(-6); }
+function readLS(k,def=null){ try{const v=JSON.parse(localStorage.getItem(k)); return v??def;}catch(e){return def;} }
+function writeLS(k,v){ localStorage.setItem(k, JSON.stringify(v)); }
+function delLS(k){ localStorage.removeItem(k); }
+function setBadge(id, txt){ const el=document.getElementById(id); if(el) el.textContent = txt; }
+function uid(){ return 'ORD' + Math.random().toString(36).slice(2,6).toUpperCase() + Date.now().toString().slice(-5); }
 
-/* ================== LOCAL STORAGE KEYS ================== */
-const LS = {
-  current:'st_current',
+/* ================== API WRAPPER (SheetDB) ================== */
+/* NOTE: SheetDB variations থাকতে পারে। এখানে common প্যাটার্ন ব্যবহার করেছি:
+   - GET   /search?sheet=X&field=value
+   - PATCH /search?sheet=X&field=value   body: { data: { ... } }
+   - POST  ?sheet=X                     body: { data: { ... } }
+   - GET   ?sheet=X                     (সব রো)
+*/
+const API = {
+  async getAll(sheet){
+    const r = await fetch(`${SHEETDB_BASE}?sheet=${encodeURIComponent(sheet)}`);
+    if(!r.ok) throw new Error('GET failed'); return r.json();
+  },
+  async search(sheet, queryObj){
+    const q = new URLSearchParams({sheet});
+    Object.entries(queryObj).forEach(([k,v])=>q.append(k, v));
+    const r = await fetch(`${SHEETDB_BASE}/search?${q.toString()}`);
+    if(!r.ok) throw new Error('SEARCH failed'); return r.json();
+  },
+  async post(sheet, row){
+    const r = await fetch(`${SHEETDB_BASE}?sheet=${encodeURIComponent(sheet)}`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({data: row})
+    });
+    if(!r.ok) throw new Error('POST failed'); return r.json();
+  },
+  async patchBy(sheet, where, data){
+    const q = new URLSearchParams({sheet});
+    Object.entries(where).forEach(([k,v])=>q.append(k, v));
+    const r = await fetch(`${SHEETDB_BASE}/search?${q.toString()}`,{
+      method:'PATCH',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({data})
+    });
+    if(!r.ok) throw new Error('PATCH failed'); return r.json();
+  }
 };
 
-/* ================== API HELPERS (SheetDB) ================== */
-async function apiGet(url){
-  const r = await fetch(url, {headers:{'Accept':'application/json'}});
-  if(!r.ok) throw new Error('GET failed'); return r.json();
-}
-async function apiPost(url, data){
-  const r = await fetch(url, {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({data})});
-  if(!r.ok) throw new Error('POST failed'); return r.json();
-}
-async function apiPatch(url, data){
-  const r = await fetch(url, {method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({data})});
-  if(!r.ok) throw new Error('PATCH failed'); return r.json();
-}
-async function apiDelete(url){
-  const r = await fetch(url, {method:'DELETE'}); if(!r.ok) throw new Error('DELETE failed'); return r.json();
-}
-
-/* ================== AUTH (with persistence) ================== */
-function getCurrent(){ try{ return JSON.parse(localStorage.getItem(LS.current)) }catch(e){ return null } }
-function setCurrent(u){ localStorage.setItem(LS.current, JSON.stringify(u)); syncHeaderFooter(); }
-function clearCurrent(){ localStorage.removeItem(LS.current); syncHeaderFooter(); }
-
-async function login(email, pass){
-  const res = await apiGet(`${API}/search?sheet=${SHEETS.users}&email=${encodeURIComponent(email)}`);
-  const u = (res||[])[0];
-  if(!u) throw new Error('User not found');
-  if(String(u.pass)!==String(pass)) throw new Error('Wrong password');
-  if(u.role!=='admin' && String(u.approved).toLowerCase()!=='true') throw new Error('Pending admin approval.');
-  // normalize numeric
-  u.balance = Number(u.balance||0);
-  setCurrent(u);
-  return u;
-}
-
-async function registerUser({email, pass, name, phone}){
-  const exists = await apiGet(`${API}/search?sheet=${SHEETS.users}&email=${encodeURIComponent(email)}`);
-  if(exists.length) throw new Error('Email already exists.');
-  const row = {
-    email, pass, name, phone,
-    role:'user', approved:false, balance:0, avatar:''
-  };
-  await apiPost(`${API}?sheet=${SHEETS.users}`, row);
-  return true;
-}
-
+/* ================== AUTH & SESSION ================== */
+function getCurrent(){ return readLS(LS.current,null); }
+function setCurrent(u){ writeLS(LS.current,u); syncHeaderFooter(); }
 function logout(){
-  clearCurrent();
+  delLS(LS.current);
+  syncHeaderFooter();
   go('#/login');
   document.getElementById('view-logout').classList.remove('hide');
-  setTimeout(()=> go('#/login'), 1200);
+  setTimeout(()=>go('#/login'), 1500);
 }
 
-/* ================== ROUTING ================== */
-const VIEWS = ['login','register','dashboard','order','history','users','admin','profile','logout'];
+/* ================== TIERS ================== */
+const TIERS = [
+  {min:800000, level:5, rate:3.5},
+  {min:80000, level:4, rate:2.6},
+  {min:40000, level:3, rate:2.1},
+  {min:20000, level:2, rate:1.6},
+  {min:5000,  level:1, rate:1.0},
+  {min:0,     level:0, rate:0}
+];
+function tierFrom(total){
+  for(const t of TIERS) if(total>=t.min) return t;
+  return TIERS[TIERS.length-1];
+}
+
+/* ================== UI ROUTER ================== */
+const VIEWS=['login','register','dashboard','order','history','users','admin','profile','logout'];
 function show(view){ VIEWS.forEach(v=>document.getElementById('view-'+v).classList.add('hide')); document.getElementById('view-'+view).classList.remove('hide'); }
 function go(hash){ location.hash = hash; }
 window.addEventListener('hashchange', onRoute);
@@ -374,10 +412,13 @@ async function onRoute(){
   const h = location.hash || '#/login';
   const route = h.split('?')[0].replace('#/','');
   const cur = getCurrent();
-  const authOnly = ['dashboard','order','history','users','admin','profile','logout'];
+
+  const authOnly=['dashboard','order','history','users','admin','profile','logout'];
   if(authOnly.includes(route) && !cur){ alert('Please login first'); return go('#/login'); }
   if(route==='admin' && cur?.role!=='admin'){ alert('Admin access only'); return go('#/dashboard'); }
+
   show(route);
+
   if(route==='dashboard') await renderDashboard();
   else if(route==='order') await renderOrder();
   else if(route==='history') await renderHistory();
@@ -385,84 +426,114 @@ async function onRoute(){
   else if(route==='admin') await renderAdmin();
   else if(route==='profile') await renderProfile();
   else if(route==='logout') logout();
+
+  closeDrawer();
 }
 
-/* ================== HEADER / FOOTER ================== */
-function syncHeaderFooter(){
-  const cur = getCurrent();
-  const hdrUser = document.getElementById('hdrUser');
-  const hdrRole = document.getElementById('hdrRole');
-  const hdrBalance = document.getElementById('hdrBalance');
-  const hdrName = document.getElementById('hdrName');
-  const hdrAvatar = document.getElementById('hdrAvatar');
-  const fBalance = document.getElementById('fBalance');
-  const fReward = document.getElementById('fReward');
-  if(!cur){
-    hdrUser.textContent='Guest'; hdrRole.textContent='—'; hdrBalance.textContent='💎 0';
-    hdrName.textContent='Not logged in';
-    hdrAvatar.src='data:image/svg+xml;base64,PHN2ZyBoZWlnaHQ9IjQ4IiB3aWR0aD0iNDgiIHZpZXdCb3g9IjAgMCA1MCA1MCIgZmlsbD0iI2ZmZiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Y2lyY2xlIGN4PSIyNSIgY3k9IjE4IiByPSIxMCIgZmlsbD0iI2JiYiIvPjxwYXRoIGQ9Ik0xMiA0MGMwLTggMjYtOCAyNiAwIiBmaWxsPSIjYmJiIi8+PC9zdmc+';
-    fBalance.textContent='💎 0'; fReward.textContent='Tier: –';
-    return;
-  }
-  hdrUser.textContent = cur.email;
-  hdrRole.textContent = cur.role;
-  hdrBalance.textContent = '💎 ' + (Number(cur.balance||0)).toLocaleString();
-  hdrName.textContent = cur.name || cur.email;
-  hdrAvatar.src = cur.avatar || hdrAvatar.src;
-  fBalance.textContent = '💎 ' + (Number(cur.balance||0)).toLocaleString();
-  // weekly+tier client-side (derived)
-  const weekly = window._weeklyTotal || 0;
-  const tier = tierFrom(weekly);
-  fReward.textContent = `Tier: ${tier.level} (${tier.rate}%)`;
-}
-
-/* ================== SIDEBAR TOGGLE ================== */
+/* ================== HEADER/FOOTER ================== */
 const drawer = document.getElementById('drawer');
 const scrim = document.getElementById('scrim');
-document.getElementById('menuBtn').onclick = ()=> drawer.classList.toggle('open');
-scrim.onclick = ()=> drawer.classList.remove('open');
+document.getElementById('menuBtn').addEventListener('click', ()=>{
+  drawer.classList.toggle('open');
+  drawer.setAttribute('aria-hidden', drawer.classList.contains('open')? 'false':'true');
+});
+scrim.addEventListener('click', closeDrawer);
+function closeDrawer(){ drawer.classList.remove('open'); drawer.setAttribute('aria-hidden','true'); }
 
-/* ================== TIERS ================== */
-const TIERS = [
-  {min:800000, level:5, rate:3.5},
-  {min:80000,  level:4, rate:2.6},
-  {min:40000,  level:3, rate:2.1},
-  {min:20000,  level:2, rate:1.6},
-  {min:5000,   level:1, rate:1.0},
-  {min:0,      level:0, rate:0},
-];
-function tierFrom(total){ for(const t of TIERS){ if(total>=t.min) return t; } return TIERS[TIERS.length-1]; }
+async function recomputeWeekly(email){
+  // BD window filter on Orders (COMPLETED within window)
+  const start = readLS(LS.lastReset, lastThursday22BD());
+  const all = await API.search(SHEET_ORDERS, { userEmail: email });
+  const sum = (all||[]).filter(o=>String(o.status).toUpperCase()==='COMPLETED' && Number(o.timestamp)>=start)
+    .reduce((a,b)=>a + Number(b.amount||0), 0);
+  return sum;
+}
+async function syncHeaderFooter(){
+  const cur = getCurrent();
+  if(!cur){
+    setBadge('hdrUser','Guest'); setBadge('hdrRole','—'); setBadge('hdrBalance','💎 0');
+    document.getElementById('hdrName').textContent='Not logged in';
+    document.getElementById('hdrAvatar').src='https://via.placeholder.com/40/222/888?text=ST';
+    setBadge('fBalance','💎 0'); setBadge('fReward','Tier: –'); setBadge('fWeekly','Week: 0');
+    return;
+  }
+  // fresh pull user row (in case admin changed anything)
+  const rows = await API.search(SHEET_USERS, { email: cur.email });
+  const me = rows && rows[0] ? rows[0] : cur;
+
+  const weekly = await recomputeWeekly(me.email);
+  const tier = tierFrom(weekly);
+
+  // update local cache (no write to sheet; weeklyDiamonds field you keep if you want)
+  me.weeklyDiamonds = weekly;
+  setCurrent(me);
+
+  setBadge('hdrUser', me.email);
+  setBadge('hdrRole', me.role||'-');
+  setBadge('hdrBalance', '💎 ' + fmt(me.balance||0));
+  document.getElementById('hdrName').textContent = me.name || me.email;
+  document.getElementById('hdrAvatar').src = me.avatar || 'https://via.placeholder.com/40/222/888?text=ST';
+  setBadge('fBalance','💎 ' + fmt(me.balance||0));
+  setBadge('fReward', `Tier: ${tier.level} (${tier.rate}%)`);
+  setBadge('fWeekly', 'Week: ' + fmt(weekly));
+}
+
+/* ================== AUTH (Login/Register) ================== */
+document.getElementById('btnLogin').onclick = async ()=>{
+  const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+  const pass  = document.getElementById('loginPass').value;
+  if(!email || !pass) return alert('Enter email & password');
+
+  try{
+    const rows = await API.search(SHEET_USERS, { email });
+    const u = rows && rows[0];
+    if(!u) return alert('User not found.');
+    if(String(u.pass)!==pass) return alert('Wrong password.');
+    if(String(u.approved).toLowerCase()!=='true' && String(u.role)!=='admin')
+      return alert('Pending admin approval.');
+    setCurrent(u);
+    go('#/dashboard');
+  }catch(e){ alert('Login failed'); console.error(e); }
+};
+
+document.getElementById('btnRegister').onclick = async ()=>{
+  const email = document.getElementById('regEmail').value.trim().toLowerCase();
+  const pass  = document.getElementById('regPass').value;
+  const name  = document.getElementById('regName').value.trim();
+  const phone = document.getElementById('regPhone').value.trim();
+  if(!email || !pass || !name) return alert('Fill required fields');
+
+  try{
+    const exists = await API.search(SHEET_USERS, { email });
+    if(exists && exists.length) return alert('Email already exists');
+    const row = { email, pass, name, phone, role:'user', approved:'false', balance:0, weeklyDiamonds:0, avatar:'' };
+    await API.post(SHEET_USERS, row);
+    alert('Registered! Await admin approval.');
+    go('#/login');
+  }catch(e){ alert('Registration failed'); console.error(e); }
+};
 
 /* ================== DASHBOARD ================== */
-async function computeWeeklyFor(email){
-  const startBD = lastThursday22BD();
-  const all = await apiGet(`${API}?sheet=${SHEETS.orders}`);
-  const mine = all.filter(o => String(o.user_email)===String(email) && String(o.status).toLowerCase()==='completed' && Number(o.timestamp||0)>=startBD);
-  return mine.reduce((a,b)=> a + Number(b.amount||0), 0);
-}
 async function renderDashboard(){
-  const u = getCurrent(); if(!u) return;
-  const w = await computeWeeklyFor(u.email);
-  window._weeklyTotal = w;
-  const t = tierFrom(w);
-  document.getElementById('dbUser').value = u.name || u.email;
-  document.getElementById('dbRole').value = u.role;
-  document.getElementById('dbBal').value  = '💎 ' + Number(u.balance||0).toLocaleString();
-  document.getElementById('dbWeekly').value = w.toLocaleString();
+  const u=getCurrent(); if(!u) return;
+  document.getElementById('dbUser').value = u.name||u.email;
+  document.getElementById('dbRole').value = u.role||'-';
+  document.getElementById('dbBal').value  = '💎 ' + fmt(u.balance||0);
+  const weekly = await recomputeWeekly(u.email);
+  document.getElementById('dbWeekly').value = fmt(weekly);
+  const t = tierFrom(weekly);
   document.getElementById('dbTier').value = `Level ${t.level} (${t.rate}%)`;
-  syncHeaderFooter();
 }
 
 /* ================== ORDER CREATE ================== */
-const amounts = [10,50,100,200,500,1000,2000,5000,10000,20000];
-let selectedAmt = null;
+const amounts=[10,50,100,200,500,1000,2000,5000,10000,20000];
+let selectedAmt=null;
 async function renderOrder(){
-  const u = getCurrent(); if(!u) return;
-  selectedAmt = null;
+  selectedAmt=null;
+  const u=getCurrent(); if(!u) return;
   document.getElementById('recipient').value='';
-  document.getElementById('orderBal').textContent = '💎 ' + Number(u.balance||0).toLocaleString();
-  const grid = document.getElementById('giftGrid');
-  grid.innerHTML='';
+  document.getElementById('orderBal').textContent='💎 '+fmt(u.balance||0);
+  const grid=document.getElementById('giftGrid'); grid.innerHTML='';
   amounts.forEach(a=>{
     const div=document.createElement('div'); div.className='gift'; div.dataset.amount=a;
     div.innerHTML=`<div class="price">💎 ${a}</div>`;
@@ -476,251 +547,229 @@ function checkOrderForm(){
   document.getElementById('btnConfirm').disabled = !(rec && selectedAmt);
 }
 document.getElementById('btnConfirm').onclick = async ()=>{
-  const u = getCurrent(); if(!u) return;
-  const rec = document.getElementById('recipient').value.trim();
-  const amt = Number(selectedAmt||0);
+  const u=getCurrent(); if(!u) return;
+  const rec=document.getElementById('recipient').value.trim();
+  const amt=selectedAmt||0;
   if(!rec || !amt) return;
+  if(Number(u.balance||0) < amt) return alert('Insufficient balance.');
 
-  // fresh user from DB to ensure latest balance
-  const res = await apiGet(`${API}/search?sheet=${SHEETS.users}&email=${encodeURIComponent(u.email)}`);
-  const me = res[0]; if(!me) return alert('User not found.');
-  const curBal = Number(me.balance||0);
-  if(curBal < amt) return alert('Insufficient balance.');
+  try{
+    // 1) Deduct balance (user)
+    const newBal = Number(u.balance||0) - amt;
+    await API.patchBy(SHEET_USERS, { email: u.email }, { balance: newBal });
 
-  // deduct balance
-  await apiPatch(`${API}?sheet=${SHEETS.users}&email=${encodeURIComponent(u.email)}`, { balance: curBal - amt });
+    // 2) Create order
+    const id=uid(); const ts=now(); const autoCancelAt=ts+5*60*1000;
+    const orderRow = { id, clientId: rec, amount: amt, status:'WAITING', userEmail: u.email, timestamp: ts, autoCancelAt };
+    await API.post(SHEET_ORDERS, orderRow);
 
-  // create order (WAITING)
-  const order = { id:uid(), user_email:u.email, client_id:rec, amount:amt, status:'waiting', timestamp: now() };
-  await apiPost(`${API}?sheet=${SHEETS.orders}`, order);
+    // 3) Refresh local
+    const fresh = (await API.search(SHEET_USERS,{email:u.email}))[0]||u; setCurrent(fresh);
 
-  // update local current user balance
-  u.balance = curBal - amt; setCurrent(u);
-
-  alert(`Order submitted!\nID: ${order.id}\nAmount: 💎 ${amt}`);
-  go('#/history');
+    alert(`Order submitted!\nID: ${id}\nAmount: 💎 ${amt}`);
+    go('#/history');
+  }catch(e){ alert('Order failed'); console.error(e); }
 };
 
-/* ================== AUTO-CANCEL (>5m) + REFUND ================== */
+/* ================== AUTO-CANCEL SWEEPER ================== */
 async function sweepAutoCancel(){
-  const five = 5*60*1000, t = now();
-  const all = await apiGet(`${API}?sheet=${SHEETS.orders}`);
-  const waits = all.filter(o=> String(o.status).toLowerCase()==='waiting' && (t - Number(o.timestamp||0))>five );
-  for(const o of waits){
-    // refund to user
-    const u = (await apiGet(`${API}/search?sheet=${SHEETS.users}&email=${encodeURIComponent(o.user_email)}`))[0];
-    if(u){
-      await apiPatch(`${API}?sheet=${SHEETS.users}&email=${encodeURIComponent(o.user_email)}`, { balance: Number(u.balance||0) + Number(o.amount||0) });
+  try{
+    const all = await API.getAll(SHEET_ORDERS);
+    const nowMs = now();
+    for(const o of all){
+      if(String(o.status).toUpperCase()==='WAITING' && Number(o.autoCancelAt||0) && nowMs>Number(o.autoCancelAt)){
+        // refund once then mark cancelled
+        const usrRows = await API.search(SHEET_USERS,{ email: o.userEmail });
+        if(usrRows && usrRows[0]){
+          const nb = Number(usrRows[0].balance||0) + Number(o.amount||0);
+          await API.patchBy(SHEET_USERS, { email:o.userEmail }, { balance: nb });
+        }
+        await API.patchBy(SHEET_ORDERS, { id:o.id }, { status:'CANCELLED' });
+      }
     }
-    // set cancelled
-    await apiPatch(`${API}?sheet=${SHEETS.orders}&id=${encodeURIComponent(o.id)}`, { status:'cancelled' });
-  }
+    const cur=getCurrent(); if(cur) await syncHeaderFooter();
+  }catch(e){ /* silent */ }
 }
+setInterval(sweepAutoCancel, 45000);
 
 /* ================== HISTORY ================== */
 let histPage=1, histSize=10;
 async function renderHistory(){
-  await sweepAutoCancel(); // ensure stale orders are cancelled
-  const cur = getCurrent(); if(!cur) return;
-  const orders = await apiGet(`${API}?sheet=${SHEETS.orders}`);
-  const mine = orders.filter(o=> String(o.user_email)===String(cur.email)).sort((a,b)=> Number(b.timestamp)-Number(a.timestamp));
+  const cur=getCurrent(); if(!cur) return;
+  const search=(document.getElementById('histSearch').value||'').toLowerCase();
+  const status=document.getElementById('histStatus').value;
 
-  const search = (document.getElementById('histSearch').value||'').toLowerCase();
-  const status = document.getElementById('histStatus').value;
+  let mine = await API.search(SHEET_ORDERS, { userEmail: cur.email });
+  mine = (mine||[]).sort((a,b)=>Number(b.timestamp)-Number(a.timestamp));
+
   const filtered = mine.filter(o=>{
-    const blob = `${o.id} ${o.client_id} ${o.amount} ${new Date(Number(o.timestamp)).toLocaleString()}`.toLowerCase();
-    const okS = !status || String(o.status).toLowerCase()===status;
+    const blob = `${o.id} ${o.clientId} ${o.amount} ${new Date(Number(o.timestamp)).toLocaleString()}`.toLowerCase();
+    const okS = !status || String(o.status).toUpperCase()===status;
     return (!search || blob.includes(search)) && okS;
   });
 
-  const total=filtered.length, pages=Math.max(1, Math.ceil(total/histSize));
+  const total=filtered.length; const pages=Math.max(1,Math.ceil(total/histSize));
   if(histPage>pages) histPage=pages;
   const start=(histPage-1)*histSize, end=start+histSize, slice=filtered.slice(start,end);
 
   const tbody=document.getElementById('histBody');
   tbody.innerHTML = slice.map(o=>`
     <tr>
-      <td>${o.id}</td>
-      <td>${o.client_id}</td>
-      <td>💎 ${Number(o.amount||0).toLocaleString()}</td>
+      <td class="nowrap">${o.id}</td>
+      <td class="nowrap">${o.clientId}</td>
+      <td>💎 ${fmt(o.amount)}</td>
       <td><span class="status ${String(o.status).toLowerCase()}">${String(o.status).toUpperCase()}</span></td>
-      <td>${new Date(Number(o.timestamp)).toLocaleString()}</td>
+      <td class="nowrap">${new Date(Number(o.timestamp)).toLocaleString()}</td>
     </tr>
   `).join('');
 
   const pager=document.getElementById('histPager'); pager.innerHTML='';
-  for(let i=1;i<=pages;i++){ const b=document.createElement('button'); b.className='btn ' + (i===histPage?'':'outline'); b.textContent=' '+i+' '; b.onclick=()=>{histPage=i; renderHistory();}; pager.appendChild(b); }
+  for(let i=1;i<=pages;i++){ const b=document.createElement('button'); b.className='btn outline'; b.textContent=i; if(i===histPage) b.classList.add('good'); b.onclick=()=>{histPage=i; renderHistory();}; pager.appendChild(b); }
 
-  const w = await computeWeeklyFor(cur.email);
-  window._weeklyTotal = w;
-  document.getElementById('histWeekly').value = w.toLocaleString();
-  document.getElementById('tierBadge').textContent = `Tier: ${tierFrom(w).level}`;
+  const weekly = await recomputeWeekly(cur.email);
+  document.getElementById('histWeekly').value = fmt(weekly);
+  document.getElementById('tierBadge').textContent = 'Tier: ' + tierFrom(weekly).level;
 }
-document.getElementById('histSearch').oninput = ()=>{histPage=1;renderHistory();};
-document.getElementById('histStatus').onchange = ()=>{histPage=1;renderHistory();};
+document.getElementById('histSearch').oninput=()=>{histPage=1; renderHistory();};
+document.getElementById('histStatus').onchange=()=>{histPage=1; renderHistory();};
 
-/* ================== USERS (ADMIN TOOLS) ================== */
-function adminUserButtons(u){
-  const pending = String(u.approved).toLowerCase()!=='true';
-  const isAdmin = String(u.role)==='admin';
-  return `
-    ${pending? `<button class="btn good" data-act="approve">Approve</button>
-                <button class="btn danger" data-act="reject">Reject</button>` : ``}
-    <button class="btn outline" data-act="edit">Edit</button>
-    <button class="btn" data-act="addbal">Add Balance</button>
-    <button class="btn outline" data-act="role">${isAdmin?'Set User':'Make Admin'}</button>
-  `;
-}
+/* ================== USERS (Admin) ================== */
+document.getElementById('userSearch').oninput=renderUsers;
+document.getElementById('userRoleFilter').onchange=renderUsers;
+
 async function renderUsers(){
-  const cur=getCurrent(); const isAdmin = cur?.role==='admin';
+  const cur=getCurrent(); const isAdmin=cur?.role==='admin';
+  let users = await API.getAll(SHEET_USERS);
   const q=(document.getElementById('userSearch').value||'').toLowerCase();
   const rf=document.getElementById('userRoleFilter').value;
 
-  const users = await apiGet(`${API}?sheet=${SHEETS.users}`);
   const tbody=document.getElementById('usersBody'); tbody.innerHTML='';
-
-  for(const u of users){
-    const name=(u.name||''); const phone=(u.phone||''); const email=u.email;
-    const approved = String(u.approved).toLowerCase()==='true';
-    const role = approved? u.role : 'pending';
-    const matches = (!q || `${email} ${name} ${phone}`.toLowerCase().includes(q)) &&
-                    (!rf || (rf==='pending'? !approved : String(u.role)===rf));
-    if(!matches) continue;
-
-    // weekly (derived)
-    const w = await computeWeeklyFor(email);
-    const tier = tierFrom(w);
+  users.forEach(u=>{
+    const matches = (!q || `${u.email} ${u.name} ${u.phone}`.toLowerCase().includes(q)) &&
+                    (!rf || (rf==='pending'? String(u.approved).toLowerCase()!=='true' : u.role===rf));
+    if(!matches) return;
 
     const tr=document.createElement('tr');
     tr.innerHTML = `
       <td><img src="${u.avatar||'https://via.placeholder.com/36'}" style="width:36px;height:36px;border-radius:50%;object-fit:cover;border:1px solid #222"/></td>
-      <td>${name||'-'}</td>
-      <td>${email}</td>
-      <td>${phone||'-'}</td>
-      <td>${role}</td>
-      <td>💎 ${Number(u.balance||0).toLocaleString()}</td>
-      <td>${w.toLocaleString()}</td>
-      <td>Lvl ${tier.level}</td>
-      <td class="nowrap" id="cell-${email}">${isAdmin? adminUserButtons(u): '<span class="small">View only</span>'}</td>
+      <td>${u.name||'-'}</td>
+      <td>${u.email}</td>
+      <td>${u.phone||'-'}</td>
+      <td>${u.role||'-'}</td>
+      <td>${String(u.approved).toLowerCase()==='true' ? '✅' : '⏳'}</td>
+      <td>💎 ${fmt(u.balance)}</td>
+      <td>${fmt(u.weeklyDiamonds||0)}</td>
+      <td class="nowrap" id="cell-${u.email}">
+        ${isAdmin? adminUserButtons(u): '<span class="small">View only</span>'}
+      </td>
     `;
     tbody.appendChild(tr);
     if(isAdmin) attachUserActions(u);
-  }
+  });
 }
-document.getElementById('userSearch').oninput=renderUsers;
-document.getElementById('userRoleFilter').onchange=renderUsers;
-
+function adminUserButtons(u){
+  const isApproved = String(u.approved).toLowerCase()==='true';
+  return `
+    ${isApproved? '' : `<button class="btn good" data-act="approve">Approve</button>
+                         <button class="btn danger" data-act="reject">Reject</button>`}
+    <button class="btn outline" data-act="edit">Edit</button>
+    <button class="btn" data-act="addbal">Add Balance</button>
+    <button class="btn outline" data-act="role">${u.role==='admin'?'Set User':'Make Admin'}</button>
+  `;
+}
 function attachUserActions(u){
   const cell=document.getElementById(`cell-${u.email}`);
   cell.querySelectorAll('button').forEach(b=>{
     b.onclick=async ()=>{
       const act=b.dataset.act;
-      if(act==='approve'){ await apiPatch(`${API}?sheet=${SHEETS.users}&email=${encodeURIComponent(u.email)}`, {approved:true}); }
-      else if(act==='reject'){ await apiDelete(`${API}?sheet=${SHEETS.users}&email=${encodeURIComponent(u.email)}`); }
-      else if(act==='edit'){
-        const name=prompt('Name', u.name||''); const phone=prompt('Phone', u.phone||''); const pass=prompt('Password (leave blank to keep)','');
+      if(act==='approve'){
+        await API.patchBy(SHEET_USERS,{email:u.email},{approved:'true'});
+      }else if(act==='reject'){
+        await API.patchBy(SHEET_USERS,{email:u.email},{approved:'false'});
+      }else if(act==='edit'){
+        const name=prompt('Name',u.name||''); const phone=prompt('Phone',u.phone||''); const pass=prompt('Password (leave blank to keep)','');
         const data={}; if(name!==null) data.name=name; if(phone!==null) data.phone=phone; if(pass) data.pass=pass;
-        if(Object.keys(data).length) await apiPatch(`${API}?sheet=${SHEETS.users}&email=${encodeURIComponent(u.email)}`, data);
-      }
-      else if(act==='addbal'){
+        Object.keys(data).length && await API.patchBy(SHEET_USERS,{email:u.email},data);
+      }else if(act==='addbal'){
         const add = Number(prompt('Add diamonds to user:', '0'))||0;
-        if(add>0){ await apiPatch(`${API}?sheet=${SHEETS.users}&email=${encodeURIComponent(u.email)}`, { balance: Number(u.balance||0) + add }); }
+        if(add>0){ const nb = Number(u.balance||0)+add; await API.patchBy(SHEET_USERS,{email:u.email},{balance: nb}); }
+      }else if(act==='role'){
+        const nr = u.role==='admin'?'user':'admin'; await API.patchBy(SHEET_USERS,{email:u.email},{role:nr});
       }
-      else if(act==='role'){
-        const newRole = String(u.role)==='admin' ? 'user' : 'admin';
-        await apiPatch(`${API}?sheet=${SHEETS.users}&email=${encodeURIComponent(u.email)}`, { role:newRole });
-      }
-      await renderUsers(); await renderAdmin(); syncHeaderFooter();
+      await renderUsers(); await syncHeaderFooter();
     };
   });
 }
 
-/* ================== ADMIN ORDERS ================== */
+/* ================== ADMIN: ORDERS MANAGE ================== */
 let admPage=1, admSize=10;
-async function renderAdmin(){
-  // Admin meta (optional settings)
-  try{
-    const settings = await apiGet(`${API}?sheet=${SHEETS.settings}`);
-    const s = Object.fromEntries(settings.map(x=>[x.key,x.value]));
-    document.getElementById('adminBal').value = '💎 ' + (Number(s.AdminBalance||0)).toLocaleString();
-    document.getElementById('adminResetInfo').value = 'Last reset (BD): ' + (s.LastResetBD? new Date(Number(s.LastResetBD)).toLocaleString() : '—');
-  }catch(e){
-    document.getElementById('adminBal').value='—';
-    document.getElementById('adminResetInfo').value='—';
-  }
-  const allUsers = await apiGet(`${API}?sheet=${SHEETS.users}`);
-  const pending = allUsers.filter(u=> String(u.approved).toLowerCase()!=='true' && String(u.role)==='user').length;
-  document.getElementById('adminPend').value = pending + ' pending';
+document.getElementById('admOrderSearch').oninput=()=>{admPage=1; renderAdmin();};
 
-  await sweepAutoCancel();
+async function renderAdmin(){
+  const cur=getCurrent(); if(cur?.role!=='admin') return;
+  const me = (await API.search(SHEET_USERS,{email:cur.email}))[0]||cur;
+  document.getElementById('adminBal').value = '💎 ' + fmt(me.balance||0);
+  const allUsers = await API.getAll(SHEET_USERS);
+  const pending = allUsers.filter(x=>String(x.approved).toLowerCase()!=='true' && x.role==='user').length;
+  document.getElementById('adminPend').value = `${pending} pending`;
+  document.getElementById('adminResetInfo').value = 'Window start (BD): ' + new Date(readLS(LS.lastReset, lastThursday22BD())).toLocaleString();
 
   const q=(document.getElementById('admOrderSearch').value||'').toLowerCase();
-  const orders = (await apiGet(`${API}?sheet=${SHEETS.orders}`)).sort((a,b)=> Number(b.timestamp)-Number(a.timestamp));
+  let orders = await API.getAll(SHEET_ORDERS);
+  orders = orders.sort((a,b)=>Number(b.timestamp)-Number(a.timestamp));
   const filtered = orders.filter(o=>{
-    const blob = `${o.id} ${o.client_id} ${o.amount} ${o.user_email} ${new Date(Number(o.timestamp)).toLocaleString()}`.toLowerCase();
+    const blob=`${o.id} ${o.clientId} ${o.amount} ${o.userEmail} ${new Date(Number(o.timestamp)).toLocaleString()}`.toLowerCase();
     return !q || blob.includes(q);
   });
 
-  const total=filtered.length, pages=Math.max(1, Math.ceil(total/admSize));
+  const total=filtered.length, pages=Math.max(1,Math.ceil(total/admSize));
   if(admPage>pages) admPage=pages;
   const start=(admPage-1)*admSize, end=start+admSize, slice=filtered.slice(start,end);
 
   const tbody=document.getElementById('admOrdersBody');
   tbody.innerHTML = slice.map(o=>`
     <tr>
-      <td>${o.id}</td>
-      <td>${o.user_email}</td>
-      <td>${o.client_id}</td>
-      <td>💎 ${Number(o.amount||0).toLocaleString()}</td>
+      <td>${o.id}</td><td>${o.userEmail}</td><td>${o.clientId}</td>
+      <td>💎 ${fmt(o.amount)}</td>
       <td><span class="status ${String(o.status).toLowerCase()}">${String(o.status).toUpperCase()}</span></td>
       <td>${new Date(Number(o.timestamp)).toLocaleString()}</td>
       <td class="nowrap">
-        <button class="btn good" onclick="admSetStatus('${o.id}','completed')">Complete</button>
-        <button class="btn danger" onclick="admSetStatus('${o.id}','cancelled')">Cancel</button>
-        <button class="btn wait" onclick="admSetStatus('${o.id}','waiting')">Waiting</button>
+        <button class="btn good" onclick="admSetStatus('${o.id}','COMPLETED')">Complete</button>
+        <button class="btn danger" onclick="admSetStatus('${o.id}','CANCELLED')">Cancel</button>
+        <button class="btn wait" onclick="admSetStatus('${o.id}','WAITING')">Waiting</button>
       </td>
     </tr>
   `).join('');
 
   const pager=document.getElementById('admPager'); pager.innerHTML='';
-  for(let i=1;i<=pages;i++){ const b=document.createElement('button'); b.className='btn ' + (i===admPage?'':'outline'); b.textContent=' '+i+' '; b.onclick=()=>{admPage=i; renderAdmin();}; pager.appendChild(b); }
-
-  document.getElementById('btnManualReset').onclick = async ()=>{
-    if(confirm('Reset weekly window now (BD)?')) {
-      try{
-        // save anchor in Settings sheet (optional)
-        await apiPatch(`${API}?sheet=${SHEETS.settings}&key=LastResetBD`, { value:String(lastThursday22BD(bdNow().getTime())) });
-      }catch(e){}
-      await renderAdmin(); await renderUsers(); await renderDashboard(); await renderHistory(); syncHeaderFooter();
-    }
-  };
+  for(let i=1;i<=pages;i++){ const b=document.createElement('button'); b.className='btn outline'; b.textContent=i; if(i===admPage) b.classList.add('good'); b.onclick=()=>{admPage=i; renderAdmin();}; pager.appendChild(b); }
 }
-document.getElementById('admOrderSearch').oninput=()=>{admPage=1;renderAdmin();};
-
 async function admSetStatus(id, status){
-  // fetch order
-  const o = (await apiGet(`${API}/search?sheet=${SHEETS.orders}&id=${encodeURIComponent(id)}`))[0];
-  if(!o) return alert('Order not found');
-  const prev = String(o.status).toLowerCase();
-  if(prev===status) return;
+  try{
+    // pull order
+    const rows = await API.search(SHEET_ORDERS, { id });
+    const o = rows && rows[0]; if(!o) return alert('Order not found');
 
-  // refund / re-deduct
-  const user = (await apiGet(`${API}/search?sheet=${SHEETS.users}&email=${encodeURIComponent(o.user_email)}`))[0];
-  if(user){
-    const bal = Number(user.balance||0), amt = Number(o.amount||0);
-    if(status==='cancelled' && prev!=='cancelled'){
-      await apiPatch(`${API}?sheet=${SHEETS.users}&email=${encodeURIComponent(o.user_email)}`, { balance: bal + amt });
-      if(getCurrent()?.email===user.email){ const cur=getCurrent(); cur.balance=bal+amt; setCurrent(cur); }
+    if(status==='CANCELLED' && String(o.status).toUpperCase()!=='CANCELLED'){
+      // refund to user
+      const urow = (await API.search(SHEET_USERS,{email:o.userEmail}))[0];
+      if(urow){
+        const nb = Number(urow.balance||0)+Number(o.amount||0);
+        await API.patchBy(SHEET_USERS,{email:o.userEmail},{balance:nb});
+      }
     }
-    if(status==='waiting' && prev==='cancelled'){
-      if(bal<amt) return alert('User balance insufficient to revert to waiting.');
-      await apiPatch(`${API}?sheet=${SHEETS.users}&email=${encodeURIComponent(o.user_email)}`, { balance: bal - amt });
-      if(getCurrent()?.email===user.email){ const cur=getCurrent(); cur.balance=bal-amt; setCurrent(cur); }
+    if(status==='WAITING' && String(o.status).toUpperCase()==='CANCELLED'){
+      // re-deduct if user has balance
+      const urow = (await API.search(SHEET_USERS,{email:o.userEmail}))[0];
+      if(urow){
+        const bal=Number(urow.balance||0), amt=Number(o.amount||0);
+        if(bal<amt) return alert('User balance insufficient to revert to WAITING.');
+        await API.patchBy(SHEET_USERS,{email:o.userEmail},{balance:bal-amt});
+      }
     }
-  }
-  // set status
-  await apiPatch(`${API}?sheet=${SHEETS.orders}&id=${encodeURIComponent(id)}`, { status });
-  await renderAdmin(); await renderHistory(); syncHeaderFooter();
+    await API.patchBy(SHEET_ORDERS, { id }, { status });
+    await renderAdmin(); await renderHistory(); await syncHeaderFooter();
+  }catch(e){ alert('Update failed'); console.error(e); }
 }
 
 /* ================== PROFILE ================== */
@@ -732,15 +781,15 @@ async function renderProfile(){
   document.getElementById('profPhone').value = u.phone || '';
   document.getElementById('profPass').value = '';
 }
-document.getElementById('avatarFile').addEventListener('change', async function(){
+document.getElementById('avatarFile').addEventListener('change', function(){
   const file=this.files[0]; if(!file) return;
   const reader=new FileReader();
   reader.onload=async ()=>{
     const cur=getCurrent(); if(!cur) return;
-    await apiPatch(`${API}?sheet=${SHEETS.users}&email=${encodeURIComponent(cur.email)}`, { avatar: reader.result });
-    cur.avatar = reader.result; setCurrent(cur);
+    await API.patchBy(SHEET_USERS,{email:cur.email},{avatar:reader.result});
+    const fresh=(await API.search(SHEET_USERS,{email:cur.email}))[0]||cur; setCurrent(fresh);
     document.getElementById('profAvatar').src = reader.result;
-    syncHeaderFooter();
+    await syncHeaderFooter();
   };
   reader.readAsDataURL(file);
 });
@@ -749,52 +798,25 @@ document.getElementById('btnSaveProfile').onclick = async ()=>{
   const phone=document.getElementById('profPhone').value.trim();
   const pass=document.getElementById('profPass').value;
   const cur=getCurrent(); if(!cur) return;
-  const data={ name, phone }; if(pass) data.pass=pass;
-  await apiPatch(`${API}?sheet=${SHEETS.users}&email=${encodeURIComponent(cur.email)}`, data);
-  cur.name=name; cur.phone=phone; if(pass) cur.pass=pass; setCurrent(cur);
-  alert('Profile updated.'); syncHeaderFooter();
+  const data={name,phone}; if(pass) data.pass=pass;
+  try{
+    await API.patchBy(SHEET_USERS,{email:cur.email},data);
+    const fresh=(await API.search(SHEET_USERS,{email:cur.email}))[0]||cur; setCurrent(fresh);
+    alert('Profile updated'); await syncHeaderFooter();
+  }catch(e){ alert('Profile update failed'); console.error(e); }
 };
 
-/* ================== LOGIN / REGISTER BUTTONS ================== */
-document.getElementById('btnLogin').onclick = async ()=>{
-  const email=document.getElementById('loginEmail').value.trim().toLowerCase();
-  const pass=document.getElementById('loginPass').value;
-  try{
-    const u = await login(email, pass);
-    alert('Login success!');
-    go('#/dashboard');
-  }catch(e){ alert(e.message||'Login failed'); }
-};
-document.getElementById('btnRegister').onclick = async ()=>{
-  const email=document.getElementById('regEmail').value.trim().toLowerCase();
-  const pass=document.getElementById('regPass').value;
-  const name=document.getElementById('regName').value.trim();
-  const phone=document.getElementById('regPhone').value.trim();
-  if(!email || !pass || !name) return alert('Fill required fields.');
-  try{
-    await registerUser({email,pass,name,phone});
-    alert('Registered! Await admin approval.'); go('#/login');
-  }catch(e){ alert(e.message||'Registration failed'); }
-};
-
-/* ================== LIVE SYNC (reload view on storage change) ================== */
-window.addEventListener('storage', ()=>{
-  syncHeaderFooter();
-  const route=(location.hash||'#/login').replace('#/','');
-  if(route==='history') renderHistory();
-  if(route==='admin') renderAdmin();
-  if(route==='users') renderUsers();
-  if(route==='dashboard') renderDashboard();
-  if(route==='order') renderOrder();
-});
+/* ================== LIVE REFRESH TICK ================== */
+setInterval(async ()=>{
+  const cur=getCurrent(); if(cur){ await syncHeaderFooter(); }
+}, 30000);
 
 /* ================== BOOT ================== */
-document.getElementById('menuBtn').addEventListener('click', ()=> drawer.classList.toggle('open'));
-scrim.addEventListener('click', ()=> drawer.classList.remove('open'));
-
-(async function boot(){
-  syncHeaderFooter();
-  // keep user logged-in across refresh (localStorage already does that)
+(function boot(){
+  if(readLS(LS.lastReset,null)===null) writeLS(LS.lastReset, lastThursday22BD());
+  // Gift amounts
+  renderOrder().catch(()=>{});
+  syncHeaderFooter().catch(()=>{});
   onRoute();
 })();
 </script>
