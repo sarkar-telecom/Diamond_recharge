@@ -1,689 +1,800 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Sarkar Telecom • Diamond Portal</title>
-<meta name="color-scheme" content="dark">
+<title>Sarkar Telecom – Diamond Portal (All-in-One)</title>
 <style>
-:root{
-  --bg:#0f1216;--card:#151a21;--muted:#a9b1bd;--line:#242c36;--brand:#42a5f5;
-  --good:#2ecc71;--bad:#e74c3c;--wait:#f1c40f;
-}
-*{box-sizing:border-box}
-html,body{height:100%}
-body{margin:0;background:var(--bg);color:#e9eef5;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Helvetica,Arial}
-a{color:inherit}
-button{font:inherit}
-input,select,textarea{background:#0e1218;border:1px solid var(--line);color:#fff;border-radius:10px;padding:10px}
-.section{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin:12px 0}
-h2{margin:0 0 10px;font-size:18px}
-.small{color:var(--muted);font-size:12px}
-.row{display:flex;gap:10px;flex-wrap:wrap}
-.field{display:flex;flex-direction:column;gap:6px;flex:1 1 220px}
-.btn{background:var(--brand);color:#00111c;border:none;border-radius:10px;padding:10px 14px;cursor:pointer}
-.btn.outline{background:transparent;color:var(--brand);border:1px solid var(--brand)}
-.btn.good{background:var(--good);color:#001b0f}
-.btn.danger{background:var(--bad)}
-.btn.wait{background:var(--wait);color:#1a1a00}
-.btn:disabled{opacity:.55;cursor:not-allowed}
-.pill{padding:5px 10px;border-radius:999px;background:#0e1218;border:1px solid var(--line);font-size:12px}
-.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:12px}
-table{width:100%;border-collapse:collapse;background:#0e1218}
-th,td{padding:10px;border-bottom:1px solid #1b232d;text-align:center;font-size:13px}
-th{position:sticky;top:0;background:#121821;color:#cfe9ff;z-index:1}
-.status{display:inline-block;padding:4px 8px;border-radius:7px;font-weight:700;font-size:12px;color:#111}
-.status.WAITING{background:var(--wait)}
-.status.COMPLETED{background:var(--good);color:#fff}
-.status.CANCELLED{background:var(--bad);color:#fff}
-.gift-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
-.gift{background:#0e1218;border:2px solid transparent;border-radius:12px;padding:16px;text-align:center;cursor:pointer}
-.gift.selected{border-color:var(--brand);background:#131a22}
-header{position:fixed;inset:0 0 auto 0;height:56px;background:var(--card);border-bottom:1px solid var(--line);
-  display:flex;align-items:center;justify-content:space-between;padding:0 12px;z-index:50}
-.brand{font-weight:800;color:var(--brand)}
-.user-chip{display:flex;align-items:center;gap:8px;background:#0e1218;border:1px solid var(--line);border-radius:10px;padding:6px 10px}
-.user-chip img{width:24px;height:24px;border-radius:50%;object-fit:cover;border:1px solid var(--line)}
-main{max-width:1100px;margin:72px auto 84px;padding:0 12px}
-footer{position:fixed;inset:auto 0 0 0;height:56px;background:var(--card);border-top:1px solid var(--line);
-  display:flex;align-items:center;justify-content:space-between;padding:0 12px}
-.nowrap{white-space:nowrap}
-.pager{display:flex;gap:6px;justify-content:center;margin-top:10px}
-.pager button{padding:6px 10px;border-radius:8px;border:1px solid var(--line);background:#121821;color:#fff}
-.pager .active{background:var(--brand);border-color:var(--brand);color:#00111c}
-/* Drawer */
-#drawer{position:fixed;inset:0;pointer-events:none;z-index:60}
-#drawer .scrim{position:absolute;inset:0;background:#0008;opacity:0;transition:opacity .2s}
-#drawer.open .scrim{opacity:1;pointer-events:auto}
-#drawer .panel{position:absolute;left:12px;top:64px;bottom:12px;width:280px;transform:translateX(-120%);
-  transition:transform .2s;background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden}
-#drawer.open .panel{transform:none;pointer-events:auto}
-.nav a{display:flex;align-items:center;gap:10px;padding:14px 16px;color:#e9eef5;text-decoration:none;border-bottom:1px solid #1b232d}
-.nav a:hover{background:#161e28}
-.menu-btn{border:none;background:transparent;color:#fff;font-size:22px;cursor:pointer}
-@media (max-width:740px){ .gift-grid{grid-template-columns:repeat(3,1fr)} th,td{font-size:12px;padding:8px} }
-.hide{display:none!important}
+  :root{
+    --bg:#0f1115;--card:#171922;--line:#24283b;--muted:#97a0b5;
+    --brand:#4cafef;--good:#22c55e;--bad:#ef4444;--wait:#f59e0b;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:#e9eef6;font:14px/1.45 system-ui,Segoe UI,Roboto,Helvetica,Arial}
+  a{color:var(--brand);text-decoration:none}
+  /* Header */
+  header{position:fixed;inset:0 0 auto 0;height:56px;background:var(--card);border-bottom:1px solid var(--line);
+    display:flex;align-items:center;justify-content:space-between;padding:0 12px;z-index:50}
+  .left{display:flex;align-items:center;gap:10px}
+  .menu-btn{border:0;background:transparent;color:#fff;font-size:22px;cursor:pointer}
+  .brand{font-weight:800;color:#cfe9ff}
+  .right{display:flex;align-items:center;gap:10px}
+  .pill{background:#111525;border:1px solid var(--line);padding:4px 10px;border-radius:999px;font-size:12px}
+  .user-chip{display:flex;align-items:center;gap:8px;background:#111525;border:1px solid var(--line);padding:4px 8px;border-radius:10px}
+  .user-chip img{width:24px;height:24px;border-radius:50%;object-fit:cover;border:1px solid var(--line)}
+  /* Drawer */
+  .drawer{position:fixed;inset:0 0 0 auto;width:0;transition:width .25s ease;z-index:60}
+  .drawer.open{width:260px}
+  .drawer .panel{position:absolute;top:0;right:0;height:100%;width:260px;background:var(--card);border-left:1px solid var(--line);display:flex;flex-direction:column}
+  .drawer .links a{display:block;padding:12px 16px;border-bottom:1px solid var(--line);color:#e9eef6}
+  .drawer .links a:hover{background:#1c2030}
+  .scrim{position:fixed;inset:0;background:#0008;opacity:0;pointer-events:none;transition:opacity .2s;z-index:55}
+  .drawer.open + .scrim{opacity:1;pointer-events:auto}
+  /* Main */
+  main{max-width:1100px;margin:0 auto;padding:72px 12px 80px}
+  .section{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:14px}
+  h2{margin:0 0 12px;font-size:18px}
+  .row{display:flex;flex-wrap:wrap;gap:10px}
+  .field{display:flex;flex-direction:column;gap:6px;flex:1 1 220px}
+  .field label{font-size:12px;color:var(--muted)}
+  input,select,button,textarea{font:inherit}
+  input,select,textarea{background:#0f1322;color:#e9eef6;border:1px solid var(--line);border-radius:10px;padding:10px}
+  .btn{background:var(--brand);color:#02121c;border:0;border-radius:10px;padding:10px 14px;cursor:pointer}
+  .btn:disabled{opacity:.5;cursor:not-allowed}
+  .btn.outline{background:transparent;color:var(--brand);border:1px solid var(--brand)}
+  .btn.danger{background:var(--bad);color:#fff}
+  .btn.good{background:var(--good);color:#02150c}
+  .btn.wait{background:var(--wait);color:#2b1900}
+  .small{font-size:12px;color:var(--muted)}
+  .w100{width:100%}
+  .center{text-align:center}
+  .hide{display:none !important}
+  /* Gift grid */
+  .gift-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+  .gift{background:#0f1322;border:2px solid transparent;border-radius:12px;padding:14px;text-align:center;cursor:pointer}
+  .gift.selected{border-color:var(--brand);background:#12162a}
+  .gift .price{font-weight:800}
+  /* Tables */
+  .table-wrap{overflow:auto;border:1px solid var(--line);border-radius:12px}
+  table{width:100%;border-collapse:collapse;background:#0f1322}
+  th,td{padding:10px;border-bottom:1px solid #20243a;text-align:center;font-size:13px;white-space:nowrap}
+  th{position:sticky;top:0;background:#12162a;color:#cfe9ff;z-index:1}
+  .status{display:inline-block;padding:4px 10px;border-radius:8px;font-weight:800;font-size:12px}
+  .status.waiting{background:var(--wait);color:#2b1900}
+  .status.completed{background:var(--good);color:#04140a}
+  .status.cancelled{background:var(--bad);color:#fff}
+  /* Footer */
+  footer{position:fixed;inset:auto 0 0 0;height:56px;background:var(--card);border-top:1px solid var(--line);
+    display:flex;align-items:center;justify-content:space-between;padding:0 12px;z-index:40}
+  /* Responsive */
+  @media (max-width:720px){
+    .gift-grid{grid-template-columns:repeat(3,1fr)}
+    th,td{font-size:12px;padding:8px}
+  }
 </style>
 </head>
 <body>
+
 <header>
-  <div class="left" style="display:flex;align-items:center;gap:10px">
-    <button class="menu-btn" id="menuBtn">☰</button>
+  <div class="left">
+    <button id="menuBtn" class="menu-btn" aria-label="Menu">☰</button>
     <div class="brand">Sarkar Telecom</div>
   </div>
-  <div class="right" style="display:flex;align-items:center;gap:8px">
-    <span id="hdrEmail" class="pill">Guest</span>
-    <span id="hdrTier" class="pill">Tier –</span>
-    <span id="hdrBal" class="pill">💎 0</span>
+  <div class="right">
+    <span id="hdrUser" class="pill">Guest</span>
+    <span id="hdrRole" class="pill">—</span>
+    <span id="hdrBalance" class="pill">💎 0</span>
     <div class="user-chip">
-      <img id="hdrAvatar" alt="avatar">
+      <img id="hdrAvatar" alt="avatar" />
       <span id="hdrName">Not logged in</span>
     </div>
   </div>
 </header>
 
 <!-- Drawer -->
-<div id="drawer">
-  <div class="scrim"></div>
+<div id="drawer" class="drawer">
   <div class="panel">
-    <div class="nav">
-      <a href="#/dashboard">🏠 Dashboard</a>
-      <a href="#/order">➕ Create Order</a>
-      <a href="#/history">🧾 Order History</a>
-      <a href="#/profile">👤 Profile</a>
-      <a href="#/admin-orders">🛠 Admin: Orders</a>
-      <a href="#/admin-users">👥 Admin: Users</a>
+    <div class="links">
       <a href="#/login">🔐 Login</a>
       <a href="#/register">📝 Register</a>
+      <a href="#/dashboard">🏠 Dashboard</a>
+      <a href="#/order">➕ Create Order</a>
+      <a href="#/history">📑 Order History</a>
+      <a href="#/users">👥 Users</a>
+      <a href="#/admin">🛠 Admin Panel</a>
+      <a href="#/profile">👤 Profile</a>
       <a href="#/logout">🚪 Logout</a>
     </div>
   </div>
 </div>
+<div id="scrim" class="scrim"></div>
 
 <main>
   <!-- LOGIN -->
-  <section id="v-login" class="section">
+  <section id="view-login" class="section">
     <h2>Login</h2>
     <div class="row">
-      <div class="field"><label>Email</label><input id="loginEmail" type="email" placeholder="you@example.com"></div>
-      <div class="field"><label>Password</label><input id="loginPass" type="password" placeholder="••••••••"></div>
+      <div class="field"><label>Email</label><input id="loginEmail" type="email" placeholder="admin@sarkar.com" /></div>
+      <div class="field"><label>Password</label><input id="loginPass" type="password" placeholder="••••••••" /></div>
     </div>
     <div class="row">
-      <button class="btn" id="btnLogin">Login</button>
-      <button class="btn outline" onclick="go('#/register')">Create Account</button>
+      <button id="btnLogin" class="btn">Login</button>
+      <button class="btn outline" onclick="go('#/register')">Create account</button>
     </div>
-    <p class="small">Default admin (add in Users sheet): <b>admin@sarkar.com / Admin@123</b></p>
+    <p class="small">Demo admin user: <b>admin@sarkar.com / Admin@123</b> (আগে Users শিটে যোগ করে রাখুন)</p>
   </section>
 
   <!-- REGISTER -->
-  <section id="v-register" class="section hide">
+  <section id="view-register" class="section hide">
     <h2>Register</h2>
     <div class="row">
-      <div class="field"><label>Email</label><input id="regEmail" type="email"></div>
-      <div class="field"><label>Password</label><input id="regPass" type="password"></div>
-      <div class="field"><label>Full Name</label><input id="regName" type="text"></div>
-      <div class="field"><label>Phone</label><input id="regPhone" type="tel"></div>
+      <div class="field"><label>Email</label><input id="regEmail" type="email" placeholder="you@example.com" /></div>
+      <div class="field"><label>Password</label><input id="regPass" type="password" /></div>
+      <div class="field"><label>Full Name</label><input id="regName" type="text" placeholder="Your Name" /></div>
+      <div class="field"><label>Phone</label><input id="regPhone" type="tel" placeholder="+880..." /></div>
     </div>
     <div class="row">
-      <button class="btn" id="btnRegister">Submit</button>
-      <button class="btn outline" onclick="go('#/login')">Back</button>
+      <button id="btnRegister" class="btn">Submit for Approval</button>
+      <button class="btn outline" onclick="go('#/login')">Back to Login</button>
     </div>
-    <p class="small">Admin approval required before login.</p>
+    <p class="small">Note: Admin approval না পাওয়া পর্যন্ত লগইন হবে না।</p>
   </section>
 
   <!-- DASHBOARD -->
-  <section id="v-dashboard" class="section hide">
+  <section id="view-dashboard" class="section hide">
     <h2>Welcome to Sarkar Telecom</h2>
     <div class="row">
-      <div class="section" style="flex:1 1 420px">
-        <h2>Account</h2>
-        <div class="small" id="acctLines"></div>
-        <div class="row" style="margin-top:12px">
-          <button class="btn" onclick="go('#/order')">Create Order</button>
-          <button class="btn outline" onclick="go('#/history')">View History</button>
-          <button class="btn outline" onclick="go('#/profile')">Profile</button>
-          <button class="btn outline" onclick="go('#/admin-users')">Admin Users</button>
-          <button class="btn outline" onclick="go('#/admin-orders')">Admin Orders</button>
-        </div>
-      </div>
-      <div class="section" style="flex:1 1 300px">
-        <h2>Tips</h2>
-        <ul class="small">
-          <li>Orders auto-cancel in 5 minutes if not completed; refund applies.</li>
-          <li>Weekly window: Thu 10:00 PM (BD) → next Thu 10:00 PM (BD).</li>
-          <li>Admin can change order status and manage users.</li>
-        </ul>
-      </div>
+      <div class="field"><label>User</label><input id="dbUser" disabled/></div>
+      <div class="field"><label>Role</label><input id="dbRole" disabled/></div>
+      <div class="field"><label>Balance</label><input id="dbBal" disabled/></div>
+      <div class="field"><label>Weekly Total (BD)</label><input id="dbWeekly" disabled/></div>
+      <div class="field"><label>Reward Tier</label><input id="dbTier" disabled/></div>
+    </div>
+    <div class="row">
+      <button class="btn" onclick="go('#/order')">➕ Create Order</button>
+      <button class="btn outline" onclick="go('#/history')">📑 Order History</button>
+      <button class="btn outline" onclick="go('#/profile')">👤 Profile</button>
+      <button class="btn outline" onclick="go('#/users')">👥 Users</button>
+      <button class="btn outline" onclick="go('#/admin')">🛠 Admin</button>
     </div>
   </section>
 
-  <!-- ORDER -->
-  <section id="v-order" class="section hide">
+  <!-- ORDER CREATE -->
+  <section id="view-order" class="section hide">
     <h2>Create Order</h2>
     <div class="field">
       <label>Gift Recipient (Number / Profile ID)</label>
-      <input id="recipient" type="number" inputmode="numeric" placeholder="Enter ID">
+      <input id="recipient" type="number" inputmode="numeric" placeholder="Enter Profile ID or Number" oninput="checkOrderForm()"/>
     </div>
-    <div class="small">Your balance: <b id="orderBal">💎 0</b></div>
-    <div class="gift-grid" id="giftGrid"></div>
+    <div class="row gift-grid" id="giftGrid"></div>
     <div class="row">
-      <button class="btn" id="btnConfirm" disabled>Order Confirm</button>
+      <button id="btnConfirm" class="btn" disabled>Order Confirm</button>
       <button class="btn outline" onclick="go('#/history')">View Order History</button>
+      <span class="small">Your balance: <b id="orderBal">💎 0</b></span>
     </div>
   </section>
 
   <!-- HISTORY -->
-  <section id="v-history" class="section hide">
+  <section id="view-history" class="section hide">
     <h2>Order History</h2>
     <div class="row">
-      <div class="field"><label>Search</label><input id="histSearch" placeholder="Order ID / Client / Amount / Time"></div>
-      <div class="field"><label>Status</label>
+      <div class="field"><label>Search</label><input id="histSearch" placeholder="Order ID / Client ID / Amount / Time"/></div>
+      <div class="field">
+        <label>Status</label>
         <select id="histStatus">
-          <option value="">All</option><option>WAITING</option><option>COMPLETED</option><option>CANCELLED</option>
+          <option value="">All</option>
+          <option value="waiting">Waiting</option>
+          <option value="completed">Completed</option>
+          <option value="cancelled">Cancelled</option>
         </select>
       </div>
-      <div class="field"><label>Weekly Total (BD)</label><input id="histWeekly" disabled></div>
-    </div>
-    <div class="table-wrap">
-      <table><thead><tr><th>Order ID</th><th>Client</th><th>Amount</th><th>Status</th><th>Time</th></tr></thead>
-        <tbody id="histBody"></tbody></table>
-    </div>
-    <div class="pager" id="histPager"></div>
-  </section>
-
-  <!-- ADMIN: ORDERS -->
-  <section id="v-admin-orders" class="section hide">
-    <h2>Admin • Manage Orders</h2>
-    <div class="row">
-      <div class="field w100"><label>Search</label><input id="admOrdSearch" placeholder="ID / Client / Email / Amount / Time"></div>
+      <div class="field"><label>Weekly Total (BD)</label><input id="histWeekly" disabled/></div>
     </div>
     <div class="table-wrap">
       <table>
-        <thead><tr><th>ID</th><th>User</th><th>Client</th><th>Amount</th><th>Status</th><th>Time</th><th>Action</th></tr></thead>
-        <tbody id="admOrdersBody"></tbody>
+        <thead><tr><th>Order ID</th><th>Client ID</th><th>Amount</th><th>Status</th><th>Time</th></tr></thead>
+        <tbody id="histBody"></tbody>
       </table>
     </div>
-    <div class="pager" id="admOrdPager"></div>
+    <div id="histPager" class="row"></div>
+    <div class="row">
+      <button class="btn" onclick="go('#/order')">➕ Create New Order</button>
+      <div class="pill" id="tierBadge">Tier: –</div>
+    </div>
   </section>
 
-  <!-- ADMIN: USERS -->
-  <section id="v-admin-users" class="section hide">
-    <h2>Admin • Users</h2>
+  <!-- USERS -->
+  <section id="view-users" class="section hide">
+    <h2>Registered Users</h2>
     <div class="row">
-      <div class="field"><label>Find</label><input id="userSearch" placeholder="Email / Name / Phone"></div>
+      <div class="field"><label>Find user</label><input id="userSearch" placeholder="Email / Name / Phone"/></div>
       <div class="field"><label>Role</label>
-        <select id="userRoleFilter"><option value="">All</option><option>admin</option><option>user</option><option value="pending">pending</option></select>
+        <select id="userRoleFilter">
+          <option value="">All</option>
+          <option value="admin">Admin</option>
+          <option value="user">User</option>
+          <option value="pending">Pending</option>
+        </select>
       </div>
     </div>
     <div class="table-wrap">
       <table>
-        <thead><tr><th>Avatar</th><th>Name</th><th>Email</th><th>Phone</th><th>Role</th><th>Approved</th><th>Balance</th><th>Weekly</th><th>Actions</th></tr></thead>
+        <thead><tr><th>Logo</th><th>Name</th><th>Email</th><th>Phone</th><th>Role</th><th>Balance</th><th>Weekly</th><th>Tier</th><th>Actions</th></tr></thead>
         <tbody id="usersBody"></tbody>
       </table>
+    </div>
+    <div class="small">Only admins can approve/reject/edit/role/balance.</div>
+  </section>
+
+  <!-- ADMIN -->
+  <section id="view-admin" class="section hide">
+    <h2>Admin Panel</h2>
+    <div class="row">
+      <div class="field"><label>Admin Balance</label><input id="adminBal" disabled/></div>
+      <div class="field"><label>Pending Registrations</label><input id="adminPend" disabled/></div>
+      <div class="field"><label>Weekly Reset (BD)</label><input id="adminResetInfo" disabled/></div>
+    </div>
+    <div class="row">
+      <button id="btnManualReset" class="btn">Manual Weekly Reset</button>
+      <button class="btn outline" onclick="go('#/users')">Manage Users</button>
+    </div>
+    <div class="section">
+      <h2>Manage All Orders</h2>
+      <div class="row">
+        <div class="field w100"><label>Search Orders</label><input id="admOrderSearch" placeholder="Order ID / Client ID / Email / Amount / Time"/></div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Order ID</th><th>User</th><th>Client ID</th><th>Amount</th><th>Status</th><th>Time</th><th>Action</th></tr></thead>
+          <tbody id="admOrdersBody"></tbody>
+        </table>
+      </div>
+      <div id="admPager" class="row"></div>
     </div>
   </section>
 
   <!-- PROFILE -->
-  <section id="v-profile" class="section hide">
+  <section id="view-profile" class="section hide">
     <h2>Profile</h2>
     <div class="row">
       <div class="field">
-        <label>Avatar</label>
-        <input id="avatarFile" type="file" accept="image/*">
-        <div class="small" style="margin-top:8px"><img id="profAvatar" style="width:76px;height:76px;border-radius:50%;border:1px solid var(--line);object-fit:cover"/></div>
+        <label>Logo</label>
+        <input id="avatarFile" type="file" accept="image/*"/>
+        <div class="small">Square image best</div>
+        <img id="profAvatar" alt="avatar" style="width:72px;height:72px;border-radius:50%;border:1px solid var(--line);object-fit:cover;margin-top:8px"/>
       </div>
-      <div class="field"><label>Name</label><input id="profName"></div>
-      <div class="field"><label>Email (read only)</label><input id="profEmail" disabled></div>
-      <div class="field"><label>Phone</label><input id="profPhone"></div>
-      <div class="field"><label>Password</label><input id="profPass" type="password" placeholder="Change password"></div>
+      <div class="field"><label>Name</label><input id="profName"/></div>
+      <div class="field"><label>Email (read-only)</label><input id="profEmail" disabled/></div>
+      <div class="field"><label>Phone</label><input id="profPhone" placeholder="+880..."/></div>
+      <div class="field"><label>Password</label><input id="profPass" type="password" placeholder="Change password"/></div>
     </div>
     <div class="row">
-      <button class="btn" id="btnSaveProfile">Save</button>
+      <button id="btnSaveProfile" class="btn">Save</button>
       <button class="btn outline" onclick="go('#/dashboard')">Back</button>
     </div>
   </section>
 
   <!-- LOGOUT -->
-  <section id="v-logout" class="section hide">
+  <section id="view-logout" class="section hide center">
     <h2>Logging out…</h2>
-    <p class="small">Redirecting to Login…</p>
+    <p class="small">You will be redirected to Login.</p>
   </section>
 </main>
 
 <footer>
-  <div class="small">© 2025 Sarkar Telecom • All rights reserved</div>
-  <div style="display:flex;gap:8px;align-items:center">
-    <span class="pill" id="fWeekly">Week: 0</span>
-    <span class="pill" id="fTier">Tier –</span>
-    <span class="pill" id="fBal">💎 0</span>
+  <div class="small">© 2025 Sarkar Telecom</div>
+  <div class="right">
+    <span id="fReward" class="pill">Tier: –</span>
+    <span id="fBalance" class="pill">💎 0</span>
   </div>
 </footer>
 
 <script>
-/*** ========= CONFIG (HARD-CODED) ========= ***/
+/* ================== HARD-CODED CONFIG ================== */
 const API = 'https://sheetdb.io/api/v1/olia09hyw73k1';
-const SHEETS = { users:'Users', orders:'Orders' };
+const SHEETS = { users:'Users', orders:'Orders', settings:'Settings' };
 
-/*** ========= UTIL ========= ***/
-const $ = sel => document.querySelector(sel);
-const $$ = sel => Array.from(document.querySelectorAll(sel));
-const json = r => r.json();
-const sleep = ms => new Promise(r=>setTimeout(r,ms));
-function uid(){
-  return 'ORD' + Math.random().toString(36).slice(2,6).toUpperCase() + Date.now().toString().slice(-5);
-}
+/* ================== UTIL (TIME / ID) ================== */
 function now(){ return Date.now(); }
-function bdNow(){ return Date.now() + 6*3600*1000; } // for window anchor only
-function lastThu22BD(ms=bdNow()){
-  const d=new Date(ms); const day=d.getUTCDay(); const diff=((day-4)+7)%7;
-  const t=new Date(ms - diff*86400000); t.setUTCHours(22,0,0,0);
-  if(t.getTime()>ms) t.setTime(t.getTime()-7*86400000);
-  return t.getTime() - 6*3600*1000; // convert BD back to UTC ms
+function bdNow(){ return new Date(Date.now() + 6*3600*1000); }
+function lastThursday22BD(ms=bdNow().getTime()){
+  const d = new Date(ms);
+  const day = d.getUTCDay(); // 0..6
+  const diffDays = (((day - 4) + 7) % 7);
+  const lastThu = new Date(ms - diffDays*86400000);
+  lastThu.setUTCHours(22,0,0,0);
+  if (lastThu.getTime() > ms) lastThu.setTime(lastThu.getTime()-7*86400000);
+  return lastThu.getTime();
 }
-function money(n){ return Number(n||0).toLocaleString(); }
-function dataUrl(img){ return img||'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="72" height="72"><rect width="100%" height="100%" fill="%23121a22"/><text x="50%" y="55%" font-family="sans-serif" font-size="14" fill="%23a9b1bd" text-anchor="middle">Avatar</text></svg>'; }
+function uid(){ return 'ORD' + Math.random().toString(36).slice(2,6).toUpperCase() + Date.now().toString().slice(-6); }
 
-/*** ========= SHEETDB HELPERS ========= ***/
-async function sGet(sheet, params={}){ // list
-  const qs = new URLSearchParams({sheet, ...params}).toString();
-  return fetch(`${API}?${qs}`).then(json);
+/* ================== LOCAL STORAGE KEYS ================== */
+const LS = {
+  current:'st_current',
+};
+
+/* ================== API HELPERS (SheetDB) ================== */
+async function apiGet(url){
+  const r = await fetch(url, {headers:{'Accept':'application/json'}});
+  if(!r.ok) throw new Error('GET failed'); return r.json();
 }
-async function sSearch(sheet, params){ // GET /search
-  const qs = new URLSearchParams({sheet, ...params}).toString();
-  return fetch(`${API}/search?${qs}`).then(json);
+async function apiPost(url, data){
+  const r = await fetch(url, {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({data})});
+  if(!r.ok) throw new Error('POST failed'); return r.json();
 }
-async function sInsert(sheet, rows){ // POST
-  return fetch(`${API}?sheet=${encodeURIComponent(sheet)}`,{
-    method:'POST', headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({data: rows})
-  }).then(json);
+async function apiPatch(url, data){
+  const r = await fetch(url, {method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({data})});
+  if(!r.ok) throw new Error('PATCH failed'); return r.json();
 }
-async function sPatchBySearch(sheet, searchParams, data){ // PATCH /search
-  const qs = new URLSearchParams({sheet, ...searchParams}).toString();
-  return fetch(`${API}/search?${qs}`,{
-    method:'PATCH', headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({data})
-  }).then(json);
-}
-async function sDeleteBySearch(sheet, searchParams){ // DELETE /search
-  const qs = new URLSearchParams({sheet, ...searchParams}).toString();
-  return fetch(`${API}/search?${qs}`,{method:'DELETE'}).then(json);
+async function apiDelete(url){
+  const r = await fetch(url, {method:'DELETE'}); if(!r.ok) throw new Error('DELETE failed'); return r.json();
 }
 
-/*** ========= STATE ========= ***/
-let current = null; // {email, ...}
-let cache = { users:[], orders:[] };
+/* ================== AUTH (with persistence) ================== */
+function getCurrent(){ try{ return JSON.parse(localStorage.getItem(LS.current)) }catch(e){ return null } }
+function setCurrent(u){ localStorage.setItem(LS.current, JSON.stringify(u)); syncHeaderFooter(); }
+function clearCurrent(){ localStorage.removeItem(LS.current); syncHeaderFooter(); }
 
-/*** ========= MENU / ROUTER ========= ***/
-const drawer = $('#drawer'); const scrim = drawer.querySelector('.scrim');
-$('#menuBtn').onclick = ()=> drawer.classList.toggle('open');
-scrim.onclick = ()=> drawer.classList.remove('open');
-$$('.nav a').forEach(a=>a.addEventListener('click', ()=>drawer.classList.remove('open')));
+async function login(email, pass){
+  const res = await apiGet(`${API}/search?sheet=${SHEETS.users}&email=${encodeURIComponent(email)}`);
+  const u = (res||[])[0];
+  if(!u) throw new Error('User not found');
+  if(String(u.pass)!==String(pass)) throw new Error('Wrong password');
+  if(u.role!=='admin' && String(u.approved).toLowerCase()!=='true') throw new Error('Pending admin approval.');
+  // normalize numeric
+  u.balance = Number(u.balance||0);
+  setCurrent(u);
+  return u;
+}
 
-const VIEWS = ['login','register','dashboard','order','history','admin-orders','admin-users','profile','logout'];
-function show(v){ VIEWS.forEach(x=>$('#v-'+x).classList.add('hide')); $('#v-'+v).classList.remove('hide'); }
+async function registerUser({email, pass, name, phone}){
+  const exists = await apiGet(`${API}/search?sheet=${SHEETS.users}&email=${encodeURIComponent(email)}`);
+  if(exists.length) throw new Error('Email already exists.');
+  const row = {
+    email, pass, name, phone,
+    role:'user', approved:false, balance:0, avatar:''
+  };
+  await apiPost(`${API}?sheet=${SHEETS.users}`, row);
+  return true;
+}
+
+function logout(){
+  clearCurrent();
+  go('#/login');
+  document.getElementById('view-logout').classList.remove('hide');
+  setTimeout(()=> go('#/login'), 1200);
+}
+
+/* ================== ROUTING ================== */
+const VIEWS = ['login','register','dashboard','order','history','users','admin','profile','logout'];
+function show(view){ VIEWS.forEach(v=>document.getElementById('view-'+v).classList.add('hide')); document.getElementById('view-'+view).classList.remove('hide'); }
 function go(hash){ location.hash = hash; }
 window.addEventListener('hashchange', onRoute);
-
 async function onRoute(){
-  const hash = location.hash || '#/login';
-  const v = hash.replace('#/','');
-  const needAuth = ['dashboard','order','history','admin-orders','admin-users','profile','logout'];
-  if(needAuth.includes(v) && !current){ alert('Please login first'); return go('#/login'); }
-  if(v.startsWith('admin') && current?.role!=='admin'){ alert('Admin only'); return go('#/dashboard'); }
-
-  show(v);
-  if(v==='dashboard') renderDashboard();
-  if(v==='order') renderOrder();
-  if(v==='history') renderHistory();
-  if(v==='admin-orders') renderAdminOrders();
-  if(v==='admin-users') renderAdminUsers();
-  if(v==='profile') renderProfile();
-  if(v==='logout'){ current=null; syncHeaderFooter(); go('#/login'); }
+  const h = location.hash || '#/login';
+  const route = h.split('?')[0].replace('#/','');
+  const cur = getCurrent();
+  const authOnly = ['dashboard','order','history','users','admin','profile','logout'];
+  if(authOnly.includes(route) && !cur){ alert('Please login first'); return go('#/login'); }
+  if(route==='admin' && cur?.role!=='admin'){ alert('Admin access only'); return go('#/dashboard'); }
+  show(route);
+  if(route==='dashboard') await renderDashboard();
+  else if(route==='order') await renderOrder();
+  else if(route==='history') await renderHistory();
+  else if(route==='users') await renderUsers();
+  else if(route==='admin') await renderAdmin();
+  else if(route==='profile') await renderProfile();
+  else if(route==='logout') logout();
 }
 
-/*** ========= AUTH ========= ***/
-async function login(email, pass){
-  const rows = await sSearch(SHEETS.users,{email, pass});
-  const u = rows[0];
-  if(!u) throw new Error('Invalid credentials');
-  if(u.role!=='admin' && String(u.approved).toLowerCase()!=='true') throw new Error('Pending admin approval');
-  current = u;
-  syncHeaderFooter();
-}
-async function register({email,pass,name,phone}){
-  const exists = await sSearch(SHEETS.users,{email});
-  if(exists.length) throw new Error('Email already exists');
-  await sInsert(SHEETS.users,[{
-    email, pass, name, phone, role:'user', approved:false,
-    balance:0, weeklyDiamonds:0, avatar:''
-  }]);
+/* ================== HEADER / FOOTER ================== */
+function syncHeaderFooter(){
+  const cur = getCurrent();
+  const hdrUser = document.getElementById('hdrUser');
+  const hdrRole = document.getElementById('hdrRole');
+  const hdrBalance = document.getElementById('hdrBalance');
+  const hdrName = document.getElementById('hdrName');
+  const hdrAvatar = document.getElementById('hdrAvatar');
+  const fBalance = document.getElementById('fBalance');
+  const fReward = document.getElementById('fReward');
+  if(!cur){
+    hdrUser.textContent='Guest'; hdrRole.textContent='—'; hdrBalance.textContent='💎 0';
+    hdrName.textContent='Not logged in';
+    hdrAvatar.src='data:image/svg+xml;base64,PHN2ZyBoZWlnaHQ9IjQ4IiB3aWR0aD0iNDgiIHZpZXdCb3g9IjAgMCA1MCA1MCIgZmlsbD0iI2ZmZiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Y2lyY2xlIGN4PSIyNSIgY3k9IjE4IiByPSIxMCIgZmlsbD0iI2JiYiIvPjxwYXRoIGQ9Ik0xMiA0MGMwLTggMjYtOCAyNiAwIiBmaWxsPSIjYmJiIi8+PC9zdmc+';
+    fBalance.textContent='💎 0'; fReward.textContent='Tier: –';
+    return;
+  }
+  hdrUser.textContent = cur.email;
+  hdrRole.textContent = cur.role;
+  hdrBalance.textContent = '💎 ' + (Number(cur.balance||0)).toLocaleString();
+  hdrName.textContent = cur.name || cur.email;
+  hdrAvatar.src = cur.avatar || hdrAvatar.src;
+  fBalance.textContent = '💎 ' + (Number(cur.balance||0)).toLocaleString();
+  // weekly+tier client-side (derived)
+  const weekly = window._weeklyTotal || 0;
+  const tier = tierFrom(weekly);
+  fReward.textContent = `Tier: ${tier.level} (${tier.rate}%)`;
 }
 
-/*** ========= TIER ========= ***/
+/* ================== SIDEBAR TOGGLE ================== */
+const drawer = document.getElementById('drawer');
+const scrim = document.getElementById('scrim');
+document.getElementById('menuBtn').onclick = ()=> drawer.classList.toggle('open');
+scrim.onclick = ()=> drawer.classList.remove('open');
+
+/* ================== TIERS ================== */
 const TIERS = [
   {min:800000, level:5, rate:3.5},
-  {min:80000, level:4, rate:2.6},
-  {min:40000, level:3, rate:2.1},
-  {min:20000, level:2, rate:1.6},
-  {min:5000,  level:1, rate:1.0},
-  {min:0,     level:0, rate:0},
+  {min:80000,  level:4, rate:2.6},
+  {min:40000,  level:3, rate:2.1},
+  {min:20000,  level:2, rate:1.6},
+  {min:5000,   level:1, rate:1.0},
+  {min:0,      level:0, rate:0},
 ];
-function tierFrom(total){ for(const t of TIERS) if(total>=t.min) return t; return TIERS.at(-1); }
-function withinWeekly(ts){ return Number(ts)>=lastThu22BD(); }
+function tierFrom(total){ for(const t of TIERS){ if(total>=t.min) return t; } return TIERS[TIERS.length-1]; }
 
-async function refreshCaches(){
-  cache.users = await sGet(SHEETS.users);
-  cache.orders = await sGet(SHEETS.orders);
+/* ================== DASHBOARD ================== */
+async function computeWeeklyFor(email){
+  const startBD = lastThursday22BD();
+  const all = await apiGet(`${API}?sheet=${SHEETS.orders}`);
+  const mine = all.filter(o => String(o.user_email)===String(email) && String(o.status).toLowerCase()==='completed' && Number(o.timestamp||0)>=startBD);
+  return mine.reduce((a,b)=> a + Number(b.amount||0), 0);
 }
-function weeklyTotalFor(email){
-  return cache.orders
-    .filter(o=>o.userEmail===email && o.status==='COMPLETED' && withinWeekly(o.timestamp))
-    .reduce((a,b)=>a+Number(b.amount||0),0);
-}
-
-/*** ========= HEADER/FOOTER ========= ***/
-function syncHeaderFooter(){
-  $('#hdrEmail').textContent = current? current.email : 'Guest';
-  $('#hdrName').textContent  = current? (current.name||current.email) : 'Not logged in';
-  $('#hdrAvatar').src        = current? dataUrl(current.avatar) : dataUrl('');
-  const bal = current? Number(current.balance||0) : 0;
-  $('#hdrBal').textContent = '💎 '+money(bal);
-
-  const w = current? weeklyTotalFor(current.email) : 0;
+async function renderDashboard(){
+  const u = getCurrent(); if(!u) return;
+  const w = await computeWeeklyFor(u.email);
+  window._weeklyTotal = w;
   const t = tierFrom(w);
-  $('#hdrTier').textContent = `Tier ${t.level}`;
-  $('#fTier').textContent   = `Tier ${t.level}`;
-  $('#fWeekly').textContent = `Week: ${money(w)}`;
-  $('#fBal').textContent    = '💎 '+money(bal);
+  document.getElementById('dbUser').value = u.name || u.email;
+  document.getElementById('dbRole').value = u.role;
+  document.getElementById('dbBal').value  = '💎 ' + Number(u.balance||0).toLocaleString();
+  document.getElementById('dbWeekly').value = w.toLocaleString();
+  document.getElementById('dbTier').value = `Level ${t.level} (${t.rate}%)`;
+  syncHeaderFooter();
 }
 
-/*** ========= DASHBOARD ========= ***/
-function renderDashboard(){
-  const w = weeklyTotalFor(current.email);
-  const t = tierFrom(w);
-  const lines = [
-    `Email: <b>${current.email}</b>`,
-    `Role: <b>${current.role}</b>`,
-    `Phone: ${current.phone||'-'}`,
-    `Balance: 💎 <b>${money(current.balance||0)}</b>`,
-    `Weekly Completed: 💎 <b>${money(w)}</b> • Tier L${t.level} (${t.rate}%)`,
-  ];
-  $('#acctLines').innerHTML = lines.map(x=>`<div>${x}</div>`).join('');
-}
-
-/*** ========= ORDER ========= ***/
-const AMOUNTS = [10,50,100,200,500,1000,2000,5000,10000,20000];
+/* ================== ORDER CREATE ================== */
+const amounts = [10,50,100,200,500,1000,2000,5000,10000,20000];
 let selectedAmt = null;
-
-function renderOrder(){
-  selectedAmt=null;
-  $('#recipient').value='';
-  $('#orderBal').textContent = '💎 '+money(current.balance||0);
-  const grid = $('#giftGrid'); grid.innerHTML='';
-  AMOUNTS.forEach(a=>{
-    const div=document.createElement('div');
-    div.className='gift'; div.dataset.amount=a; div.innerHTML=`<div class="price">💎 ${a}</div>`;
+async function renderOrder(){
+  const u = getCurrent(); if(!u) return;
+  selectedAmt = null;
+  document.getElementById('recipient').value='';
+  document.getElementById('orderBal').textContent = '💎 ' + Number(u.balance||0).toLocaleString();
+  const grid = document.getElementById('giftGrid');
+  grid.innerHTML='';
+  amounts.forEach(a=>{
+    const div=document.createElement('div'); div.className='gift'; div.dataset.amount=a;
+    div.innerHTML=`<div class="price">💎 ${a}</div>`;
     div.onclick=()=>{ [...grid.children].forEach(c=>c.classList.remove('selected')); div.classList.add('selected'); selectedAmt=a; checkOrderForm(); };
     grid.appendChild(div);
   });
   checkOrderForm();
 }
 function checkOrderForm(){
-  $('#btnConfirm').disabled = !( $('#recipient').value.trim() && selectedAmt );
+  const rec = document.getElementById('recipient').value.trim();
+  document.getElementById('btnConfirm').disabled = !(rec && selectedAmt);
 }
-$('#recipient').addEventListener('input', checkOrderForm);
+document.getElementById('btnConfirm').onclick = async ()=>{
+  const u = getCurrent(); if(!u) return;
+  const rec = document.getElementById('recipient').value.trim();
+  const amt = Number(selectedAmt||0);
+  if(!rec || !amt) return;
 
-$('#btnConfirm').onclick = async ()=>{
-  try{
-    await refreshCaches();
-    const me = cache.users.find(u=>u.email===current.email);
-    const amt = Number(selectedAmt||0);
-    const rec = $('#recipient').value.trim();
-    if(!rec || !amt) return;
-    if(Number(me.balance||0) < amt) return alert('Insufficient balance');
+  // fresh user from DB to ensure latest balance
+  const res = await apiGet(`${API}/search?sheet=${SHEETS.users}&email=${encodeURIComponent(u.email)}`);
+  const me = res[0]; if(!me) return alert('User not found.');
+  const curBal = Number(me.balance||0);
+  if(curBal < amt) return alert('Insufficient balance.');
 
-    // deduct balance
-    await sPatchBySearch(SHEETS.users,{email:me.email},{balance: Number(me.balance||0) - amt});
-    // create order
-    const id = uid(); const ts = now(); const cancelAt = ts + 5*60*1000;
-    await sInsert(SHEETS.orders,[{
-      id, clientId: rec, amount: amt, status:'WAITING',
-      userEmail: me.email, timestamp: ts, autoCancelAt: cancelAt
-    }]);
+  // deduct balance
+  await apiPatch(`${API}?sheet=${SHEETS.users}&email=${encodeURIComponent(u.email)}`, { balance: curBal - amt });
 
-    // local refresh
-    await refreshCaches();
-    current = cache.users.find(u=>u.email===me.email);
-    syncHeaderFooter();
-    alert(`Order submitted!\nID: ${id}\nClient: ${rec}\nAmount: 💎 ${amt}`);
-    go('#/history');
-  }catch(e){ alert(e.message||'Order failed'); }
+  // create order (WAITING)
+  const order = { id:uid(), user_email:u.email, client_id:rec, amount:amt, status:'waiting', timestamp: now() };
+  await apiPost(`${API}?sheet=${SHEETS.orders}`, order);
+
+  // update local current user balance
+  u.balance = curBal - amt; setCurrent(u);
+
+  alert(`Order submitted!\nID: ${order.id}\nAmount: 💎 ${amt}`);
+  go('#/history');
 };
 
-/*** ========= HISTORY ========= ***/
+/* ================== AUTO-CANCEL (>5m) + REFUND ================== */
+async function sweepAutoCancel(){
+  const five = 5*60*1000, t = now();
+  const all = await apiGet(`${API}?sheet=${SHEETS.orders}`);
+  const waits = all.filter(o=> String(o.status).toLowerCase()==='waiting' && (t - Number(o.timestamp||0))>five );
+  for(const o of waits){
+    // refund to user
+    const u = (await apiGet(`${API}/search?sheet=${SHEETS.users}&email=${encodeURIComponent(o.user_email)}`))[0];
+    if(u){
+      await apiPatch(`${API}?sheet=${SHEETS.users}&email=${encodeURIComponent(o.user_email)}`, { balance: Number(u.balance||0) + Number(o.amount||0) });
+    }
+    // set cancelled
+    await apiPatch(`${API}?sheet=${SHEETS.orders}&id=${encodeURIComponent(o.id)}`, { status:'cancelled' });
+  }
+}
+
+/* ================== HISTORY ================== */
 let histPage=1, histSize=10;
 async function renderHistory(){
-  await refreshCaches();
-  const mine = cache.orders.filter(o=>o.userEmail===current.email).sort((a,b)=>Number(b.timestamp)-Number(a.timestamp));
-  const s = ($('#histSearch').value||'').toLowerCase();
-  const st = $('#histStatus').value;
+  await sweepAutoCancel(); // ensure stale orders are cancelled
+  const cur = getCurrent(); if(!cur) return;
+  const orders = await apiGet(`${API}?sheet=${SHEETS.orders}`);
+  const mine = orders.filter(o=> String(o.user_email)===String(cur.email)).sort((a,b)=> Number(b.timestamp)-Number(a.timestamp));
+
+  const search = (document.getElementById('histSearch').value||'').toLowerCase();
+  const status = document.getElementById('histStatus').value;
   const filtered = mine.filter(o=>{
-    const blob = `${o.id} ${o.clientId} ${o.amount} ${o.status} ${o.timestamp}`.toLowerCase();
-    return (!s || blob.includes(s)) && (!st || o.status===st);
+    const blob = `${o.id} ${o.client_id} ${o.amount} ${new Date(Number(o.timestamp)).toLocaleString()}`.toLowerCase();
+    const okS = !status || String(o.status).toLowerCase()===status;
+    return (!search || blob.includes(search)) && okS;
   });
-  const pages = Math.max(1, Math.ceil(filtered.length/histSize));
+
+  const total=filtered.length, pages=Math.max(1, Math.ceil(total/histSize));
   if(histPage>pages) histPage=pages;
-  const slice = filtered.slice((histPage-1)*histSize, histPage*histSize);
+  const start=(histPage-1)*histSize, end=start+histSize, slice=filtered.slice(start,end);
 
-  $('#histBody').innerHTML = slice.map(o=>`
-    <tr>
-      <td class="nowrap">${o.id}</td>
-      <td class="nowrap">${o.clientId}</td>
-      <td>💎 ${money(o.amount)}</td>
-      <td><span class="status ${o.status}">${o.status}</span></td>
-      <td class="nowrap">${new Date(Number(o.timestamp)).toLocaleString()}</td>
-    </tr>`).join('');
-
-  const pag = $('#histPager'); pag.innerHTML='';
-  for(let i=1;i<=pages;i++){ const b=document.createElement('button'); b.textContent=i; if(i===histPage)b.classList.add('active'); b.onclick=()=>{histPage=i;renderHistory();}; pag.appendChild(b); }
-
-  const w = weeklyTotalFor(current.email);
-  $('#histWeekly').value = money(w);
-  syncHeaderFooter();
-}
-$('#histSearch').oninput = ()=>{histPage=1;renderHistory();};
-$('#histStatus').onchange = ()=>{histPage=1;renderHistory();};
-
-/*** ========= ADMIN: ORDERS ========= ***/
-let aoPage=1, aoSize=12;
-async function renderAdminOrders(){
-  await refreshCaches();
-  const q = ($('#admOrdSearch').value||'').toLowerCase();
-  const list = cache.orders.slice().sort((a,b)=>Number(b.timestamp)-Number(a.timestamp))
-    .filter(o=>{
-      const blob = `${o.id} ${o.clientId} ${o.amount} ${o.userEmail} ${o.status}`.toLowerCase();
-      return !q || blob.includes(q);
-    });
-
-  const pages = Math.max(1, Math.ceil(list.length/aoSize)); if(aoPage>pages) aoPage=pages;
-  const rows = list.slice((aoPage-1)*aoSize, aoPage*aoSize);
-  $('#admOrdersBody').innerHTML = rows.map(o=>`
+  const tbody=document.getElementById('histBody');
+  tbody.innerHTML = slice.map(o=>`
     <tr>
       <td>${o.id}</td>
-      <td>${o.userEmail}</td>
-      <td>${o.clientId}</td>
-      <td>💎 ${money(o.amount)}</td>
-      <td><span class="status ${o.status}">${o.status}</span></td>
+      <td>${o.client_id}</td>
+      <td>💎 ${Number(o.amount||0).toLocaleString()}</td>
+      <td><span class="status ${String(o.status).toLowerCase()}">${String(o.status).toUpperCase()}</span></td>
       <td>${new Date(Number(o.timestamp)).toLocaleString()}</td>
-      <td class="nowrap">
-        <button class="btn good" onclick="admSetStatus('${o.id}','COMPLETED')">Complete</button>
-        <button class="btn danger" onclick="admSetStatus('${o.id}','CANCELLED')">Cancel</button>
-        <button class="btn wait" onclick="admSetStatus('${o.id}','WAITING')">Waiting</button>
-      </td>
-    </tr>`).join('');
+    </tr>
+  `).join('');
 
-  const pag = $('#admOrdPager'); pag.innerHTML='';
-  for(let i=1;i<=pages;i++){ const b=document.createElement('button'); b.textContent=i; if(i===aoPage)b.classList.add('active'); b.onclick=()=>{aoPage=i;renderAdminOrders();}; pag.appendChild(b); }
+  const pager=document.getElementById('histPager'); pager.innerHTML='';
+  for(let i=1;i<=pages;i++){ const b=document.createElement('button'); b.className='btn ' + (i===histPage?'':'outline'); b.textContent=' '+i+' '; b.onclick=()=>{histPage=i; renderHistory();}; pager.appendChild(b); }
+
+  const w = await computeWeeklyFor(cur.email);
+  window._weeklyTotal = w;
+  document.getElementById('histWeekly').value = w.toLocaleString();
+  document.getElementById('tierBadge').textContent = `Tier: ${tierFrom(w).level}`;
 }
-$('#admOrdSearch').oninput = ()=>{aoPage=1;renderAdminOrders();};
+document.getElementById('histSearch').oninput = ()=>{histPage=1;renderHistory();};
+document.getElementById('histStatus').onchange = ()=>{histPage=1;renderHistory();};
 
-async function admSetStatus(id, status){
-  await refreshCaches();
-  const o = cache.orders.find(x=>x.id===id); if(!o) return;
-  if(o.status===status) return;
-
-  // refund/charge
-  const me = cache.users.find(u=>u.email===o.userEmail);
-  if(status==='CANCELLED' && o.status!=='CANCELLED'){ // refund
-    await sPatchBySearch(SHEETS.users,{email:me.email},{balance:Number(me.balance||0)+Number(o.amount||0)});
-  }
-  if(status==='WAITING' && o.status==='CANCELLED'){ // charge back again
-    const bal = Number(me.balance||0);
-    if(bal<Number(o.amount||0)) return alert('User balance insufficient to revert to WAITING');
-    await sPatchBySearch(SHEETS.users,{email:me.email},{balance:bal-Number(o.amount||0)});
-  }
-
-  await sPatchBySearch(SHEETS.orders,{id},{status});
-  await refreshCaches(); syncHeaderFooter();
-  renderAdminOrders(); renderHistory();
+/* ================== USERS (ADMIN TOOLS) ================== */
+function adminUserButtons(u){
+  const pending = String(u.approved).toLowerCase()!=='true';
+  const isAdmin = String(u.role)==='admin';
+  return `
+    ${pending? `<button class="btn good" data-act="approve">Approve</button>
+                <button class="btn danger" data-act="reject">Reject</button>` : ``}
+    <button class="btn outline" data-act="edit">Edit</button>
+    <button class="btn" data-act="addbal">Add Balance</button>
+    <button class="btn outline" data-act="role">${isAdmin?'Set User':'Make Admin'}</button>
+  `;
 }
+async function renderUsers(){
+  const cur=getCurrent(); const isAdmin = cur?.role==='admin';
+  const q=(document.getElementById('userSearch').value||'').toLowerCase();
+  const rf=document.getElementById('userRoleFilter').value;
 
-/*** ========= ADMIN: USERS ========= ***/
-async function renderAdminUsers(){
-  await refreshCaches();
-  const q = ($('#userSearch').value||'').toLowerCase();
-  const rf = $('#userRoleFilter').value;
-  const tbody = $('#usersBody'); tbody.innerHTML='';
+  const users = await apiGet(`${API}?sheet=${SHEETS.users}`);
+  const tbody=document.getElementById('usersBody'); tbody.innerHTML='';
 
-  cache.users.forEach(u=>{
-    const w = weeklyTotalFor(u.email);
-    const role = u.role||'user';
-    const isPending = String(u.approved).toLowerCase()!=='true';
-    const match = (!q || `${u.email} ${u.name} ${u.phone}`.toLowerCase().includes(q)) &&
-                  (!rf || (rf==='pending'? isPending : role===rf));
-    if(!match) return;
+  for(const u of users){
+    const name=(u.name||''); const phone=(u.phone||''); const email=u.email;
+    const approved = String(u.approved).toLowerCase()==='true';
+    const role = approved? u.role : 'pending';
+    const matches = (!q || `${email} ${name} ${phone}`.toLowerCase().includes(q)) &&
+                    (!rf || (rf==='pending'? !approved : String(u.role)===rf));
+    if(!matches) continue;
 
-    const tr = document.createElement('tr');
+    // weekly (derived)
+    const w = await computeWeeklyFor(email);
+    const tier = tierFrom(w);
+
+    const tr=document.createElement('tr');
     tr.innerHTML = `
-      <td><img src="${dataUrl(u.avatar)}" style="width:36px;height:36px;border-radius:50%;border:1px solid #1b232d;object-fit:cover"></td>
-      <td>${u.name||'-'}</td>
-      <td>${u.email}</td>
-      <td>${u.phone||'-'}</td>
+      <td><img src="${u.avatar||'https://via.placeholder.com/36'}" style="width:36px;height:36px;border-radius:50%;object-fit:cover;border:1px solid #222"/></td>
+      <td>${name||'-'}</td>
+      <td>${email}</td>
+      <td>${phone||'-'}</td>
       <td>${role}</td>
-      <td>${isPending? 'pending':'true'}</td>
-      <td>💎 ${money(u.balance)}</td>
-      <td>${money(w)}</td>
-      <td class="nowrap">
-        ${isPending? `<button class="btn good" data-act="approve">Approve</button>
-                      <button class="btn danger" data-act="reject">Reject</button>`:''}
-        <button class="btn outline" data-act="edit">Edit</button>
-        <button class="btn" data-act="addbal">Add Bal</button>
-        <button class="btn outline" data-act="role">${role==='admin'?'Set User':'Make Admin'}</button>
-      </td>`;
+      <td>💎 ${Number(u.balance||0).toLocaleString()}</td>
+      <td>${w.toLocaleString()}</td>
+      <td>Lvl ${tier.level}</td>
+      <td class="nowrap" id="cell-${email}">${isAdmin? adminUserButtons(u): '<span class="small">View only</span>'}</td>
+    `;
     tbody.appendChild(tr);
+    if(isAdmin) attachUserActions(u);
+  }
+}
+document.getElementById('userSearch').oninput=renderUsers;
+document.getElementById('userRoleFilter').onchange=renderUsers;
 
-    tr.querySelectorAll('button').forEach(b=>{
-      b.onclick = async ()=>{
-        const act=b.dataset.act;
-        if(act==='approve'){ await sPatchBySearch(SHEETS.users,{email:u.email},{approved:true}); }
-        else if(act==='reject'){ await sDeleteBySearch(SHEETS.users,{email:u.email}); }
-        else if(act==='edit'){
-          const name=prompt('Name', u.name||'');
-          const phone=prompt('Phone', u.phone||'');
-          const pass=prompt('Password (blank = keep)','');
-          const data={name,phone}; if(pass) data.pass=pass;
-          await sPatchBySearch(SHEETS.users,{email:u.email},data);
-        }
-        else if(act==='addbal'){
-          const add = Number(prompt('Add diamonds:', '0')||0); if(add>0){
-            await sPatchBySearch(SHEETS.users,{email:u.email},{balance:Number(u.balance||0)+add});
-          }
-        }
-        else if(act==='role'){
-          await sPatchBySearch(SHEETS.users,{email:u.email},{role: u.role==='admin'?'user':'admin'});
-        }
-        await refreshCaches(); renderAdminUsers(); syncHeaderFooter();
-      };
-    });
+function attachUserActions(u){
+  const cell=document.getElementById(`cell-${u.email}`);
+  cell.querySelectorAll('button').forEach(b=>{
+    b.onclick=async ()=>{
+      const act=b.dataset.act;
+      if(act==='approve'){ await apiPatch(`${API}?sheet=${SHEETS.users}&email=${encodeURIComponent(u.email)}`, {approved:true}); }
+      else if(act==='reject'){ await apiDelete(`${API}?sheet=${SHEETS.users}&email=${encodeURIComponent(u.email)}`); }
+      else if(act==='edit'){
+        const name=prompt('Name', u.name||''); const phone=prompt('Phone', u.phone||''); const pass=prompt('Password (leave blank to keep)','');
+        const data={}; if(name!==null) data.name=name; if(phone!==null) data.phone=phone; if(pass) data.pass=pass;
+        if(Object.keys(data).length) await apiPatch(`${API}?sheet=${SHEETS.users}&email=${encodeURIComponent(u.email)}`, data);
+      }
+      else if(act==='addbal'){
+        const add = Number(prompt('Add diamonds to user:', '0'))||0;
+        if(add>0){ await apiPatch(`${API}?sheet=${SHEETS.users}&email=${encodeURIComponent(u.email)}`, { balance: Number(u.balance||0) + add }); }
+      }
+      else if(act==='role'){
+        const newRole = String(u.role)==='admin' ? 'user' : 'admin';
+        await apiPatch(`${API}?sheet=${SHEETS.users}&email=${encodeURIComponent(u.email)}`, { role:newRole });
+      }
+      await renderUsers(); await renderAdmin(); syncHeaderFooter();
+    };
   });
 }
-$('#userSearch').oninput = renderAdminUsers;
-$('#userRoleFilter').onchange = renderAdminUsers;
 
-/*** ========= PROFILE ========= ***/
-function renderProfile(){
-  $('#profAvatar').src = dataUrl(current.avatar);
-  $('#profName').value = current.name||'';
-  $('#profEmail').value = current.email;
-  $('#profPhone').value = current.phone||'';
-  $('#profPass').value = '';
-}
-$('#avatarFile').addEventListener('change', function(){
-  const f=this.files[0]; if(!f) return;
-  const r=new FileReader();
-  r.onload=async ()=>{
-    await sPatchBySearch(SHEETS.users,{email:current.email},{avatar:r.result});
-    await refreshCaches(); current=cache.users.find(u=>u.email===current.email);
-    renderProfile(); syncHeaderFooter();
+/* ================== ADMIN ORDERS ================== */
+let admPage=1, admSize=10;
+async function renderAdmin(){
+  // Admin meta (optional settings)
+  try{
+    const settings = await apiGet(`${API}?sheet=${SHEETS.settings}`);
+    const s = Object.fromEntries(settings.map(x=>[x.key,x.value]));
+    document.getElementById('adminBal').value = '💎 ' + (Number(s.AdminBalance||0)).toLocaleString();
+    document.getElementById('adminResetInfo').value = 'Last reset (BD): ' + (s.LastResetBD? new Date(Number(s.LastResetBD)).toLocaleString() : '—');
+  }catch(e){
+    document.getElementById('adminBal').value='—';
+    document.getElementById('adminResetInfo').value='—';
+  }
+  const allUsers = await apiGet(`${API}?sheet=${SHEETS.users}`);
+  const pending = allUsers.filter(u=> String(u.approved).toLowerCase()!=='true' && String(u.role)==='user').length;
+  document.getElementById('adminPend').value = pending + ' pending';
+
+  await sweepAutoCancel();
+
+  const q=(document.getElementById('admOrderSearch').value||'').toLowerCase();
+  const orders = (await apiGet(`${API}?sheet=${SHEETS.orders}`)).sort((a,b)=> Number(b.timestamp)-Number(a.timestamp));
+  const filtered = orders.filter(o=>{
+    const blob = `${o.id} ${o.client_id} ${o.amount} ${o.user_email} ${new Date(Number(o.timestamp)).toLocaleString()}`.toLowerCase();
+    return !q || blob.includes(q);
+  });
+
+  const total=filtered.length, pages=Math.max(1, Math.ceil(total/admSize));
+  if(admPage>pages) admPage=pages;
+  const start=(admPage-1)*admSize, end=start+admSize, slice=filtered.slice(start,end);
+
+  const tbody=document.getElementById('admOrdersBody');
+  tbody.innerHTML = slice.map(o=>`
+    <tr>
+      <td>${o.id}</td>
+      <td>${o.user_email}</td>
+      <td>${o.client_id}</td>
+      <td>💎 ${Number(o.amount||0).toLocaleString()}</td>
+      <td><span class="status ${String(o.status).toLowerCase()}">${String(o.status).toUpperCase()}</span></td>
+      <td>${new Date(Number(o.timestamp)).toLocaleString()}</td>
+      <td class="nowrap">
+        <button class="btn good" onclick="admSetStatus('${o.id}','completed')">Complete</button>
+        <button class="btn danger" onclick="admSetStatus('${o.id}','cancelled')">Cancel</button>
+        <button class="btn wait" onclick="admSetStatus('${o.id}','waiting')">Waiting</button>
+      </td>
+    </tr>
+  `).join('');
+
+  const pager=document.getElementById('admPager'); pager.innerHTML='';
+  for(let i=1;i<=pages;i++){ const b=document.createElement('button'); b.className='btn ' + (i===admPage?'':'outline'); b.textContent=' '+i+' '; b.onclick=()=>{admPage=i; renderAdmin();}; pager.appendChild(b); }
+
+  document.getElementById('btnManualReset').onclick = async ()=>{
+    if(confirm('Reset weekly window now (BD)?')) {
+      try{
+        // save anchor in Settings sheet (optional)
+        await apiPatch(`${API}?sheet=${SHEETS.settings}&key=LastResetBD`, { value:String(lastThursday22BD(bdNow().getTime())) });
+      }catch(e){}
+      await renderAdmin(); await renderUsers(); await renderDashboard(); await renderHistory(); syncHeaderFooter();
+    }
   };
-  r.readAsDataURL(f);
+}
+document.getElementById('admOrderSearch').oninput=()=>{admPage=1;renderAdmin();};
+
+async function admSetStatus(id, status){
+  // fetch order
+  const o = (await apiGet(`${API}/search?sheet=${SHEETS.orders}&id=${encodeURIComponent(id)}`))[0];
+  if(!o) return alert('Order not found');
+  const prev = String(o.status).toLowerCase();
+  if(prev===status) return;
+
+  // refund / re-deduct
+  const user = (await apiGet(`${API}/search?sheet=${SHEETS.users}&email=${encodeURIComponent(o.user_email)}`))[0];
+  if(user){
+    const bal = Number(user.balance||0), amt = Number(o.amount||0);
+    if(status==='cancelled' && prev!=='cancelled'){
+      await apiPatch(`${API}?sheet=${SHEETS.users}&email=${encodeURIComponent(o.user_email)}`, { balance: bal + amt });
+      if(getCurrent()?.email===user.email){ const cur=getCurrent(); cur.balance=bal+amt; setCurrent(cur); }
+    }
+    if(status==='waiting' && prev==='cancelled'){
+      if(bal<amt) return alert('User balance insufficient to revert to waiting.');
+      await apiPatch(`${API}?sheet=${SHEETS.users}&email=${encodeURIComponent(o.user_email)}`, { balance: bal - amt });
+      if(getCurrent()?.email===user.email){ const cur=getCurrent(); cur.balance=bal-amt; setCurrent(cur); }
+    }
+  }
+  // set status
+  await apiPatch(`${API}?sheet=${SHEETS.orders}&id=${encodeURIComponent(id)}`, { status });
+  await renderAdmin(); await renderHistory(); syncHeaderFooter();
+}
+
+/* ================== PROFILE ================== */
+async function renderProfile(){
+  const u=getCurrent(); if(!u) return;
+  document.getElementById('profAvatar').src = u.avatar || 'https://via.placeholder.com/72';
+  document.getElementById('profName').value = u.name || '';
+  document.getElementById('profEmail').value = u.email;
+  document.getElementById('profPhone').value = u.phone || '';
+  document.getElementById('profPass').value = '';
+}
+document.getElementById('avatarFile').addEventListener('change', async function(){
+  const file=this.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=async ()=>{
+    const cur=getCurrent(); if(!cur) return;
+    await apiPatch(`${API}?sheet=${SHEETS.users}&email=${encodeURIComponent(cur.email)}`, { avatar: reader.result });
+    cur.avatar = reader.result; setCurrent(cur);
+    document.getElementById('profAvatar').src = reader.result;
+    syncHeaderFooter();
+  };
+  reader.readAsDataURL(file);
 });
-$('#btnSaveProfile').onclick = async ()=>{
-  const name=$('#profName').value.trim(); const phone=$('#profPhone').value.trim(); const pass=$('#profPass').value;
-  const data={name,phone}; if(pass) data.pass=pass;
-  await sPatchBySearch(SHEETS.users,{email:current.email},data);
-  await refreshCaches(); current=cache.users.find(u=>u.email===current.email);
-  alert('Profile updated'); syncHeaderFooter();
+document.getElementById('btnSaveProfile').onclick = async ()=>{
+  const name=document.getElementById('profName').value.trim();
+  const phone=document.getElementById('profPhone').value.trim();
+  const pass=document.getElementById('profPass').value;
+  const cur=getCurrent(); if(!cur) return;
+  const data={ name, phone }; if(pass) data.pass=pass;
+  await apiPatch(`${API}?sheet=${SHEETS.users}&email=${encodeURIComponent(cur.email)}`, data);
+  cur.name=name; cur.phone=phone; if(pass) cur.pass=pass; setCurrent(cur);
+  alert('Profile updated.'); syncHeaderFooter();
 };
 
-/*** ========= LOGIN / REGISTER BTN ========= ***/
-$('#btnLogin').onclick = async ()=>{
+/* ================== LOGIN / REGISTER BUTTONS ================== */
+document.getElementById('btnLogin').onclick = async ()=>{
+  const email=document.getElementById('loginEmail').value.trim().toLowerCase();
+  const pass=document.getElementById('loginPass').value;
   try{
-    await login($('#loginEmail').value.trim().toLowerCase(), $('#loginPass').value);
-    await refreshCaches(); current = cache.users.find(u=>u.email===current.email);
+    const u = await login(email, pass);
+    alert('Login success!');
     go('#/dashboard');
   }catch(e){ alert(e.message||'Login failed'); }
 };
-$('#btnRegister').onclick = async ()=>{
+document.getElementById('btnRegister').onclick = async ()=>{
+  const email=document.getElementById('regEmail').value.trim().toLowerCase();
+  const pass=document.getElementById('regPass').value;
+  const name=document.getElementById('regName').value.trim();
+  const phone=document.getElementById('regPhone').value.trim();
+  if(!email || !pass || !name) return alert('Fill required fields.');
   try{
-    await register({
-      email: $('#regEmail').value.trim().toLowerCase(),
-      pass:  $('#regPass').value,
-      name:  $('#regName').value.trim(),
-      phone: $('#regPhone').value.trim()
-    });
-    alert('Registered! Wait for admin approval.'); go('#/login');
-  }catch(e){ alert(e.message||'Register failed'); }
+    await registerUser({email,pass,name,phone});
+    alert('Registered! Await admin approval.'); go('#/login');
+  }catch(e){ alert(e.message||'Registration failed'); }
 };
 
-/*** ========= AUTO-CANCEL SWEEPER + LIVE REFRESH ========= ***/
-async function sweepAutoCancel(){
-  try{
-    await refreshCaches();
-    const waitings = cache.orders.filter(o=>o.status==='WAITING' && Number(o.autoCancelAt||0) < now());
-    for(const o of waitings){
-      // refund
-      const u = cache.users.find(x=>x.email===o.userEmail);
-      if(u) await sPatchBySearch(SHEETS.users,{email:u.email},{balance:Number(u.balance||0)+Number(o.amount||0)});
-      // mark cancelled
-      await sPatchBySearch(SHEETS.orders,{id:o.id},{status:'CANCELLED'});
-    }
-    if(waitings.length) await refreshCaches();
-    if(current){ current = cache.users.find(u=>u.email===current.email) || current; syncHeaderFooter(); }
-    const route = (location.hash||'#/login').replace('#/','');
-    if(route==='history') renderHistory();
-    if(route==='admin-orders') renderAdminOrders();
-    if(route==='admin-users') renderAdminUsers();
-    if(route==='dashboard') renderDashboard();
-  }catch(e){ /* ignore transient errors */ }
-}
-setInterval(sweepAutoCancel, 15000);
-
-/*** ========= BOOT ========= ***/
-(async function boot(){
-  await refreshCaches();
+/* ================== LIVE SYNC (reload view on storage change) ================== */
+window.addEventListener('storage', ()=>{
   syncHeaderFooter();
+  const route=(location.hash||'#/login').replace('#/','');
+  if(route==='history') renderHistory();
+  if(route==='admin') renderAdmin();
+  if(route==='users') renderUsers();
+  if(route==='dashboard') renderDashboard();
+  if(route==='order') renderOrder();
+});
+
+/* ================== BOOT ================== */
+document.getElementById('menuBtn').addEventListener('click', ()=> drawer.classList.toggle('open'));
+scrim.addEventListener('click', ()=> drawer.classList.remove('open'));
+
+(async function boot(){
+  syncHeaderFooter();
+  // keep user logged-in across refresh (localStorage already does that)
   onRoute();
 })();
 </script>
