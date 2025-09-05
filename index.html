@@ -2,204 +2,242 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <title>Diamond Recharge</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Diamond Recharge Admin</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #111;
-      color: #fff;
-      margin: 0;
-      padding: 0;
-    }
-    .container {
-      width: 100%;
-      max-width: 400px;
-      margin: 100px auto;
-      padding: 20px;
-      background: #222;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.5);
-    }
-    input {
-      width: 100%;
-      padding: 10px;
-      margin: 10px 0;
-      border: none;
-      border-radius: 5px;
-    }
-    button {
-      width: 100%;
-      padding: 10px;
-      background: #0d6efd;
-      border: none;
-      border-radius: 5px;
-      color: #fff;
-      font-size: 16px;
-      cursor: pointer;
-    }
-    .hidden { display: none; }
-    .tabs { display: flex; background:#333; }
-    .tabs button {
-      flex:1; border-radius:0; border:none;
-      padding:10px; cursor:pointer;
-      background:#444; color:#fff;
-    }
-    .tabs button.active { background:#0d6efd; }
-    table {
-      width:100%; border-collapse:collapse; margin-top:10px;
-    }
-    th, td {
-      border:1px solid #444; padding:8px; text-align:left;
-    }
+    body { background:#121212; color:#fff; font-family:Arial, sans-serif; margin:0; }
+    header, footer { background:#1f1f1f; padding:10px; text-align:center; }
+    nav { background:#222; padding:10px; text-align:center; }
+    nav button { margin:5px; }
+    .hidden { display:none; }
+    .card { background:#1f1f1f; margin:10px; padding:20px; border-radius:10px; }
+    .btn { background:#444; color:#fff; border:none; padding:10px; border-radius:5px; cursor:pointer; }
+    .btn:hover { background:#666; }
+    .status-waiting { background:#ff9800; padding:5px 10px; border-radius:5px; }
+    .status-completed { background:#4caf50; padding:5px 10px; border-radius:5px; }
+    .status-cancelled { background:#f44336; padding:5px 10px; border-radius:5px; }
   </style>
 </head>
 <body>
 
-  <!-- Login Form -->
-  <div id="loginDiv" class="container">
-    <h2>🔐 Login</h2>
-    <input type="email" id="email" placeholder="Email">
-    <input type="password" id="password" placeholder="Password">
-    <button onclick="login()">Login</button>
-    <p id="loginError" style="color:red;"></p>
-  </div>
+<header>
+  <h1>💎 Diamond Recharge</h1>
+  <div id="userInfo"></div>
+</header>
+
+<nav>
+  <button onclick="showPage('login')">Login</button>
+  <button onclick="showPage('register')">Register</button>
+  <button onclick="showPage('dashboard')">Dashboard</button>
+  <button onclick="showPage('orders')">Order</button>
+  <button onclick="showPage('history')">Order History</button>
+  <button onclick="showPage('profile')">Profile</button>
+  <button onclick="showPage('admin')">Admin</button>
+  <button onclick="logout()">Logout</button>
+</nav>
+
+<main>
+  <!-- Login -->
+  <section id="login" class="card">
+    <h2>Login</h2>
+    <input id="loginEmail" placeholder="Email"><br><br>
+    <input id="loginPass" type="password" placeholder="Password"><br><br>
+    <button class="btn" onclick="login()">Login</button>
+  </section>
+
+  <!-- Register -->
+  <section id="register" class="card hidden">
+    <h2>Register</h2>
+    <input id="regName" placeholder="Name"><br><br>
+    <input id="regEmail" placeholder="Email"><br><br>
+    <input id="regPhone" placeholder="Phone"><br><br>
+    <input id="regPass" type="password" placeholder="Password"><br><br>
+    <button class="btn" onclick="register()">Register</button>
+  </section>
 
   <!-- Dashboard -->
-  <div id="dashboardDiv" class="hidden">
-    <div class="tabs">
-      <button id="usersTab" class="active" onclick="showTab('users')">Users</button>
-      <button id="ordersTab" onclick="showTab('orders')">Orders</button>
-      <button style="background:#dc3545;" onclick="logout()">Logout</button>
-    </div>
-    <div id="usersContent">
-      <h2>👤 Users</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Email</th>
-            <th>Name</th>
-            <th>Phone</th>
-            <th>Role</th>
-            <th>Balance</th>
-          </tr>
-        </thead>
-        <tbody id="usersTable"></tbody>
-      </table>
-    </div>
-    <div id="ordersContent" class="hidden">
-      <h2>📦 Orders</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Client ID</th>
-            <th>Amount</th>
-            <th>Status</th>
-            <th>User Email</th>
-            <th>Timestamp</th>
-          </tr>
-        </thead>
-        <tbody id="ordersTable"></tbody>
-      </table>
-    </div>
-  </div>
+  <section id="dashboard" class="card hidden">
+    <h2>Dashboard</h2>
+    <p>Welcome! Manage everything from here.</p>
+    <button class="btn" onclick="showPage('orders')">Make Order</button>
+    <button class="btn" onclick="showPage('history')">View History</button>
+    <button class="btn" onclick="showPage('profile')">Profile</button>
+    <button class="btn" onclick="showPage('admin')">Admin Panel</button>
+  </section>
 
-  <!-- Firebase SDK -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  <!-- Orders -->
+  <section id="orders" class="card hidden">
+    <h2>Make Order</h2>
+    <input id="orderAmount" type="number" placeholder="Enter diamonds"><br><br>
+    <button class="btn" onclick="makeOrder()">Submit Order</button>
+  </section>
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyDJRm9-jRkxVrTLYBzK1gGrRmAEu29jVrU",
-      authDomain: "diamond-recharge-f7f59.firebaseapp.com",
-      projectId: "diamond-recharge-f7f59",
-      storageBucket: "diamond-recharge-f7f59.appspot.com",
-      messagingSenderId: "657717928489",
-      appId: "1:657717928489:web:70431ebc9afb7002d4b238",
-      measurementId: "G-TDK78BQ8SQ"
-    };
+  <!-- Order History -->
+  <section id="history" class="card hidden">
+    <h2>Order History</h2>
+    <div id="orderList"></div>
+  </section>
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
+  <!-- Profile -->
+  <section id="profile" class="card hidden">
+    <h2>Profile</h2>
+    <input id="profName" placeholder="Name"><br><br>
+    <input id="profPhone" placeholder="Phone"><br><br>
+    <input id="profAvatar" placeholder="Avatar URL"><br><br>
+    <button class="btn" onclick="updateProfile()">Update Profile</button>
+  </section>
 
-    // Login Function
-    window.login = function() {
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
-      signInWithEmailAndPassword(auth, email, password)
-        .then(() => { document.getElementById("loginError").innerText = ""; })
-        .catch((error) => { document.getElementById("loginError").innerText = error.message; });
-    };
+  <!-- Admin -->
+  <section id="admin" class="card hidden">
+    <h2>Admin Panel</h2>
+    <div id="adminUsers"></div>
+    <div id="adminOrders"></div>
+  </section>
+</main>
 
-    // Auth State
-    onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        document.getElementById("loginDiv").classList.add("hidden");
-        document.getElementById("dashboardDiv").classList.remove("hidden");
-        loadUsers();
-        loadOrders();
-      } else {
-        document.getElementById("loginDiv").classList.remove("hidden");
-        document.getElementById("dashboardDiv").classList.add("hidden");
-      }
+<footer>
+  <p>💎 Balance: <span id="footBalance">0</span> | Reward: <span id="footReward">N/A</span></p>
+  <p>&copy; 2025 Diamond Recharge</p>
+</footer>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
+           signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getFirestore, doc, setDoc, getDoc, getDocs, updateDoc,
+           addDoc, collection, query, where } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  // 🔹 আপনার Firebase Config (আপনি আগে দিয়েছেন সেটাই বসানো হলো)
+  const firebaseConfig = {
+    apiKey: "AIzaSyDJRm9-jRkxVrTLYBzK1gGrRmAEu29jVrU",
+    authDomain: "diamond-recharge-f7f59.firebaseapp.com",
+    projectId: "diamond-recharge-f7f59",
+    storageBucket: "diamond-recharge-f7f59.appspot.com",
+    messagingSenderId: "657717928489",
+    appId: "1:657717928489:web:70431ebc9afb7002d4b238",
+    measurementId: "G-TDK78BQ8SQ"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  let currentUser = null;
+
+  // 🔹 Show Page
+  function showPage(id) {
+    document.querySelectorAll("main section").forEach(sec => sec.classList.add("hidden"));
+    document.getElementById(id).classList.remove("hidden");
+  }
+
+  // 🔹 Register
+  async function register() {
+    const email = regEmail.value, pass = regPass.value;
+    const name = regName.value, phone = regPhone.value;
+    try {
+      const userCred = await createUserWithEmailAndPassword(auth, email, pass);
+      await setDoc(doc(db, "users", userCred.user.uid), {
+        email, name, phone, role:"user", approved:false,
+        balance:100, weeklyDiamonds:0, avatar:""
+      });
+      alert("Registered! Wait for admin approval.");
+    } catch(e){ alert(e.message); }
+  }
+
+  // 🔹 Login
+  async function login() {
+    const email = loginEmail.value, pass = loginPass.value;
+    try {
+      await signInWithEmailAndPassword(auth, email, pass);
+    } catch(e){ alert("Login failed: " + e.message); }
+  }
+
+  // 🔹 Logout
+  async function logout(){ await signOut(auth); }
+
+  // 🔹 Make Order
+  async function makeOrder(){
+    const amount = parseInt(orderAmount.value);
+    if(!currentUser) return;
+    const userDoc = await getDoc(doc(db,"users",currentUser.uid));
+    const data = userDoc.data();
+    if(amount>data.balance){ alert("Not enough balance!"); return; }
+    await addDoc(collection(db,"orders"),{
+      clientId:currentUser.uid, amount, status:"WAITING",
+      userEmail:data.email, timestamp:Date.now(),
+      autoCancelAt: Date.now()+5*60*1000
+    });
+    await updateDoc(doc(db,"users",currentUser.uid), { balance:data.balance-amount });
+    alert("Order placed!");
+    loadOrders();
+  }
+
+  // 🔹 Load Orders
+  async function loadOrders(){
+    if(!currentUser) return;
+    orderList.innerHTML="";
+    const q = query(collection(db,"orders"), where("clientId","==",currentUser.uid));
+    const snap = await getDocs(q);
+    snap.forEach(docu=>{
+      const d=docu.data();
+      const st = d.status=="WAITING"?"status-waiting":d.status=="COMPLETED"?"status-completed":"status-cancelled";
+      orderList.innerHTML += `<p>#${docu.id} - ${d.amount} 💎 <span class="${st}">${d.status}</span></p>`;
+    });
+  }
+
+  // 🔹 Update Profile
+  async function updateProfile(){
+    if(!currentUser) return;
+    await updateDoc(doc(db,"users",currentUser.uid), {
+      name:profName.value, phone:profPhone.value, avatar:profAvatar.value
+    });
+    alert("Profile updated!");
+  }
+
+  // 🔹 Admin Panel
+  async function loadAdmin(){
+    if(!currentUser) return;
+    adminUsers.innerHTML="<h3>Users</h3>";
+    const users = await getDocs(collection(db,"users"));
+    users.forEach(u=>{
+      const d=u.data();
+      adminUsers.innerHTML+=`<p>${d.email} | Role:${d.role} | Bal:${d.balance} | Approved:${d.approved}</p>`;
     });
 
-    // Logout
-    window.logout = function() {
-      signOut(auth);
-    };
+    adminOrders.innerHTML="<h3>Orders</h3>";
+    const orders = await getDocs(collection(db,"orders"));
+    orders.forEach(o=>{
+      const d=o.data();
+      adminOrders.innerHTML+=`<p>${d.userEmail} - ${d.amount} 💎 [${d.status}]</p>`;
+    });
+  }
 
-    // Tabs
-    window.showTab = function(tab) {
-      document.getElementById("usersContent").classList.add("hidden");
-      document.getElementById("ordersContent").classList.add("hidden");
-      document.getElementById("usersTab").classList.remove("active");
-      document.getElementById("ordersTab").classList.remove("active");
-      if (tab === "users") {
-        document.getElementById("usersContent").classList.remove("hidden");
-        document.getElementById("usersTab").classList.add("active");
-      } else {
-        document.getElementById("ordersContent").classList.remove("hidden");
-        document.getElementById("ordersTab").classList.add("active");
-      }
-    };
-
-    // Load Users
-    async function loadUsers() {
-      const querySnapshot = await getDocs(collection(db, "users"));
-      let html = "";
-      querySnapshot.forEach((doc) => {
-        const u = doc.data();
-        html += `<tr>
-          <td>${u.email || ""}</td>
-          <td>${u.name || ""}</td>
-          <td>${u.phone || ""}</td>
-          <td>${u.role || ""}</td>
-          <td>${u.balance || 0}</td>
-        </tr>`;
-      });
-      document.getElementById("usersTable").innerHTML = html;
+  // 🔹 Auth listener
+  onAuthStateChanged(auth, async user=>{
+    if(user){
+      currentUser=user;
+      const uDoc=await getDoc(doc(db,"users",user.uid));
+      if(!uDoc.exists()) return;
+      const u=uDoc.data();
+      userInfo.innerHTML=`Logged in as ${u.name} (${u.role})`;
+      footBalance.innerText=u.balance;
+      footReward.innerText=u.weeklyDiamonds;
+      showPage("dashboard");
+      loadOrders();
+      if(u.role=="admin") loadAdmin();
+    } else {
+      currentUser=null;
+      userInfo.innerHTML="Not logged in";
+      showPage("login");
     }
+  });
 
-    // Load Orders
-    async function loadOrders() {
-      const querySnapshot = await getDocs(collection(db, "orders"));
-      let html = "";
-      querySnapshot.forEach((doc) => {
-        const o = doc.data();
-        html += `<tr>
-          <td>${o.clientId || ""}</td>
-          <td>${o.amount || 0}</td>
-          <td>${o.status || ""}</td>
-          <td>${o.userEmail || ""}</td>
-          <td>${o.timestamp || ""}</td>
-        </tr>`;
-      });
-      document.getElementById("ordersTable").innerHTML = html;
-    }
-
-  </script>
+  window.showPage=showPage;
+  window.register=register;
+  window.login=login;
+  window.logout=logout;
+  window.makeOrder=makeOrder;
+  window.updateProfile=updateProfile;
+</script>
 </body>
 </html>
