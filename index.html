@@ -1,309 +1,240 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Sarkar Telecom – Diamond Portal (All-in-One)</title>
-<meta name="description" content="Sarkar Telecom Diamond Portal – Login, Register, Dashboard, Orders, History, Users, Admin, Profile">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Sarkar Telecom • Diamond Portal</title>
+<meta name="color-scheme" content="dark">
 <style>
-  :root{
-    --bg:#0e0f12;--card:#17181c;--muted:#aeb4bf;--line:#23262d;--brand:#4cafef;
-    --good:#2ecc71;--bad:#e74c3c;--wait:#f1c40f;
-  }
-  *{box-sizing:border-box}
-  html,body{height:100%}
-  body{margin:0;background:var(--bg);color:#e8eef6;font-family:Inter,Segoe UI,Arial,Helvetica,sans-serif}
-  a{color:inherit}
-  /* Header */
-  header{position:fixed;top:0;left:0;right:0;height:56px;background:var(--card);
-    display:flex;align-items:center;justify-content:space-between;padding:0 12px;border-bottom:1px solid var(--line);z-index:50}
-  .left{display:flex;align-items:center;gap:10px}
-  .menu-btn{border:none;background:transparent;color:#fff;font-size:22px;cursor:pointer;line-height:1}
-  .brand{font-size:16px;color:#cfeaff;font-weight:700;letter-spacing:.3px}
-  .right{display:flex;align-items:center;gap:10px}
-  .pill{font-size:12px;color:#fff;background:#11151b;border:1px solid var(--line);padding:4px 8px;border-radius:999px}
-  .user-chip{display:flex;align-items:center;gap:8px;background:#11151b;border:1px solid var(--line);padding:4px 8px;border-radius:10px}
-  .user-chip img{width:26px;height:26px;border-radius:50%;object-fit:cover;border:1px solid var(--line)}
-  /* Sidebar Drawer (from header menu) */
-  .drawer{position:fixed;top:56px;left:0;bottom:0;width:0;overflow:hidden;transition:width .25s ease;background:transparent;z-index:60}
-  .drawer.open{width:260px}
-  .drawer .panel{position:absolute;inset:0;background:var(--card);border-right:1px solid var(--line);display:flex;flex-direction:column}
-  .nav-title{padding:12px 14px;border-bottom:1px solid var(--line);font-weight:700;color:#b9dfff}
-  .drawer .links a{display:block;padding:12px 14px;color:#d7e6ff;text-decoration:none;border-bottom:1px solid var(--line);font-size:14px}
-  .drawer .links a:hover{background:#20242b}
-  .scrim{position:fixed;inset:56px 0 0 0;background:#0009;opacity:0;pointer-events:none;transition:opacity .2s;z-index:55}
-  .scrim.show{opacity:1;pointer-events:auto}
-  /* Main + cards */
-  main{padding:72px 12px 84px;max-width:1100px;margin:0 auto}
-  h2{font-size:18px;margin:8px 0 12px;color:#fff}
-  .section{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:14px}
-  .row{display:flex;flex-wrap:wrap;gap:10px}
-  .field{display:flex;flex-direction:column;gap:6px;flex:1 1 220px}
-  .field label{font-size:12px;color:var(--muted)}
-  input,select,button,textarea{font:inherit}
-  input,select,textarea{background:#11151b;color:#eef6ff;border:1px solid var(--line);border-radius:10px;padding:10px}
-  .btn{background:var(--brand);color:#001321;border:none;border-radius:10px;padding:10px 14px;cursor:pointer;font-weight:700}
-  .btn:disabled{opacity:.6;cursor:not-allowed}
-  .btn.outline{background:transparent;border:1px solid var(--brand);color:#cfeaff}
-  .btn.danger{background:var(--bad);color:#fff}
-  .btn.good{background:var(--good);color:#08140c}
-  .btn.wait{background:var(--wait);color:#332b00}
-  /* Gift grid */
-  .gift-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
-  .gift{background:#11151b;border:2px solid transparent;border-radius:12px;padding:14px;text-align:center;cursor:pointer;user-select:none}
-  .gift.selected{border-color:var(--brand);background:#16202b}
-  .gift .price{font-weight:800}
-  /* Tables */
-  .table-wrap{overflow:auto;border:1px solid var(--line);border-radius:12px}
-  table{width:100%;border-collapse:collapse;background:#0f1318}
-  th,td{padding:10px;border-bottom:1px solid #1b2027;text-align:center;font-size:13px}
-  th{position:sticky;top:0;background:#151a21;color:#cde9ff;z-index:1}
-  .status{display:inline-block;padding:4px 8px;border-radius:8px;font-weight:800;font-size:12px;color:#111}
-  .status.waiting{background:var(--wait)}
-  .status.completed{background:var(--good);color:#fff}
-  .status.cancelled{background:var(--bad);color:#fff}
-  /* Footer */
-  footer{position:fixed;left:0;right:0;bottom:0;height:60px;background:var(--card);border-top:1px solid var(--line);
-    display:flex;align-items:center;justify-content:space-between;padding:0 12px;z-index:40}
-  .foot-left,.foot-right{display:flex;align-items:center;gap:8px}
-  .small{font-size:12px;color:var(--muted)}
-  /* Utility */
-  .hide{display:none !important}
-  .center{text-align:center}
-  .spacer{height:8px}
-  .w100{width:100%}
-  .wrap{flex-wrap:wrap}
-  .nowrap{white-space:nowrap}
-  .chip{display:inline-flex;align-items:center;gap:6px;padding:4px 8px;border-radius:999px;border:1px solid var(--line);background:#0f1318}
-  .tip{font-size:12px;color:#9fb7ff}
-  .muted{color:#91a0b3}
-  /* Pager */
-  .pager{display:flex;gap:6px;justify-content:center;margin-top:10px}
-  .pager button{padding:6px 10px;border-radius:8px;border:1px solid var(--line);background:#151a21;color:#fff}
-  .pager .active{background:var(--brand);border-color:var(--brand);color:#001321}
-  @media (max-width:860px){ .gift-grid{grid-template-columns:repeat(3,1fr)} }
-  @media (max-width:520px){ .gift-grid{grid-template-columns:repeat(3,1fr)} .user-chip span{display:none} }
+:root{
+  --bg:#0f1216;--card:#151a21;--muted:#a9b1bd;--line:#242c36;--brand:#42a5f5;
+  --good:#2ecc71;--bad:#e74c3c;--wait:#f1c40f;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:#e9eef5;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Helvetica,Arial}
+a{color:inherit}
+button{font:inherit}
+input,select,textarea{background:#0e1218;border:1px solid var(--line);color:#fff;border-radius:10px;padding:10px}
+.section{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin:12px 0}
+h2{margin:0 0 10px;font-size:18px}
+.small{color:var(--muted);font-size:12px}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.field{display:flex;flex-direction:column;gap:6px;flex:1 1 220px}
+.btn{background:var(--brand);color:#00111c;border:none;border-radius:10px;padding:10px 14px;cursor:pointer}
+.btn.outline{background:transparent;color:var(--brand);border:1px solid var(--brand)}
+.btn.good{background:var(--good);color:#001b0f}
+.btn.danger{background:var(--bad)}
+.btn.wait{background:var(--wait);color:#1a1a00}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.pill{padding:5px 10px;border-radius:999px;background:#0e1218;border:1px solid var(--line);font-size:12px}
+.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:12px}
+table{width:100%;border-collapse:collapse;background:#0e1218}
+th,td{padding:10px;border-bottom:1px solid #1b232d;text-align:center;font-size:13px}
+th{position:sticky;top:0;background:#121821;color:#cfe9ff;z-index:1}
+.status{display:inline-block;padding:4px 8px;border-radius:7px;font-weight:700;font-size:12px;color:#111}
+.status.WAITING{background:var(--wait)}
+.status.COMPLETED{background:var(--good);color:#fff}
+.status.CANCELLED{background:var(--bad);color:#fff}
+.gift-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.gift{background:#0e1218;border:2px solid transparent;border-radius:12px;padding:16px;text-align:center;cursor:pointer}
+.gift.selected{border-color:var(--brand);background:#131a22}
+header{position:fixed;inset:0 0 auto 0;height:56px;background:var(--card);border-bottom:1px solid var(--line);
+  display:flex;align-items:center;justify-content:space-between;padding:0 12px;z-index:50}
+.brand{font-weight:800;color:var(--brand)}
+.user-chip{display:flex;align-items:center;gap:8px;background:#0e1218;border:1px solid var(--line);border-radius:10px;padding:6px 10px}
+.user-chip img{width:24px;height:24px;border-radius:50%;object-fit:cover;border:1px solid var(--line)}
+main{max-width:1100px;margin:72px auto 84px;padding:0 12px}
+footer{position:fixed;inset:auto 0 0 0;height:56px;background:var(--card);border-top:1px solid var(--line);
+  display:flex;align-items:center;justify-content:space-between;padding:0 12px}
+.nowrap{white-space:nowrap}
+.pager{display:flex;gap:6px;justify-content:center;margin-top:10px}
+.pager button{padding:6px 10px;border-radius:8px;border:1px solid var(--line);background:#121821;color:#fff}
+.pager .active{background:var(--brand);border-color:var(--brand);color:#00111c}
+/* Drawer */
+#drawer{position:fixed;inset:0;pointer-events:none;z-index:60}
+#drawer .scrim{position:absolute;inset:0;background:#0008;opacity:0;transition:opacity .2s}
+#drawer.open .scrim{opacity:1;pointer-events:auto}
+#drawer .panel{position:absolute;left:12px;top:64px;bottom:12px;width:280px;transform:translateX(-120%);
+  transition:transform .2s;background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+#drawer.open .panel{transform:none;pointer-events:auto}
+.nav a{display:flex;align-items:center;gap:10px;padding:14px 16px;color:#e9eef5;text-decoration:none;border-bottom:1px solid #1b232d}
+.nav a:hover{background:#161e28}
+.menu-btn{border:none;background:transparent;color:#fff;font-size:22px;cursor:pointer}
+@media (max-width:740px){ .gift-grid{grid-template-columns:repeat(3,1fr)} th,td{font-size:12px;padding:8px} }
+.hide{display:none!important}
 </style>
 </head>
 <body>
-
-<!-- ====== Header ====== -->
 <header>
-  <div class="left">
-    <button class="menu-btn" id="menuBtn" aria-label="Menu">☰</button>
+  <div class="left" style="display:flex;align-items:center;gap:10px">
+    <button class="menu-btn" id="menuBtn">☰</button>
     <div class="brand">Sarkar Telecom</div>
   </div>
-  <div class="right">
-    <span id="hdrUser" class="pill">Guest</span>
-    <span id="hdrRole" class="pill">—</span>
-    <span id="hdrBalance" class="pill">💎 0</span>
+  <div class="right" style="display:flex;align-items:center;gap:8px">
+    <span id="hdrEmail" class="pill">Guest</span>
+    <span id="hdrTier" class="pill">Tier –</span>
+    <span id="hdrBal" class="pill">💎 0</span>
     <div class="user-chip">
-      <img id="hdrAvatar" src="" alt="logo"/>
+      <img id="hdrAvatar" alt="avatar">
       <span id="hdrName">Not logged in</span>
     </div>
   </div>
 </header>
 
-<!-- ====== Drawer from Header ====== -->
-<div class="drawer" id="drawer">
+<!-- Drawer -->
+<div id="drawer">
+  <div class="scrim"></div>
   <div class="panel">
-    <div class="nav-title">Navigation</div>
-    <div class="links" id="navLinks">
-      <a href="#/login">🔐 Login</a>
-      <a href="#/register">📝 Register</a>
+    <div class="nav">
       <a href="#/dashboard">🏠 Dashboard</a>
       <a href="#/order">➕ Create Order</a>
-      <a href="#/history">📑 Order History</a>
-      <a href="#/users">👥 Users</a>
-      <a href="#/admin">🛠 Admin Panel</a>
+      <a href="#/history">🧾 Order History</a>
       <a href="#/profile">👤 Profile</a>
+      <a href="#/admin-orders">🛠 Admin: Orders</a>
+      <a href="#/admin-users">👥 Admin: Users</a>
+      <a href="#/login">🔐 Login</a>
+      <a href="#/register">📝 Register</a>
       <a href="#/logout">🚪 Logout</a>
     </div>
   </div>
 </div>
-<div class="scrim" id="scrim"></div>
 
 <main>
-  <!-- ====== LOGIN ====== -->
-  <section id="view-login" class="section">
+  <!-- LOGIN -->
+  <section id="v-login" class="section">
     <h2>Login</h2>
     <div class="row">
-      <div class="field"><label>Email</label><input id="loginEmail" type="email" placeholder="admin@sarkar.com"></div>
+      <div class="field"><label>Email</label><input id="loginEmail" type="email" placeholder="you@example.com"></div>
       <div class="field"><label>Password</label><input id="loginPass" type="password" placeholder="••••••••"></div>
     </div>
-    <div class="spacer"></div>
     <div class="row">
       <button class="btn" id="btnLogin">Login</button>
-      <button class="btn outline" onclick="go('#/register')">Create account</button>
-      <a class="btn outline" href="#" id="btnForgot">Reset Password (email)</a>
+      <button class="btn outline" onclick="go('#/register')">Create Account</button>
     </div>
-    <p class="small tip">Tip: admin user preloaded: <b>admin@sarkar.com / Admin@123</b></p>
+    <p class="small">Default admin (add in Users sheet): <b>admin@sarkar.com / Admin@123</b></p>
   </section>
 
-  <!-- ====== REGISTER ====== -->
-  <section id="view-register" class="section hide">
+  <!-- REGISTER -->
+  <section id="v-register" class="section hide">
     <h2>Register</h2>
     <div class="row">
-      <div class="field"><label>Email</label><input id="regEmail" type="email" placeholder="you@example.com"></div>
+      <div class="field"><label>Email</label><input id="regEmail" type="email"></div>
       <div class="field"><label>Password</label><input id="regPass" type="password"></div>
-      <div class="field"><label>Full Name</label><input id="regName" type="text" placeholder="Your Name"></div>
-      <div class="field"><label>Phone</label><input id="regPhone" type="tel" placeholder="+880..."></div>
+      <div class="field"><label>Full Name</label><input id="regName" type="text"></div>
+      <div class="field"><label>Phone</label><input id="regPhone" type="tel"></div>
     </div>
     <div class="row">
-      <button class="btn" id="btnRegister">Submit for Approval</button>
-      <button class="btn outline" onclick="go('#/login')">Back to Login</button>
+      <button class="btn" id="btnRegister">Submit</button>
+      <button class="btn outline" onclick="go('#/login')">Back</button>
     </div>
-    <p class="small muted">Registration requires admin approval.</p>
+    <p class="small">Admin approval required before login.</p>
   </section>
 
-  <!-- ====== DASHBOARD ====== -->
-  <section id="view-dashboard" class="section hide">
+  <!-- DASHBOARD -->
+  <section id="v-dashboard" class="section hide">
     <h2>Welcome to Sarkar Telecom</h2>
     <div class="row">
-      <div class="section w100">
-        <div class="row wrap">
-          <div class="field"><label>User</label><input id="dbUser" disabled></div>
-          <div class="field"><label>Role</label><input id="dbRole" disabled></div>
-          <div class="field"><label>Balance</label><input id="dbBal" disabled></div>
-          <div class="field"><label>Weekly Total (BD)</label><input id="dbWeekly" disabled></div>
-          <div class="field"><label>Reward Tier</label><input id="dbTier" disabled></div>
+      <div class="section" style="flex:1 1 420px">
+        <h2>Account</h2>
+        <div class="small" id="acctLines"></div>
+        <div class="row" style="margin-top:12px">
+          <button class="btn" onclick="go('#/order')">Create Order</button>
+          <button class="btn outline" onclick="go('#/history')">View History</button>
+          <button class="btn outline" onclick="go('#/profile')">Profile</button>
+          <button class="btn outline" onclick="go('#/admin-users')">Admin Users</button>
+          <button class="btn outline" onclick="go('#/admin-orders')">Admin Orders</button>
         </div>
-        <div class="row">
-          <button class="btn" onclick="go('#/order')">➕ Create Order</button>
-          <button class="btn outline" onclick="go('#/history')">📑 Order History</button>
-          <button class="btn outline" onclick="go('#/profile')">👤 Profile</button>
-          <button class="btn outline" onclick="go('#/users')">👥 Users</button>
-          <button class="btn outline" onclick="go('#/admin')">🛠 Admin (if allowed)</button>
-        </div>
+      </div>
+      <div class="section" style="flex:1 1 300px">
+        <h2>Tips</h2>
+        <ul class="small">
+          <li>Orders auto-cancel in 5 minutes if not completed; refund applies.</li>
+          <li>Weekly window: Thu 10:00 PM (BD) → next Thu 10:00 PM (BD).</li>
+          <li>Admin can change order status and manage users.</li>
+        </ul>
       </div>
     </div>
   </section>
 
-  <!-- ====== ORDER ====== -->
-  <section id="view-order" class="section hide">
+  <!-- ORDER -->
+  <section id="v-order" class="section hide">
     <h2>Create Order</h2>
     <div class="field">
       <label>Gift Recipient (Number / Profile ID)</label>
-      <input id="recipient" type="number" inputmode="numeric" placeholder="Enter Profile ID or Number" oninput="checkOrderForm()">
+      <input id="recipient" type="number" inputmode="numeric" placeholder="Enter ID">
     </div>
-    <div class="spacer"></div>
+    <div class="small">Your balance: <b id="orderBal">💎 0</b></div>
     <div class="gift-grid" id="giftGrid"></div>
-    <div class="spacer"></div>
     <div class="row">
       <button class="btn" id="btnConfirm" disabled>Order Confirm</button>
       <button class="btn outline" onclick="go('#/history')">View Order History</button>
-      <span class="small chip">Your balance: <b id="orderBal">💎 0</b></span>
     </div>
-
-    <!-- Hidden form target (for Google Forms) -->
-    <iframe name="hidden_iframe" id="hidden_iframe" class="hide"></iframe>
-    <form id="gform" class="hide" target="hidden_iframe" method="POST"></form>
   </section>
 
-  <!-- ====== ORDER HISTORY ====== -->
-  <section id="view-history" class="section hide">
+  <!-- HISTORY -->
+  <section id="v-history" class="section hide">
     <h2>Order History</h2>
-    <div class="row wrap">
-      <div class="field"><label>Search</label><input id="histSearch" placeholder="Order ID / Client ID / Amount / Time"></div>
-      <div class="field">
-        <label>Status</label>
+    <div class="row">
+      <div class="field"><label>Search</label><input id="histSearch" placeholder="Order ID / Client / Amount / Time"></div>
+      <div class="field"><label>Status</label>
         <select id="histStatus">
-          <option value="">All</option>
-          <option value="WAITING">Waiting</option>
-          <option value="COMPLETED">Completed</option>
-          <option value="CANCELLED">Cancelled</option>
+          <option value="">All</option><option>WAITING</option><option>COMPLETED</option><option>CANCELLED</option>
         </select>
       </div>
-      <div class="field">
-        <label>Weekly Total (BD)</label>
-        <input id="histWeekly" disabled>
-      </div>
+      <div class="field"><label>Weekly Total (BD)</label><input id="histWeekly" disabled></div>
     </div>
     <div class="table-wrap">
-      <table>
-        <thead>
-          <tr><th>Order ID</th><th>Client ID</th><th>Amount 💎</th><th>Status</th><th>Time</th></tr>
-        </thead>
-        <tbody id="histBody"></tbody>
-      </table>
+      <table><thead><tr><th>Order ID</th><th>Client</th><th>Amount</th><th>Status</th><th>Time</th></tr></thead>
+        <tbody id="histBody"></tbody></table>
     </div>
     <div class="pager" id="histPager"></div>
-    <div class="row">
-      <button class="btn" onclick="go('#/order')">➕ Create New Order</button>
-      <div class="pill" id="tierBadge">Tier: –</div>
-    </div>
   </section>
 
-  <!-- ====== USERS ====== -->
-  <section id="view-users" class="section hide">
-    <h2>Registered Users</h2>
-    <div class="row wrap">
-      <div class="field"><label>Find user</label><input id="userSearch" placeholder="Email / Name / Phone"></div>
+  <!-- ADMIN: ORDERS -->
+  <section id="v-admin-orders" class="section hide">
+    <h2>Admin • Manage Orders</h2>
+    <div class="row">
+      <div class="field w100"><label>Search</label><input id="admOrdSearch" placeholder="ID / Client / Email / Amount / Time"></div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>ID</th><th>User</th><th>Client</th><th>Amount</th><th>Status</th><th>Time</th><th>Action</th></tr></thead>
+        <tbody id="admOrdersBody"></tbody>
+      </table>
+    </div>
+    <div class="pager" id="admOrdPager"></div>
+  </section>
+
+  <!-- ADMIN: USERS -->
+  <section id="v-admin-users" class="section hide">
+    <h2>Admin • Users</h2>
+    <div class="row">
+      <div class="field"><label>Find</label><input id="userSearch" placeholder="Email / Name / Phone"></div>
       <div class="field"><label>Role</label>
-        <select id="userRoleFilter">
-          <option value="">All</option>
-          <option value="admin">Admin</option>
-          <option value="user">User</option>
-          <option value="pending">Pending</option>
-        </select>
+        <select id="userRoleFilter"><option value="">All</option><option>admin</option><option>user</option><option value="pending">pending</option></select>
       </div>
     </div>
     <div class="table-wrap">
       <table>
-        <thead>
-          <tr><th>Logo</th><th>Name</th><th>Email</th><th>Phone</th><th>Role</th><th>Balance</th><th>Weekly</th><th>Tier</th><th>Actions</th></tr>
-        </thead>
+        <thead><tr><th>Avatar</th><th>Name</th><th>Email</th><th>Phone</th><th>Role</th><th>Approved</th><th>Balance</th><th>Weekly</th><th>Actions</th></tr></thead>
         <tbody id="usersBody"></tbody>
       </table>
     </div>
-    <div class="small">Only admins can approve/reject, edit, change role, and add balance. <span class="muted">(Apps Script URL দিলে লাইভ হবে)</span></div>
   </section>
 
-  <!-- ====== ADMIN PANEL ====== -->
-  <section id="view-admin" class="section hide">
-    <h2>Admin Panel</h2>
-    <div class="row wrap">
-      <div class="field"><label>Admin Balance</label><input id="adminBal" disabled></div>
-      <div class="field"><label>Pending Registrations</label><input id="adminPend" disabled></div>
-      <div class="field"><label>Weekly Reset (BD)</label><input id="adminResetInfo" disabled></div>
-    </div>
-    <div class="row">
-      <button class="btn" id="btnManualReset" title="Apps Script URL প্রয়োজন">Manual Weekly Reset</button>
-      <button class="btn outline" onclick="go('#/users')">Manage Users</button>
-    </div>
-
-    <div class="section">
-      <h2>Manage All Orders</h2>
-      <div class="row wrap">
-        <div class="field w100"><label>Search Orders</label>
-          <input id="admOrderSearch" placeholder="Order ID / Client ID / Email / Amount / Time">
-        </div>
-      </div>
-      <div class="table-wrap">
-        <table>
-          <thead>
-          <tr><th>Order ID</th><th>User</th><th>Client ID</th><th>Amount</th><th>Status</th><th>Time</th><th>Action</th></tr>
-          </thead>
-          <tbody id="admOrdersBody"></tbody>
-        </table>
-      </div>
-      <div class="pager" id="admPager"></div>
-      <p class="small muted">Status change লাইভ করতে Apps Script URL দিন (CONFIG অংশে)।</p>
-    </div>
-  </section>
-
-  <!-- ====== PROFILE ====== -->
-  <section id="view-profile" class="section hide">
+  <!-- PROFILE -->
+  <section id="v-profile" class="section hide">
     <h2>Profile</h2>
-    <div class="row wrap">
-      <div class="field"><label>Logo</label>
-        <input type="file" id="avatarFile" accept="image/*">
-        <div class="spacer"></div>
-        <img id="profAvatar" src="" alt="avatar" style="width:72px;height:72px;border-radius:50%;border:1px solid var(--line);object-fit:cover"/>
+    <div class="row">
+      <div class="field">
+        <label>Avatar</label>
+        <input id="avatarFile" type="file" accept="image/*">
+        <div class="small" style="margin-top:8px"><img id="profAvatar" style="width:76px;height:76px;border-radius:50%;border:1px solid var(--line);object-fit:cover"/></div>
       </div>
       <div class="field"><label>Name</label><input id="profName"></div>
-      <div class="field"><label>Email (read-only)</label><input id="profEmail" disabled></div>
-      <div class="field"><label>Phone</label><input id="profPhone" placeholder="+880..."></div>
+      <div class="field"><label>Email (read only)</label><input id="profEmail" disabled></div>
+      <div class="field"><label>Phone</label><input id="profPhone"></div>
       <div class="field"><label>Password</label><input id="profPass" type="password" placeholder="Change password"></div>
     </div>
     <div class="row">
@@ -312,674 +243,446 @@
     </div>
   </section>
 
-  <!-- ====== LOGOUT ====== -->
-  <section id="view-logout" class="section hide center">
+  <!-- LOGOUT -->
+  <section id="v-logout" class="section hide">
     <h2>Logging out…</h2>
-    <p class="small">You will be redirected to Login in 3 seconds.</p>
+    <p class="small">Redirecting to Login…</p>
   </section>
 </main>
 
 <footer>
-  <div class="foot-left">
-    <span class="small">© 2025 Sarkar Telecom • All rights reserved</span>
-  </div>
-  <div class="foot-right">
-    <span class="pill" id="fReward">Tier: –</span>
-    <span class="pill" id="fWeekly">Weekly: 0</span>
-    <span class="pill" id="fBalance">💎 0</span>
+  <div class="small">© 2025 Sarkar Telecom • All rights reserved</div>
+  <div style="display:flex;gap:8px;align-items:center">
+    <span class="pill" id="fWeekly">Week: 0</span>
+    <span class="pill" id="fTier">Tier –</span>
+    <span class="pill" id="fBal">💎 0</span>
   </div>
 </footer>
 
 <script>
-/* ================== CONFIG (EDIT THESE) ================== */
-const CONFIG = {
-  // 1) Orders CSV (Publish to web → CSV link)
-  CSV_ORDERS_URL: "https://docs.google.com/spreadsheets/d/e/2PACX-1vTQ0DtT8uJ3Jkvb88MhY1WSFYN5Xyw3MjzZZTT3h_Nw7NHc1N69MCIRgBENOCRXjcHox8mGpPR003se/pub?output=csv",
+/*** ========= CONFIG (HARD-CODED) ========= ***/
+const API = 'https://sheetdb.io/api/v1/olia09hyw73k1';
+const SHEETS = { users:'Users', orders:'Orders' };
 
-  // 2) Google Form formResponse URL (for Orders)
-  FORM_ACTION_URL: "https://docs.google.com/forms/d/e/1FAIpQLSdLZedpHWFpWwyPO18I2IkBq_zRHV-yIzBobAGonFufkZDjwQ/formResponse",
-
-  // 3) Google Form Entry IDs (your ones are prefilled here)
-  FORM_FIELDS: {
-    orderId: "entry.199422397",
-    userEmail: "entry.1625720895",
-    phone: "entry.299666698",
-    amount: "entry.124518137",
-    status: "entry.1307666707",
-    time: "entry.129114461"
-  },
-
-  // 4) Optional: Apps Script Web App URL (enable admin actions)
-  APPS_SCRIPT_URL: "", // e.g. "https://script.google.com/macros/s/AKfycb...../exec"
-
-  // UI
-  CURRENCY: "💎",
-  AUTO_CANCEL_MIN: 5, // minutes
-};
-/* ========================================================= */
-
-/* ========= Storage & Bootstrap ========= */
-const LS = {
-  usersKey:'st_users',
-  ordersKey:'st_orders',       // local fallback
-  currentKey:'st_current',
-  adminBalKey:'st_admin_balance',
-  lastResetKey:'st_last_reset_bd'
-};
+/*** ========= UTIL ========= ***/
+const $ = sel => document.querySelector(sel);
+const $$ = sel => Array.from(document.querySelectorAll(sel));
+const json = r => r.json();
+const sleep = ms => new Promise(r=>setTimeout(r,ms));
+function uid(){
+  return 'ORD' + Math.random().toString(36).slice(2,6).toUpperCase() + Date.now().toString().slice(-5);
+}
 function now(){ return Date.now(); }
-// BD time: UTC+6
-function bdNow(){ return new Date(Date.now() + 6*3600*1000); }
-function lastThursday22BD(ms=bdNow().getTime()){
-  const d = new Date(ms);
-  const day = d.getUTCDay();
-  const diffDays = (((day - 4)+7)%7);
-  const lastThu = new Date(ms - diffDays*86400000);
-  lastThu.setUTCHours(22,0,0,0);
-  if (lastThu.getTime() > ms) lastThu.setTime(lastThu.getTime()-7*86400000);
-  return lastThu.getTime();
+function bdNow(){ return Date.now() + 6*3600*1000; } // for window anchor only
+function lastThu22BD(ms=bdNow()){
+  const d=new Date(ms); const day=d.getUTCDay(); const diff=((day-4)+7)%7;
+  const t=new Date(ms - diff*86400000); t.setUTCHours(22,0,0,0);
+  if(t.getTime()>ms) t.setTime(t.getTime()-7*86400000);
+  return t.getTime() - 6*3600*1000; // convert BD back to UTC ms
 }
-function read(key, def){ try{ const v = JSON.parse(localStorage.getItem(key)); return (v===null?def:v); }catch(e){ return def; } }
-function write(key, val){ localStorage.setItem(key, JSON.stringify(val)); }
-function uid(){ return 'ORD' + Math.random().toString(36).slice(2,6).toUpperCase() + Date.now().toString().slice(-5); }
+function money(n){ return Number(n||0).toLocaleString(); }
+function dataUrl(img){ return img||'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="72" height="72"><rect width="100%" height="100%" fill="%23121a22"/><text x="50%" y="55%" font-family="sans-serif" font-size="14" fill="%23a9b1bd" text-anchor="middle">Avatar</text></svg>'; }
 
-function seed(){
-  let users = read(LS.usersKey, null);
-  if(!users){
-    users = [
-      {email:'admin@sarkar.com', pass:'Admin@123', name:'Admin', phone:'+8801000000000',
-       role:'admin', balance:1000000000000, avatar:'', approved:true, weekly:0, tier:0},
-      {email:'user1@gmail.com', pass:'User@123', name:'Client One', phone:'+8801711111111',
-       role:'user', balance:1000000, avatar:'', approved:true, weekly:0, tier:0}
-    ];
-    write(LS.usersKey, users);
-  }
-  if(read(LS.ordersKey, null)===null) write(LS.ordersKey, []);
-  if(read(LS.adminBalKey, null)===null) write(LS.adminBalKey, 1000000000000);
-  if(read(LS.lastResetKey, null)===null) write(LS.lastResetKey, lastThursday22BD());
-  if(!read(LS.currentKey,null)) write(LS.currentKey, null);
+/*** ========= SHEETDB HELPERS ========= ***/
+async function sGet(sheet, params={}){ // list
+  const qs = new URLSearchParams({sheet, ...params}).toString();
+  return fetch(`${API}?${qs}`).then(json);
 }
-seed();
+async function sSearch(sheet, params){ // GET /search
+  const qs = new URLSearchParams({sheet, ...params}).toString();
+  return fetch(`${API}/search?${qs}`).then(json);
+}
+async function sInsert(sheet, rows){ // POST
+  return fetch(`${API}?sheet=${encodeURIComponent(sheet)}`,{
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({data: rows})
+  }).then(json);
+}
+async function sPatchBySearch(sheet, searchParams, data){ // PATCH /search
+  const qs = new URLSearchParams({sheet, ...searchParams}).toString();
+  return fetch(`${API}/search?${qs}`,{
+    method:'PATCH', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({data})
+  }).then(json);
+}
+async function sDeleteBySearch(sheet, searchParams){ // DELETE /search
+  const qs = new URLSearchParams({sheet, ...searchParams}).toString();
+  return fetch(`${API}/search?${qs}`,{method:'DELETE'}).then(json);
+}
 
+/*** ========= STATE ========= ***/
+let current = null; // {email, ...}
+let cache = { users:[], orders:[] };
+
+/*** ========= MENU / ROUTER ========= ***/
+const drawer = $('#drawer'); const scrim = drawer.querySelector('.scrim');
+$('#menuBtn').onclick = ()=> drawer.classList.toggle('open');
+scrim.onclick = ()=> drawer.classList.remove('open');
+$$('.nav a').forEach(a=>a.addEventListener('click', ()=>drawer.classList.remove('open')));
+
+const VIEWS = ['login','register','dashboard','order','history','admin-orders','admin-users','profile','logout'];
+function show(v){ VIEWS.forEach(x=>$('#v-'+x).classList.add('hide')); $('#v-'+v).classList.remove('hide'); }
+function go(hash){ location.hash = hash; }
+window.addEventListener('hashchange', onRoute);
+
+async function onRoute(){
+  const hash = location.hash || '#/login';
+  const v = hash.replace('#/','');
+  const needAuth = ['dashboard','order','history','admin-orders','admin-users','profile','logout'];
+  if(needAuth.includes(v) && !current){ alert('Please login first'); return go('#/login'); }
+  if(v.startsWith('admin') && current?.role!=='admin'){ alert('Admin only'); return go('#/dashboard'); }
+
+  show(v);
+  if(v==='dashboard') renderDashboard();
+  if(v==='order') renderOrder();
+  if(v==='history') renderHistory();
+  if(v==='admin-orders') renderAdminOrders();
+  if(v==='admin-users') renderAdminUsers();
+  if(v==='profile') renderProfile();
+  if(v==='logout'){ current=null; syncHeaderFooter(); go('#/login'); }
+}
+
+/*** ========= AUTH ========= ***/
+async function login(email, pass){
+  const rows = await sSearch(SHEETS.users,{email, pass});
+  const u = rows[0];
+  if(!u) throw new Error('Invalid credentials');
+  if(u.role!=='admin' && String(u.approved).toLowerCase()!=='true') throw new Error('Pending admin approval');
+  current = u;
+  syncHeaderFooter();
+}
+async function register({email,pass,name,phone}){
+  const exists = await sSearch(SHEETS.users,{email});
+  if(exists.length) throw new Error('Email already exists');
+  await sInsert(SHEETS.users,[{
+    email, pass, name, phone, role:'user', approved:false,
+    balance:0, weeklyDiamonds:0, avatar:''
+  }]);
+}
+
+/*** ========= TIER ========= ***/
 const TIERS = [
   {min:800000, level:5, rate:3.5},
   {min:80000, level:4, rate:2.6},
   {min:40000, level:3, rate:2.1},
   {min:20000, level:2, rate:1.6},
   {min:5000,  level:1, rate:1.0},
-  {min:0,     level:0, rate:0}
+  {min:0,     level:0, rate:0},
 ];
-function computeWeeklyFor(email){
-  // Weekly from CSV if available, else local orders
-  const startBD = read(LS.lastResetKey, lastThursday22BD());
-  const csvOrders = window._csvOrders || [];
-  const csvSum = csvOrders
-    .filter(o => o.userEmail===email && o.status==='COMPLETED' && o.timestamp>=startBD)
+function tierFrom(total){ for(const t of TIERS) if(total>=t.min) return t; return TIERS.at(-1); }
+function withinWeekly(ts){ return Number(ts)>=lastThu22BD(); }
+
+async function refreshCaches(){
+  cache.users = await sGet(SHEETS.users);
+  cache.orders = await sGet(SHEETS.orders);
+}
+function weeklyTotalFor(email){
+  return cache.orders
+    .filter(o=>o.userEmail===email && o.status==='COMPLETED' && withinWeekly(o.timestamp))
     .reduce((a,b)=>a+Number(b.amount||0),0);
-  if(csvOrders.length) return csvSum;
-
-  const orders = read(LS.ordersKey, []);
-  const sum = orders
-    .filter(o=>o.userEmail===email && o.status==='completed' && o.timestamp>=startBD)
-    .reduce((a,b)=>a+b.amount,0);
-  return sum;
-}
-function tierFrom(total){
-  for(const t of TIERS) if(total>=t.min) return t;
-  return TIERS[TIERS.length-1];
-}
-function maybeAutoWeeklyReset(){
-  const last = read(LS.lastResetKey, lastThursday22BD());
-  const nowBD = bdNow().getTime();
-  const prevAnchor = lastThursday22BD(nowBD);
-  if(prevAnchor>last){
-    write(LS.lastResetKey, prevAnchor);
-    const users = read(LS.usersKey, []);
-    users.forEach(u=>{ u.weekly = 0; u.tier = 0; });
-    write(LS.usersKey, users);
-  }
 }
 
-/* ========= Auth ========= */
-function getCurrent(){ return read(LS.currentKey, null); }
-function setCurrent(u){ write(LS.currentKey, u); syncHeaderFooter(); }
-function logout(){
-  write(LS.currentKey, null);
-  syncHeaderFooter();
-  go('#/login');
-  document.getElementById('view-logout').classList.remove('hide');
-  setTimeout(()=>{ go('#/login'); },3000);
-}
-
-/* ========= UI Routing ========= */
-const VIEWS = ['login','register','dashboard','order','history','users','admin','profile','logout'];
-function show(view){
-  VIEWS.forEach(v=>document.getElementById('view-'+v).classList.add('hide'));
-  document.getElementById('view-'+view).classList.remove('hide');
-}
-function go(hash){ location.hash = hash; }
-window.addEventListener('hashchange', onRoute);
-function onRoute(){
-  const h = location.hash || '#/login';
-  const route = h.split('?')[0].replace('#/','');
-  const cur = getCurrent();
-
-  const authOnly = ['dashboard','order','history','users','admin','profile','logout'];
-  if(authOnly.includes(route) && !cur){ alert('Please login first'); return go('#/login'); }
-  if(route==='admin' && cur?.role!=='admin'){ alert('Admin access only'); return go('#/dashboard'); }
-
-  show(route);
-  if(route==='dashboard') renderDashboard();
-  else if(route==='order') renderOrder();
-  else if(route==='history') renderHistory();
-  else if(route==='users') renderUsers();
-  else if(route==='admin') renderAdmin();
-  else if(route==='profile') renderProfile();
-  else if(route==='logout') logout();
-
-  closeDrawer();
-}
-
-/* ========= Drawer Toggle (fixed) ========= */
-const drawer = document.getElementById('drawer');
-const scrim = document.getElementById('scrim');
-function openDrawer(){ drawer.classList.add('open'); scrim.classList.add('show'); }
-function closeDrawer(){ drawer.classList.remove('open'); scrim.classList.remove('show'); }
-document.getElementById('menuBtn').onclick = ()=> drawer.classList.toggle('open') || scrim.classList.toggle('show');
-scrim.onclick = ()=> closeDrawer();
-
-/* ========= Header & Footer ========= */
+/*** ========= HEADER/FOOTER ========= ***/
 function syncHeaderFooter(){
-  maybeAutoWeeklyReset();
-  const cur = getCurrent();
-  const hdrUser = document.getElementById('hdrUser');
-  const hdrRole = document.getElementById('hdrRole');
-  const hdrBalance = document.getElementById('hdrBalance');
-  const hdrName = document.getElementById('hdrName');
-  const hdrAvatar = document.getElementById('hdrAvatar');
-  const fBalance = document.getElementById('fBalance');
-  const fReward = document.getElementById('fReward');
-  const fWeekly = document.getElementById('fWeekly');
+  $('#hdrEmail').textContent = current? current.email : 'Guest';
+  $('#hdrName').textContent  = current? (current.name||current.email) : 'Not logged in';
+  $('#hdrAvatar').src        = current? dataUrl(current.avatar) : dataUrl('');
+  const bal = current? Number(current.balance||0) : 0;
+  $('#hdrBal').textContent = '💎 '+money(bal);
 
-  if(!cur){
-    hdrUser.textContent = 'Guest';
-    hdrRole.textContent = '—';
-    hdrBalance.textContent = '💎 0';
-    hdrName.textContent = 'Not logged in';
-    hdrAvatar.src = 'data:image/svg+xml;base64,PHN2ZyBoZWlnaHQ9IjQ4IiB3aWR0aD0iNDgiIHZpZXdCb3g9IjAgMCA1MCA1MCIgZmlsbD0iI2ZmZiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Y2lyY2xlIGN4PSIyNSIgY3k9IjE4IiByPSIxMCIgZmlsbD0iI2JiYiIvPjxwYXRoIGQ9Ik0xMiA0MGMwLTggMjYtOCAyNiAwIiBmaWxsPSIjYmJiIi8+PC9zdmc+';
-    fBalance.textContent = '💎 0';
-    fReward.textContent = 'Tier: –';
-    fWeekly.textContent = 'Weekly: 0';
-    return;
-  }
-  const users = read(LS.usersKey, []);
-  const me = users.find(u=>u.email===cur.email) || cur;
-
-  // Weekly from CSV/local
-  const w = computeWeeklyFor(cur.email);
+  const w = current? weeklyTotalFor(current.email) : 0;
   const t = tierFrom(w);
-  me.weekly = w; me.tier = t.level;
-  write(LS.usersKey, users); write(LS.currentKey, me);
-
-  hdrUser.textContent = cur.email;
-  hdrRole.textContent = cur.role;
-  hdrBalance.textContent = '💎 ' + (me.balance?.toLocaleString()||0);
-  hdrName.textContent = me.name || cur.email;
-  hdrAvatar.src = me.avatar || hdrAvatar.src;
-  fBalance.textContent = '💎 ' + (me.balance?.toLocaleString()||0);
-  fReward.textContent = `Tier: ${t.level} (${t.rate}%)`;
-  fWeekly.textContent = `Weekly: ${w.toLocaleString()}`;
+  $('#hdrTier').textContent = `Tier ${t.level}`;
+  $('#fTier').textContent   = `Tier ${t.level}`;
+  $('#fWeekly').textContent = `Week: ${money(w)}`;
+  $('#fBal').textContent    = '💎 '+money(bal);
 }
 
-/* ========= Login / Register ========= */
-document.getElementById('btnLogin').onclick = ()=>{
-  const email = document.getElementById('loginEmail').value.trim().toLowerCase();
-  const pass  = document.getElementById('loginPass').value;
-  const users = read(LS.usersKey, []);
-  const u = users.find(x=>x.email===email && x.pass===pass);
-  if(!u) return alert('Invalid credentials.');
-  if(u.role!=='admin' && !u.approved) return alert('Pending admin approval.');
-  setCurrent(u);
-  go('#/dashboard');
-};
-document.getElementById('btnForgot').onclick=(e)=>{
-  e.preventDefault();
-  const em = document.getElementById('loginEmail').value.trim();
-  if(!em) return alert('Enter email above first.');
-  alert('We would send a reset link to: '+em+' (demo only).');
-};
-document.getElementById('btnRegister').onclick = ()=>{
-  const email = document.getElementById('regEmail').value.trim().toLowerCase();
-  const pass  = document.getElementById('regPass').value;
-  const name  = document.getElementById('regName').value.trim();
-  const phone = document.getElementById('regPhone').value.trim();
-  if(!email || !pass || !name) return alert('Fill required fields.');
-  let users = read(LS.usersKey, []);
-  if(users.some(u=>u.email===email)) return alert('Email already exists.');
-  users.push({email, pass, name, phone, role:'user', balance:0, avatar:'', approved:false, weekly:0, tier:0});
-  write(LS.usersKey, users);
-  alert('Registered! Await admin approval.');
-  go('#/login');
-};
-
-/* ========= Dashboard ========= */
+/*** ========= DASHBOARD ========= ***/
 function renderDashboard(){
-  const u = getCurrent(); if(!u) return;
-  document.getElementById('dbUser').value = u.name || u.email;
-  document.getElementById('dbRole').value = u.role;
-  document.getElementById('dbBal').value = '💎 ' + (u.balance?.toLocaleString()||0);
-  const w = computeWeeklyFor(u.email);
-  document.getElementById('dbWeekly').value = w.toLocaleString();
+  const w = weeklyTotalFor(current.email);
   const t = tierFrom(w);
-  document.getElementById('dbTier').value = `Level ${t.level} (${t.rate}%)`;
+  const lines = [
+    `Email: <b>${current.email}</b>`,
+    `Role: <b>${current.role}</b>`,
+    `Phone: ${current.phone||'-'}`,
+    `Balance: 💎 <b>${money(current.balance||0)}</b>`,
+    `Weekly Completed: 💎 <b>${money(w)}</b> • Tier L${t.level} (${t.rate}%)`,
+  ];
+  $('#acctLines').innerHTML = lines.map(x=>`<div>${x}</div>`).join('');
 }
 
-/* ========= Order Create ========= */
-const amounts = [10,50,100,200,500,1000,2000,5000,10000,20000];
+/*** ========= ORDER ========= ***/
+const AMOUNTS = [10,50,100,200,500,1000,2000,5000,10000,20000];
 let selectedAmt = null;
 
 function renderOrder(){
-  const u = getCurrent(); if(!u) return;
-  selectedAmt = null;
-  document.getElementById('recipient').value = '';
-  document.getElementById('orderBal').textContent = '💎 ' + (u.balance||0).toLocaleString();
-
-  const grid = document.getElementById('giftGrid');
-  grid.innerHTML = '';
-  amounts.forEach(a=>{
-    const div = document.createElement('div');
-    div.className = 'gift'; div.dataset.amount = a;
-    div.innerHTML = `<div class="price">${CONFIG.CURRENCY} ${a}</div>`;
-    div.onclick = ()=>{
-      [...grid.children].forEach(c=>c.classList.remove('selected'));
-      div.classList.add('selected');
-      selectedAmt = a; checkOrderForm();
-    };
+  selectedAmt=null;
+  $('#recipient').value='';
+  $('#orderBal').textContent = '💎 '+money(current.balance||0);
+  const grid = $('#giftGrid'); grid.innerHTML='';
+  AMOUNTS.forEach(a=>{
+    const div=document.createElement('div');
+    div.className='gift'; div.dataset.amount=a; div.innerHTML=`<div class="price">💎 ${a}</div>`;
+    div.onclick=()=>{ [...grid.children].forEach(c=>c.classList.remove('selected')); div.classList.add('selected'); selectedAmt=a; checkOrderForm(); };
     grid.appendChild(div);
   });
   checkOrderForm();
 }
 function checkOrderForm(){
-  const rec = document.getElementById('recipient').value.trim();
-  const btn = document.getElementById('btnConfirm');
-  btn.disabled = !(rec && selectedAmt);
+  $('#btnConfirm').disabled = !( $('#recipient').value.trim() && selectedAmt );
 }
-document.getElementById('btnConfirm').onclick = ()=>{
-  const u = getCurrent(); if(!u) return;
-  const rec = document.getElementById('recipient').value.trim();
-  const amt = selectedAmt||0;
-  if(!rec || !amt) return;
+$('#recipient').addEventListener('input', checkOrderForm);
 
-  // local balance check
-  let users = read(LS.usersKey, []);
-  const me = users.find(x=>x.email===u.email);
-  if((me?.balance||0) < amt) return alert('Insufficient balance.');
-  me.balance -= amt;
-  write(LS.usersKey, users);
-  write(LS.currentKey, me);
-  syncHeaderFooter();
+$('#btnConfirm').onclick = async ()=>{
+  try{
+    await refreshCaches();
+    const me = cache.users.find(u=>u.email===current.email);
+    const amt = Number(selectedAmt||0);
+    const rec = $('#recipient').value.trim();
+    if(!rec || !amt) return;
+    if(Number(me.balance||0) < amt) return alert('Insufficient balance');
 
-  // Create order locally (fallback)
-  const id = uid();
-  const ts = now();
-  const orders = read(LS.ordersKey, []);
-  orders.unshift({id, userEmail:me.email, clientId:rec, amount:amt, status:'WAITING', timestamp:ts});
-  write(LS.ordersKey, orders);
-  scheduleAutoCancel(id);
+    // deduct balance
+    await sPatchBySearch(SHEETS.users,{email:me.email},{balance: Number(me.balance||0) - amt});
+    // create order
+    const id = uid(); const ts = now(); const cancelAt = ts + 5*60*1000;
+    await sInsert(SHEETS.orders,[{
+      id, clientId: rec, amount: amt, status:'WAITING',
+      userEmail: me.email, timestamp: ts, autoCancelAt: cancelAt
+    }]);
 
-  // Submit to Google Form (hidden iframe)
-  submitToGoogleForm({ id, email:me.email, phone:me.phone||'', amount:amt, status:'WAITING', time: new Date(ts).toLocaleString() });
-
-  alert(`Order submitted!\nID: ${id}\nClient: ${rec}\nAmount: ${CONFIG.CURRENCY} ${amt}`);
-  go('#/history');
+    // local refresh
+    await refreshCaches();
+    current = cache.users.find(u=>u.email===me.email);
+    syncHeaderFooter();
+    alert(`Order submitted!\nID: ${id}\nClient: ${rec}\nAmount: 💎 ${amt}`);
+    go('#/history');
+  }catch(e){ alert(e.message||'Order failed'); }
 };
 
-/* === Submit to Google Form (no CORS; hidden iframe) === */
-function submitToGoogleForm({id,email,phone,amount,status,time}){
-  const form = document.getElementById('gform');
-  form.action = CONFIG.FORM_ACTION_URL;
-
-  const F = CONFIG.FORM_FIELDS;
-  form.innerHTML = '';
-  const pairs = [
-    [F.orderId, id],
-    [F.userEmail, email],
-    [F.phone, phone],
-    [F.amount, String(amount)],
-    [F.status, status],
-    [F.time, time]
-  ];
-  pairs.forEach(([name,val])=>{
-    const inp = document.createElement('input');
-    inp.name = name; inp.value = val; inp.type = 'hidden';
-    form.appendChild(inp);
+/*** ========= HISTORY ========= ***/
+let histPage=1, histSize=10;
+async function renderHistory(){
+  await refreshCaches();
+  const mine = cache.orders.filter(o=>o.userEmail===current.email).sort((a,b)=>Number(b.timestamp)-Number(a.timestamp));
+  const s = ($('#histSearch').value||'').toLowerCase();
+  const st = $('#histStatus').value;
+  const filtered = mine.filter(o=>{
+    const blob = `${o.id} ${o.clientId} ${o.amount} ${o.status} ${o.timestamp}`.toLowerCase();
+    return (!s || blob.includes(s)) && (!st || o.status===st);
   });
-  form.submit();
-}
-
-/* ========= Auto-cancel after N minutes (local) ========= */
-function scheduleAutoCancel(orderId){
-  setTimeout(()=>sweepAutoCancel(), (CONFIG.AUTO_CANCEL_MIN*60+10)*1000);
-}
-function sweepAutoCancel(){
-  let orders = read(LS.ordersKey, []);
-  let changed = false;
-  const lim = CONFIG.AUTO_CANCEL_MIN*60*1000;
-  orders.forEach(o=>{
-    if(o.status==='WAITING' && now() - o.timestamp > lim){
-      const users = read(LS.usersKey, []);
-      const u = users.find(x=>x.email===o.userEmail);
-      if(u){ u.balance += o.amount; write(LS.usersKey, users); }
-      o.status='CANCELLED'; changed=true;
-    }
-  });
-  if(changed) write(LS.ordersKey, orders);
-}
-setInterval(sweepAutoCancel, 60000);
-
-/* ========= CSV → History ========= */
-let histPage = 1, histSize = 10;
-async function fetchCSVOrders(){
-  try{
-    const res = await fetch(CONFIG.CSV_ORDERS_URL, {cache:'no-store'});
-    const text = await res.text();
-    const rows = parseCSV(text);
-    // Expect header row—map columns (flexible names)
-    const header = rows[0]?.map(x=>x.trim().toLowerCase())||[];
-    const dataRows = rows.slice(1);
-    const idx = {
-      orderId: header.findIndex(h=>/order.?id/i.test(h)),
-      userEmail: header.findIndex(h=>/email/i.test(h)),
-      phone: header.findIndex(h=>/phone/i.test(h)),
-      amount: header.findIndex(h=>/amount|diamond/i.test(h)),
-      status: header.findIndex(h=>/status/i.test(h)),
-      time: header.findIndex(h=>/time|timestamp|date/i.test(h)),
-      clientId: header.findIndex(h=>/client|number|recipient|profile/i.test(h)),
-    };
-    const parsed = dataRows.map(r=>{
-      const t = r[idx.time]||'';
-      const ts = Date.parse(t) || Date.parse(t.replace(/-/g,'/')) || Date.now();
-      return {
-        id: (r[idx.orderId]||'').trim(),
-        userEmail: (r[idx.userEmail]||'').trim().toLowerCase(),
-        clientId: (r[idx.clientId]||'').trim(),
-        amount: Number((r[idx.amount]||'0').toString().replace(/[^\d\.]/g,''))||0,
-        status: (r[idx.status]||'').trim().toUpperCase(),
-        timestamp: ts
-      };
-    }).filter(x=>x.id);
-    window._csvOrders = parsed;
-  }catch(e){
-    console.warn('CSV fetch failed, fallback to local orders', e);
-    window._csvOrders = [];
-  }
-}
-function parseCSV(text){
-  // simple CSV parser (handles quoted commas)
-  const lines = text.replace(/\r/g,'').split('\n').filter(x=>x.trim().length);
-  const out = [];
-  let i=0;
-  while(i<lines.length){
-    const row=[]; let cur=''; let inq=false; let j=0;
-    const line = lines[i];
-    for(let k=0;k<line.length;k++){
-      const ch=line[k];
-      if(ch==='\"'){
-        if(inq && line[k+1]==='\"'){ cur+='\"'; k++; }
-        else inq=!inq;
-      }else if(ch===',' && !inq){
-        row.push(cur); cur='';
-      }else{
-        cur+=ch;
-      }
-    }
-    row.push(cur);
-    out.push(row);
-    i++;
-  }
-  return out;
-}
-
-function renderHistory(){
-  const cur = getCurrent(); if(!cur) return;
-  const search = (document.getElementById('histSearch').value||'').toLowerCase();
-  const status = document.getElementById('histStatus').value;
-
-  const csvOrders = window._csvOrders || [];
-  const localOrders = read(LS.ordersKey, []);
-  // Prefer CSV if available, but also merge unseen local entries (same id keeps CSV)
-  const map = new Map();
-  [...localOrders, ...csvOrders].forEach(o=>{ map.set(o.id, o); });
-  const merged = [...map.values()]
-    .filter(o=>o.userEmail===cur.email)
-    .sort((a,b)=>b.timestamp-a.timestamp);
-
-  const filtered = merged.filter(o=>{
-    const blob = `${o.id} ${o.clientId} ${o.amount} ${new Date(o.timestamp).toLocaleString()} ${o.status}`.toLowerCase();
-    const okS = !status || o.status===status;
-    return (!search || blob.includes(search)) && okS;
-  });
-
-  const total = filtered.length;
-  const pages = Math.max(1, Math.ceil(total/histSize));
+  const pages = Math.max(1, Math.ceil(filtered.length/histSize));
   if(histPage>pages) histPage=pages;
-  const start=(histPage-1)*histSize, end=start+histSize;
-  const slice = filtered.slice(start,end);
+  const slice = filtered.slice((histPage-1)*histSize, histPage*histSize);
 
-  const tbody = document.getElementById('histBody');
-  tbody.innerHTML = slice.map(o=>`
+  $('#histBody').innerHTML = slice.map(o=>`
     <tr>
       <td class="nowrap">${o.id}</td>
-      <td class="nowrap">${o.clientId||'-'}</td>
-      <td>${CONFIG.CURRENCY} ${o.amount.toLocaleString()}</td>
-      <td><span class="status ${o.status.toLowerCase()}">${o.status}</span></td>
-      <td class="nowrap">${new Date(o.timestamp).toLocaleString()}</td>
-    </tr>
-  `).join('');
+      <td class="nowrap">${o.clientId}</td>
+      <td>💎 ${money(o.amount)}</td>
+      <td><span class="status ${o.status}">${o.status}</span></td>
+      <td class="nowrap">${new Date(Number(o.timestamp)).toLocaleString()}</td>
+    </tr>`).join('');
 
-  const pager = document.getElementById('histPager');
-  pager.innerHTML = '';
-  for(let i=1;i<=pages;i++){
-    const b=document.createElement('button'); b.textContent=i; if(i===histPage) b.classList.add('active');
-    b.onclick=()=>{histPage=i; renderHistory();};
-    pager.appendChild(b);
-  }
+  const pag = $('#histPager'); pag.innerHTML='';
+  for(let i=1;i<=pages;i++){ const b=document.createElement('button'); b.textContent=i; if(i===histPage)b.classList.add('active'); b.onclick=()=>{histPage=i;renderHistory();}; pag.appendChild(b); }
 
-  const w = computeWeeklyFor(cur.email);
-  document.getElementById('histWeekly').value = w.toLocaleString();
-  document.getElementById('tierBadge').textContent = `Tier: ${tierFrom(w).level}`;
+  const w = weeklyTotalFor(current.email);
+  $('#histWeekly').value = money(w);
+  syncHeaderFooter();
 }
-document.getElementById('histSearch').oninput = ()=>{ histPage=1; renderHistory(); };
-document.getElementById('histStatus').onchange = ()=>{ histPage=1; renderHistory(); };
+$('#histSearch').oninput = ()=>{histPage=1;renderHistory();};
+$('#histStatus').onchange = ()=>{histPage=1;renderHistory();};
 
-/* ========= Users (admin tools; local + optional server) ========= */
-function renderUsers(){
-  const cur=getCurrent(); const isAdmin = cur?.role==='admin';
-  const users = read(LS.usersKey, []);
-  const q=(document.getElementById('userSearch').value||'').toLowerCase();
-  const rf=document.getElementById('userRoleFilter').value;
+/*** ========= ADMIN: ORDERS ========= ***/
+let aoPage=1, aoSize=12;
+async function renderAdminOrders(){
+  await refreshCaches();
+  const q = ($('#admOrdSearch').value||'').toLowerCase();
+  const list = cache.orders.slice().sort((a,b)=>Number(b.timestamp)-Number(a.timestamp))
+    .filter(o=>{
+      const blob = `${o.id} ${o.clientId} ${o.amount} ${o.userEmail} ${o.status}`.toLowerCase();
+      return !q || blob.includes(q);
+    });
 
-  const tbody=document.getElementById('usersBody');
-  tbody.innerHTML='';
-
-  users.forEach(u=>{
-    const w = computeWeeklyFor(u.email);
-    const tier = tierFrom(w);
-    const matches = (!q || `${u.email} ${u.name} ${u.phone}`.toLowerCase().includes(q)) &&
-                    (!rf || (rf==='pending'? !u.approved : u.role===rf));
-    if(!matches) return;
-    const tr=document.createElement('tr');
-    const disabledTip = CONFIG.APPS_SCRIPT_URL ? '' : 'title="Add Apps Script URL in CONFIG to enable" disabled';
-    tr.innerHTML=`
-      <td><img src="${u.avatar||'https://via.placeholder.com/36'}" style="width:36px;height:36px;border-radius:50%;object-fit:cover;border:1px solid #222"/></td>
-      <td>${u.name||'-'}</td>
-      <td>${u.email}</td>
-      <td>${u.phone||'-'}</td>
-      <td>${u.approved? u.role : 'pending'}</td>
-      <td>${CONFIG.CURRENCY} ${Number(u.balance||0).toLocaleString()}</td>
-      <td>${w.toLocaleString()}</td>
-      <td>Lvl ${tier.level}</td>
-      <td class="nowrap" id="cell-${cssSafe(u.email)}">
-        ${isAdmin? `
-          ${u.approved? '' : `<button class="btn good" data-act="approve" ${disabledTip}>Approve</button>
-                               <button class="btn danger" data-act="reject" ${disabledTip}>Reject</button>`}
-          <button class="btn outline" data-act="edit" ${disabledTip}>Edit</button>
-          <button class="btn" data-act="addbal" ${disabledTip}>Add Balance</button>
-          <button class="btn outline" data-act="role" ${disabledTip}>${u.role==='admin'?'Set User':'Make Admin'}</button>
-          <button class="btn danger" data-act="reset" ${disabledTip}>Reset Weekly</button>
-        `: '<span class="small">View only</span>'}
-      </td>
-    `;
-    tbody.appendChild(tr);
-    if(isAdmin) attachUserActions(u);
-  });
-}
-function cssSafe(s){ return s.replace(/[^a-z0-9]/gi,'_'); }
-function attachUserActions(u){
-  const cell=document.querySelector(`#cell-${cssSafe(u.email)}`);
-  cell?.querySelectorAll('button').forEach(b=>{
-    b.onclick=async ()=>{
-      if(!CONFIG.APPS_SCRIPT_URL){ return alert('Add Apps Script URL in CONFIG to enable admin actions.'); }
-      const act=b.dataset.act;
-      const payload = { type:'user', action:act, user:u.email };
-      if(act==='edit'){
-        payload.name = prompt('Name', u.name||'')||u.name;
-        payload.phone = prompt('Phone', u.phone||'')||u.phone;
-        const p = prompt('Password (leave blank to keep)', '');
-        if(p) payload.pass = p;
-      }
-      if(act==='addbal'){
-        payload.amount = Number(prompt('Add diamonds to user:', '0'))||0;
-      }
-      try{
-        await fetch(CONFIG.APPS_SCRIPT_URL, {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
-        alert('Done (server). Refreshing data.');
-      }catch(e){ alert('Server call failed. Check Apps Script URL.'); }
-      renderUsers(); syncHeaderFooter(); renderAdmin();
-    };
-  });
-}
-document.getElementById('userSearch').oninput=renderUsers;
-document.getElementById('userRoleFilter').onchange=renderUsers;
-
-/* ========= Admin orders (requires server for true write) ========= */
-let admPage=1, admSize=10;
-function renderAdmin(){
-  const adminBal = read(LS.adminBalKey, 0);
-  const users = read(LS.usersKey, []);
-  const pending = users.filter(u=>!u.approved && u.role==='user').length;
-  document.getElementById('adminBal').value = `${CONFIG.CURRENCY} ${adminBal.toLocaleString()}`;
-  document.getElementById('adminPend').value = pending + ' pending';
-  document.getElementById('adminResetInfo').value = 'Last reset (BD): ' + new Date(read(LS.lastResetKey, lastThursday22BD())).toLocaleString();
-
-  const q=(document.getElementById('admOrderSearch').value||'').toLowerCase();
-
-  // Merge local + CSV (admin sees all)
-  const csvOrders = window._csvOrders || [];
-  const localOrders = read(LS.ordersKey, []);
-  const map = new Map();
-  [...localOrders, ...csvOrders].forEach(o=>{ map.set(o.id, o); });
-  const orders = [...map.values()].sort((a,b)=>b.timestamp-a.timestamp);
-
-  const filtered = orders.filter(o=>{
-    const blob = `${o.id} ${o.clientId} ${o.amount} ${o.userEmail} ${new Date(o.timestamp).toLocaleString()} ${o.status}`.toLowerCase();
-    return !q || blob.includes(q);
-  });
-  const total=filtered.length, pages=Math.max(1, Math.ceil(total/admSize));
-  if(admPage>pages) admPage=pages;
-  const start=(admPage-1)*admSize, end=start+admSize, slice=filtered.slice(start,end);
-
-  const tbody=document.getElementById('admOrdersBody');
-  const disabledTip = CONFIG.APPS_SCRIPT_URL ? '' : 'title="Apps Script URL দিন" disabled';
-  tbody.innerHTML = slice.map(o=>`
+  const pages = Math.max(1, Math.ceil(list.length/aoSize)); if(aoPage>pages) aoPage=pages;
+  const rows = list.slice((aoPage-1)*aoSize, aoPage*aoSize);
+  $('#admOrdersBody').innerHTML = rows.map(o=>`
     <tr>
       <td>${o.id}</td>
       <td>${o.userEmail}</td>
-      <td>${o.clientId||'-'}</td>
-      <td>${CONFIG.CURRENCY} ${o.amount.toLocaleString()}</td>
-      <td><span class="status ${o.status.toLowerCase()}">${o.status}</span></td>
-      <td>${new Date(o.timestamp).toLocaleString()}</td>
+      <td>${o.clientId}</td>
+      <td>💎 ${money(o.amount)}</td>
+      <td><span class="status ${o.status}">${o.status}</span></td>
+      <td>${new Date(Number(o.timestamp)).toLocaleString()}</td>
       <td class="nowrap">
-        <button class="btn good" onclick="admSetStatus('${o.id}','COMPLETED')" ${disabledTip}>Complete</button>
-        <button class="btn danger" onclick="admSetStatus('${o.id}','CANCELLED')" ${disabledTip}>Cancel</button>
-        <button class="btn wait" onclick="admSetStatus('${o.id}','WAITING')" ${disabledTip}>Waiting</button>
+        <button class="btn good" onclick="admSetStatus('${o.id}','COMPLETED')">Complete</button>
+        <button class="btn danger" onclick="admSetStatus('${o.id}','CANCELLED')">Cancel</button>
+        <button class="btn wait" onclick="admSetStatus('${o.id}','WAITING')">Waiting</button>
       </td>
-    </tr>
-  `).join('');
+    </tr>`).join('');
 
-  const pager=document.getElementById('admPager'); pager.innerHTML='';
-  for(let i=1;i<=pages;i++){ const b=document.createElement('button'); b.textContent=i; if(i===admPage) b.classList.add('active'); b.onclick=()=>{admPage=i; renderAdmin();}; pager.appendChild(b); }
-
-  document.getElementById('btnManualReset').onclick=async ()=>{
-    if(!CONFIG.APPS_SCRIPT_URL) return alert('Add Apps Script URL in CONFIG.');
-    if(confirm('Reset weekly window now (BD)?')){
-      try{
-        await fetch(CONFIG.APPS_SCRIPT_URL, {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:'admin',action:'resetWeekly'})});
-        alert('Reset requested.'); renderAdmin(); renderUsers(); renderDashboard(); renderHistory(); syncHeaderFooter();
-      }catch(e){ alert('Server call failed.'); }
-    }
-  };
+  const pag = $('#admOrdPager'); pag.innerHTML='';
+  for(let i=1;i<=pages;i++){ const b=document.createElement('button'); b.textContent=i; if(i===aoPage)b.classList.add('active'); b.onclick=()=>{aoPage=i;renderAdminOrders();}; pag.appendChild(b); }
 }
-document.getElementById('admOrderSearch').oninput=()=>{admPage=1;renderAdmin();};
+$('#admOrdSearch').oninput = ()=>{aoPage=1;renderAdminOrders();};
 
 async function admSetStatus(id, status){
-  if(!CONFIG.APPS_SCRIPT_URL) return alert('Add Apps Script URL in CONFIG.');
-  try{
-    await fetch(CONFIG.APPS_SCRIPT_URL, {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:'order',action:'setStatus',id,status})});
-    alert('Status updated (server).');
-  }catch(e){ alert('Server call failed.'); }
-  renderAdmin(); renderHistory(); syncHeaderFooter();
+  await refreshCaches();
+  const o = cache.orders.find(x=>x.id===id); if(!o) return;
+  if(o.status===status) return;
+
+  // refund/charge
+  const me = cache.users.find(u=>u.email===o.userEmail);
+  if(status==='CANCELLED' && o.status!=='CANCELLED'){ // refund
+    await sPatchBySearch(SHEETS.users,{email:me.email},{balance:Number(me.balance||0)+Number(o.amount||0)});
+  }
+  if(status==='WAITING' && o.status==='CANCELLED'){ // charge back again
+    const bal = Number(me.balance||0);
+    if(bal<Number(o.amount||0)) return alert('User balance insufficient to revert to WAITING');
+    await sPatchBySearch(SHEETS.users,{email:me.email},{balance:bal-Number(o.amount||0)});
+  }
+
+  await sPatchBySearch(SHEETS.orders,{id},{status});
+  await refreshCaches(); syncHeaderFooter();
+  renderAdminOrders(); renderHistory();
 }
 
-/* ========= Profile ========= */
-function renderProfile(){
-  const u=getCurrent(); if(!u) return;
-  document.getElementById('profAvatar').src = u.avatar || 'https://via.placeholder.com/72';
-  document.getElementById('profName').value = u.name || '';
-  document.getElementById('profEmail').value = u.email;
-  document.getElementById('profPhone').value = u.phone || '';
-  document.getElementById('profPass').value = '';
+/*** ========= ADMIN: USERS ========= ***/
+async function renderAdminUsers(){
+  await refreshCaches();
+  const q = ($('#userSearch').value||'').toLowerCase();
+  const rf = $('#userRoleFilter').value;
+  const tbody = $('#usersBody'); tbody.innerHTML='';
+
+  cache.users.forEach(u=>{
+    const w = weeklyTotalFor(u.email);
+    const role = u.role||'user';
+    const isPending = String(u.approved).toLowerCase()!=='true';
+    const match = (!q || `${u.email} ${u.name} ${u.phone}`.toLowerCase().includes(q)) &&
+                  (!rf || (rf==='pending'? isPending : role===rf));
+    if(!match) return;
+
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><img src="${dataUrl(u.avatar)}" style="width:36px;height:36px;border-radius:50%;border:1px solid #1b232d;object-fit:cover"></td>
+      <td>${u.name||'-'}</td>
+      <td>${u.email}</td>
+      <td>${u.phone||'-'}</td>
+      <td>${role}</td>
+      <td>${isPending? 'pending':'true'}</td>
+      <td>💎 ${money(u.balance)}</td>
+      <td>${money(w)}</td>
+      <td class="nowrap">
+        ${isPending? `<button class="btn good" data-act="approve">Approve</button>
+                      <button class="btn danger" data-act="reject">Reject</button>`:''}
+        <button class="btn outline" data-act="edit">Edit</button>
+        <button class="btn" data-act="addbal">Add Bal</button>
+        <button class="btn outline" data-act="role">${role==='admin'?'Set User':'Make Admin'}</button>
+      </td>`;
+    tbody.appendChild(tr);
+
+    tr.querySelectorAll('button').forEach(b=>{
+      b.onclick = async ()=>{
+        const act=b.dataset.act;
+        if(act==='approve'){ await sPatchBySearch(SHEETS.users,{email:u.email},{approved:true}); }
+        else if(act==='reject'){ await sDeleteBySearch(SHEETS.users,{email:u.email}); }
+        else if(act==='edit'){
+          const name=prompt('Name', u.name||'');
+          const phone=prompt('Phone', u.phone||'');
+          const pass=prompt('Password (blank = keep)','');
+          const data={name,phone}; if(pass) data.pass=pass;
+          await sPatchBySearch(SHEETS.users,{email:u.email},data);
+        }
+        else if(act==='addbal'){
+          const add = Number(prompt('Add diamonds:', '0')||0); if(add>0){
+            await sPatchBySearch(SHEETS.users,{email:u.email},{balance:Number(u.balance||0)+add});
+          }
+        }
+        else if(act==='role'){
+          await sPatchBySearch(SHEETS.users,{email:u.email},{role: u.role==='admin'?'user':'admin'});
+        }
+        await refreshCaches(); renderAdminUsers(); syncHeaderFooter();
+      };
+    });
+  });
 }
-document.getElementById('avatarFile').addEventListener('change', function(){
-  const file=this.files[0]; if(!file) return;
-  const reader=new FileReader();
-  reader.onload=()=>{
-    const users=read(LS.usersKey, []), cur=getCurrent();
-    const idx=users.findIndex(u=>u.email===cur.email);
-    users[idx].avatar=reader.result;
-    write(LS.usersKey, users);
-    write(LS.currentKey, users[idx]);
-    document.getElementById('profAvatar').src = reader.result;
-    syncHeaderFooter();
+$('#userSearch').oninput = renderAdminUsers;
+$('#userRoleFilter').onchange = renderAdminUsers;
+
+/*** ========= PROFILE ========= ***/
+function renderProfile(){
+  $('#profAvatar').src = dataUrl(current.avatar);
+  $('#profName').value = current.name||'';
+  $('#profEmail').value = current.email;
+  $('#profPhone').value = current.phone||'';
+  $('#profPass').value = '';
+}
+$('#avatarFile').addEventListener('change', function(){
+  const f=this.files[0]; if(!f) return;
+  const r=new FileReader();
+  r.onload=async ()=>{
+    await sPatchBySearch(SHEETS.users,{email:current.email},{avatar:r.result});
+    await refreshCaches(); current=cache.users.find(u=>u.email===current.email);
+    renderProfile(); syncHeaderFooter();
   };
-  reader.readAsDataURL(file);
+  r.readAsDataURL(f);
 });
-document.getElementById('btnSaveProfile').onclick=()=>{
-  const name=document.getElementById('profName').value.trim();
-  const phone=document.getElementById('profPhone').value.trim();
-  const pass=document.getElementById('profPass').value;
-  let users=read(LS.usersKey, []), cur=getCurrent();
-  const idx=users.findIndex(u=>u.email===cur.email); if(idx<0) return;
-  users[idx].name=name; users[idx].phone=phone; if(pass) users[idx].pass=pass;
-  write(LS.usersKey, users); write(LS.currentKey, users[idx]);
-  alert('Profile updated.'); syncHeaderFooter();
+$('#btnSaveProfile').onclick = async ()=>{
+  const name=$('#profName').value.trim(); const phone=$('#profPhone').value.trim(); const pass=$('#profPass').value;
+  const data={name,phone}; if(pass) data.pass=pass;
+  await sPatchBySearch(SHEETS.users,{email:current.email},data);
+  await refreshCaches(); current=cache.users.find(u=>u.email===current.email);
+  alert('Profile updated'); syncHeaderFooter();
 };
 
-/* ========= Live sync across tabs ========= */
-window.addEventListener('storage', (e)=>{
-  if([LS.usersKey,LS.ordersKey,LS.currentKey,LS.adminBalKey,LS.lastResetKey].includes(e.key)){
-    syncHeaderFooter();
-    const route=(location.hash||'#/login').replace('#/','');
-    if(route==='history') renderHistory();
-    if(route==='admin') renderAdmin();
-    if(route==='users') renderUsers();
-    if(route==='dashboard') renderDashboard();
-    if(route==='order') renderOrder();
-  }
-});
+/*** ========= LOGIN / REGISTER BTN ========= ***/
+$('#btnLogin').onclick = async ()=>{
+  try{
+    await login($('#loginEmail').value.trim().toLowerCase(), $('#loginPass').value);
+    await refreshCaches(); current = cache.users.find(u=>u.email===current.email);
+    go('#/dashboard');
+  }catch(e){ alert(e.message||'Login failed'); }
+};
+$('#btnRegister').onclick = async ()=>{
+  try{
+    await register({
+      email: $('#regEmail').value.trim().toLowerCase(),
+      pass:  $('#regPass').value,
+      name:  $('#regName').value.trim(),
+      phone: $('#regPhone').value.trim()
+    });
+    alert('Registered! Wait for admin approval.'); go('#/login');
+  }catch(e){ alert(e.message||'Register failed'); }
+};
 
-/* ========= Initial boot ========= */
+/*** ========= AUTO-CANCEL SWEEPER + LIVE REFRESH ========= ***/
+async function sweepAutoCancel(){
+  try{
+    await refreshCaches();
+    const waitings = cache.orders.filter(o=>o.status==='WAITING' && Number(o.autoCancelAt||0) < now());
+    for(const o of waitings){
+      // refund
+      const u = cache.users.find(x=>x.email===o.userEmail);
+      if(u) await sPatchBySearch(SHEETS.users,{email:u.email},{balance:Number(u.balance||0)+Number(o.amount||0)});
+      // mark cancelled
+      await sPatchBySearch(SHEETS.orders,{id:o.id},{status:'CANCELLED'});
+    }
+    if(waitings.length) await refreshCaches();
+    if(current){ current = cache.users.find(u=>u.email===current.email) || current; syncHeaderFooter(); }
+    const route = (location.hash||'#/login').replace('#/','');
+    if(route==='history') renderHistory();
+    if(route==='admin-orders') renderAdminOrders();
+    if(route==='admin-users') renderAdminUsers();
+    if(route==='dashboard') renderDashboard();
+  }catch(e){ /* ignore transient errors */ }
+}
+setInterval(sweepAutoCancel, 15000);
+
+/*** ========= BOOT ========= ***/
 (async function boot(){
-  await fetchCSVOrders(); // load server orders if CSV set
+  await refreshCaches();
   syncHeaderFooter();
   onRoute();
 })();
