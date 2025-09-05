@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Sarkar Telecom</title>
+<style>
+  :root{
+    --bg:#121212;--panel:#1e1e1e;--panel-2:#181818;--border:#2b2b2b;
+    --text:#f1f1f1;--muted:#bdbdbd;--brand:#4cafef;--hover:#2a2a2a;
+    --ok:#2ecc71;--warn:#f1c40f;--bad:#e74c3c;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,Segoe UI,Arial,sans-serif}
+  a{color:inherit;text-decoration:none}
+  /* Header */
+  header{
+    position:fixed;top:0;left:0;right:0;z-index:20;height:52px;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:0 12px;background:var(--panel);border-bottom:1px solid var(--border)
+  }
+  .brand{display:flex;align-items:center;gap:10px}
+  .menu-btn{border:0;background:transparent;color:#fff;font-size:20px;cursor:pointer}
+  .title{font-size:16px;font-weight:700;color:var(--brand)}
+  .userbar{display:flex;align-items:center;gap:10px}
+  .chip{font-size:12px;color:var(--muted)}
+  .avatar{width:30px;height:30px;border-radius:50%;object-fit:cover;border:1px solid var(--border)}
+  .header-cta{background:var(--brand);border:0;color:#fff;padding:6px 10px;border-radius:8px;font-size:12px;cursor:pointer}
+  /* Drawer */
+  .drawer{
+    position:fixed;inset:52px auto 52px 0;width:260px;background:var(--panel);
+    border-right:1px solid var(--border);transform:translateX(-100%);transition:transform .25s ease;z-index:15
+  }
+  .drawer.open{transform:translateX(0)}
+  .nav a{display:block;padding:12px 14px;border-bottom:1px solid var(--border);font-size:14px;color:#ddd}
+  .nav a:hover{background:#262626}
+  /* Main + Footer */
+  main{padding:66px 12px 70px;max-width:1000px;margin:0 auto}
+  footer{
+    position:fixed;left:0;right:0;bottom:0;height:52px;background:var(--panel);border-top:1px solid var(--border);
+    display:flex;align-items:center;justify-content:space-between;padding:0 12px;color:var(--muted);z-index:20
+  }
+  .foot-left{display:flex;gap:12px;align-items:center;font-size:12px}
+  .foot-right{font-size:12px}
+  /* Cards / sections */
+  .card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:14px}
+  .row{display:grid;gap:12px}
+  @media(min-width:720px){.row-2{grid-template-columns:1fr 1fr}}
+  h2,h3{margin:0 0 10px}
+  .muted{color:var(--muted);font-size:13px}
+  input,select,button,textarea{
+    background:var(--panel-2);border:1px solid var(--border);color:var(--text);
+    border-radius:10px;padding:10px;font-size:14px;width:100%
+  }
+  button{cursor:pointer}
+  .btn{background:var(--brand);border:0}
+  .btn:disabled{opacity:.6;cursor:not-allowed}
+  .btn-text{background:transparent;border:0;color:var(--brand)}
+  .actions{display:flex;gap:8px;flex-wrap:wrap}
+  .pill{padding:5px 8px;border-radius:999px;font-size:12px;border:1px solid var(--border);background:var(--panel-2)}
+  .status{color:#111}
+  .waiting{background:var(--warn);color:#111}
+  .completed{background:var(--ok);color:#111}
+  .cancelled{background:var(--bad);color:#fff}
+  /* Order grid */
+  .gift-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:10px 0 8px}
+  .gift{background:var(--panel-2);border:1px solid var(--border);border-radius:12px;padding:14px;text-align:center;cursor:pointer}
+  .gift.selected{outline:2px solid var(--brand);background:#20242a}
+  .balance-line{font-size:13px;color:var(--muted);margin-top:6px}
+  .confirm-wrap{position:sticky;bottom:62px;background:transparent;padding-top:8px}
+  /* Tables (history/admin) */
+  .toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:8px}
+  .table{width:100%;border-collapse:collapse}
+  .table th,.table td{padding:10px;border-bottom:1px solid var(--border);text-align:center;font-size:13px}
+  .table th{color:var(--brand);background:#171717}
+  .table tr:hover{background:#171717}
+  .pagination{display:flex;gap:6px;justify-content:center;margin-top:10px}
+  .tag{font-size:11px;color:#999}
+  .right{margin-left:auto}
+  .hidden{display:none!important}
+  .banner{background:#0f1720;border:1px solid #153a55;color:#83c8ff;border-radius:12px;padding:10px;margin-bottom:10px}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <button class="menu-btn" id="menuBtn">☰</button>
+    <div class="title">Sarkar Telecom</div>
+  </div>
+  <div class="userbar">
+    <span id="hdrUser" class="chip"></span>
+    <span id="hdrBal" class="chip"></span>
+    <span id="hdrTier" class="chip"></span>
+    <img id="hdrAvatar" class="avatar" src="" alt="avatar" />
+    <button class="header-cta" id="goOrder">New Order</button>
+  </div>
+</header>
+
+<nav class="drawer" id="drawer">
+  <div class="nav">
+    <a href="#/dashboard">🏠 Dashboard</a>
+    <a href="#/order">➕ Create Order</a>
+    <a href="#/history">📑 Order History</a>
+    <a href="#/profile">👤 Profile</a>
+    <a href="#/admin-orders">🛠️ Admin: Orders</a>
+    <a href="#/admin-users">👥 Admin: Users</a>
+    <a href="#/logout">🚪 Logout</a>
+  </div>
+</nav>
+
+<main id="app">
+  <!-- dynamic content -->
+</main>
+
+<footer>
+  <div class="foot-left">
+    <span id="fBal">Balance: 💎 0</span>
+    <span id="fTier">Tier: L0</span>
+  </div>
+  <div class="foot-right">© 2025-2025 Sarkar Telecom · All rights reserved</div>
+</footer>
+
+<script>
+/* ========= Utilities & Storage ========= */
+const LS = {
+  get(k,def){ try{const v=JSON.parse(localStorage.getItem(k)); return v??def; }catch(_){return def}},
+  set(k,v){ localStorage.setItem(k,JSON.stringify(v)) }
+};
+const now = ()=> Date.now();
+const fmtDT = ts => new Date(ts).toLocaleString();
+
+/* Asia/Dhaka weekly window (Thu 22:00 BD to next Thu 22:00 BD) */
+function currentBangladeshTime(){
+  // BD is UTC+6; this simple offset works fine in WebView
+  const d=new Date();
+  return new Date(d.getTime()+6*60*60*1000);
+}
+function currentWeekWindow(){
+  // Find last Thu 22:00 BD
+  const bd = currentBangladeshTime();
+  const day=bd.getUTCDay(); // 0=Sun ... 4=Thu
+  const bdMillis=bd.getTime();
+  // Move to BD midnight of today
+  const bdDate=new Date(bdMillis);
+  bdDate.setUTCHours(0,0,0,0);
+  // Offset to Thursday this week
+  const diffToThu = (day>=4)? (day-4) : (7-(4-day));
+  const lastThuMidnight = new Date(bdDate.getTime() - diffToThu*24*60*60*1000);
+  const lastThu2200 = new Date(lastThuMidnight.getTime() + 22*60*60*1000);
+  // If we're before Thu 22:00, subtract 7 days
+  const start = (bdMillis>=lastThu2200.getTime()) ? lastThu2200 : new Date(lastThu2200.getTime()-7*24*60*60*1000);
+  const end = new Date(start.getTime()+7*24*60*60*1000);
+  // Return in real UTC epoch (remove our manual +6)
+  const toUTC = d => new Date(d.getTime()-6*60*60*1000).getTime();
+  return {start: toUTC(start), end: toUTC(end)};
+}
+
+/* Reward tiers map */
+const rewardTiers = [
+  {limit:800000, level:5, label:"L5", rate:3.5},
+  {limit:80000,  level:4, label:"L4", rate:2.6},
+  {limit:40000,  level:3, label:"L3", rate:2.1},
+  {limit:20000,  level:2, label:"L2", rate:1.6},
+  {limit:5000,   level:1, label:"L1", rate:1.0},
+  {limit:0,      level:0, label:"L0", rate:0.0},
+];
+function tierFromAmount(sum){
+  for(const t of rewardTiers) if(sum>=t.limit) return t;
+  return rewardTiers.at(-1);
+}
+
+/* Seed demo users if empty */
+function seed(){
+  const users = LS.get('users', null);
+  if(!users){
+    const demo=[
+      {id:'U1',email:'admin@sarkartelecom.com',password:'admin123',name:'Admin',phone:'',role:'admin',approved:true,balance:1000000000000,avatar:'',pending:false},
+      {id:'U2',email:'user1@sarkartelecom.com',password:'user123',name:'User One',phone:'',role:'user',approved:true,balance:1000000,avatar:'',pending:false},
+    ];
+    LS.set('users', demo);
+  }
+  if(!LS.get('orders', null)) LS.set('orders',[]);
+  if(!LS.get('lastWeeklyReset', null)) LS.set('lastWeeklyReset',0);
+}
+seed();
+
+/* Simple auth helpers */
+function currentUser(){ return LS.get('loggedInUser', null); }
+function setCurrentUser(u){ LS.set('loggedInUser', u); refreshHeaderFooter(); }
+
+/* Weekly auto reset if crossed threshold */
+function maybeWeeklyReset(){
+  const {start} = currentWeekWindow();
+  const last = LS.get('lastWeeklyReset', 0);
+  if(last < start){ // week rolled
+    // Reset each user's weekly counters (we compute live; just mark reset moment)
+    LS.set('lastWeeklyReset', start);
+  }
+}
+
+/* Compute user's weekly completed sum */
+function weeklyCompletedSum(email){
+  const {start,end} = currentWeekWindow();
+  const orders = LS.get('orders',[]);
+  return orders
+    .filter(o=>o.userEmail===email && o.status==='completed' && o.timestamp>=start && o.timestamp<end)
+    .reduce((s,o)=>s+o.amount,0);
+}
+
+/* Balance helpers (global, synced) */
+function getUserByEmail(email){
+  return LS.get('users',[]).find(u=>u.email===email);
+}
+function saveUser(u){
+  const arr=LS.get('users',[]);
+  const i=arr.findIndex(x=>x.email===u.email);
+  if(i>=0){ arr[i]=u; LS.set('users',arr); if(currentUser()?.email===u.email) setCurrentUser(u); }
+}
+function adjustBalance(email, delta){
+  const u=getUserByEmail(email); if(!u) return;
+  u.balance = Math.max(0, Math.round((u.balance + delta)*100)/100);
+  saveUser(u);
+}
+
+/* Auto-cancel waiting orders older than 5 minutes */
+function autocancelSweep(){
+  const orders = LS.get('orders',[]);
+  let changed=false;
+  const nowTS = now();
+  for(const o of orders){
+    if(o.status==='waiting' && nowTS - o.timestamp > 5*60*1000){
+      o.status='cancelled';
+      // refund
+      adjustBalance(o.userEmail, o.amount);
+      changed=true;
+    }
+  }
+  if(changed) LS.set('orders',orders);
+}
+
+/* ========= SPA Router ========= */
+const app = document.getElementById('app');
+const drawer = document.getElementById('drawer');
+document.getElementById('menuBtn').addEventListener('click', ()=> drawer.classList.toggle('open'));
+document.getElementById('goOrder').addEventListener('click', ()=>{ location.hash='#/order'; drawer.classList.remove('open'); });
+
+window.addEventListener('hashchange', render);
+window.addEventListener('load', ()=>{ if(!location.hash) location.hash='#/dashboard'; render(); setInterval(tick, 3000); });
+
+function tick(){
+  maybeWeeklyReset();
+  autocancelSweep();
+  refreshHeaderFooter();
+  // if on list screens, re-render to reflect live updates
+  const h=location.hash;
+  if(['#/history','#/admin-orders','#/admin-users','#/dashboard'].includes(h)) render();
+}
+
+/* ========= Views ========= */
+function guardLogin(){
+  const u=currentUser();
+  if(!u){ location.hash='#/login'; return false; }
+  if(!u.approved && u.role!=='admin'){ // admins bypass approval
+    alert('Your account needs admin approval. Please wait.');
+    return false;
+  }
+  return true;
+}
+
+function headerInfo(){
+  const u=currentUser();
+  const hdrUser=document.getElementById('hdrUser');
+  const hdrBal=document.getElementById('hdrBal');
+  const hdrTier=document.getElementById('hdrTier');
+  const hdrAvatar=document.getElementById('hdrAvatar');
+  if(!u){
+    hdrUser.textContent='Not logged in';
+    hdrBal.textContent='';
+    hdrTier.textContent='';
+    hdrAvatar.src='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg"/>';
+    return;
+  }
+  const weekly = weeklyCompletedSum(u.email);
+  const tier = tierFromAmount(weekly);
+  hdrUser.textContent = `${u.email} (${u.role})`;
+  hdrBal.textContent  = `💎 ${u.balance.toLocaleString()}`;
+  hdrTier.textContent = `Tier ${tier.label}`;
+  hdrAvatar.src = u.avatar || defaultAvatarSVG(u.name||u.email);
+}
+
+function footerInfo(){
+  const u=currentUser();
+  const fBal=document.getElementById('fBal');
+  const fTier=document.getElementById('fTier');
+  if(!u){ fBal.textContent=''; fTier.textContent=''; return; }
+  const weekly = weeklyCompletedSum(u.email);
+  const tier = tierFromAmount(weekly);
+  fBal.textContent = `Balance: 💎 ${u.balance.toLocaleString()}`;
+  fTier.textContent= `Tier: ${tier.label}`;
+}
+function refreshHeaderFooter(){ headerInfo(); footerInfo(); }
+
+/* --- LOGIN --- */
+function viewLogin(){
+  app.innerHTML = `
+  <div class="card" style="max-width:420px;margin:0 auto;">
+    <h3>Login · Sarkar Telecom</h3>
+    <div class="muted">Email and password</div>
+    <div class="row">
+      <input id="liEmail" type="email" placeholder="Email" />
+      <input id="liPass" type="password" placeholder="Password" />
+      <button class="btn" id="btnLogin">Login</button>
+      <button class="btn-text" id="goReg">Create account</button>
+    </div>
+  </div>`;
+  document.getElementById('btnLogin').onclick=()=>{
+    const email=val('liEmail'), pass=val('liPass');
+    const u = LS.get('users',[]).find(x=>x.email===email && x.password===pass);
+    if(!u){ alert('Invalid credentials'); return; }
+    if(u.role!=='admin' && !u.approved){ alert('Account pending admin approval.'); return; }
+    setCurrentUser(u);
+    location.hash='#/dashboard';
+  };
+  document.getElementById('goReg').onclick=()=> location.hash='#/register';
+}
+
+/* --- REGISTER --- */
+function viewRegister(){
+  app.innerHTML = `
+  <div class="card" style="max-width:480px;margin:0 auto;">
+    <h3>Register · Sarkar Telecom</h3>
+    <div class="muted">Admin approval required</div>
+    <div class="row">
+      <input id="rName" placeholder="Full name" />
+      <input id="rEmail" type="email" placeholder="Email" />
+      <input id="rPhone" type="tel" placeholder="Phone (optional)" />
+      <input id="rPass" type="password" placeholder="Password" />
+      <button class="btn" id="btnReg">Register</button>
+      <button class="btn-text" id="goLogin">Already have an account? Login</button>
+    </div>
+  </div>`;
+  byId('goLogin').onclick=()=> location.hash='#/login';
+  byId('btnReg').onclick=()=>{
+    const name=val('rName'), email=val('rEmail'), phone=val('rPhone'), pass=val('rPass');
+    if(!email||!pass){ alert('Email & password required'); return; }
+    const users=LS.get('users',[]);
+    if(users.some(u=>u.email===email)){ alert('Email already exists'); return; }
+    users.push({id:'U'+(users.length+1),email,password:pass,name,phone,role:'user',approved:false,pending:true,balance:0,avatar:''});
+    LS.set('users',users);
+    alert('Registered! Wait for admin approval.');
+    location.hash='#/login';
+  };
+}
+
+/* --- DASHBOARD --- */
+function viewDashboard(){
+  if(!guardLogin()) return;
+  const u=currentUser();
+  const weekSum=weeklyCompletedSum(u.email);
+  const tier=tierFromAmount(weekSum);
+  app.innerHTML=`
+  <div class="banner">Welcome to <b>Sarkar Telecom</b>. Manage diamond gifting with live updates.</div>
+  <div class="row row-2">
+    <div class="card">
+      <h3>Account</h3>
+      <div class="muted">Email: ${u.email}</div>
+      <div class="muted">Role: ${u.role}</div>
+      <div class="muted">Phone: ${u.phone||'-'}</div>
+      <div class="muted">Balance: 💎 ${u.balance.toLocaleString()}</div>
+      <div class="muted">Weekly Completed: 💎 ${weekSum.toLocaleString()} · Tier ${tier.label} (${tier.rate}%)</div>
+      <div class="actions" style="margin-top:10px">
+        <button class="btn" onclick="location.hash='#/order'">Create Order</button>
+        <button class="btn-text" onclick="location.hash='#/history'">View History</button>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Tips</h3>
+      <div class="muted">• Orders auto-cancel in 5 minutes if not completed by admin (refunds apply).</div>
+      <div class="muted">• Weekly window: Thursday 10:00 PM (BD) → next Thursday 10:00 PM (BD).</div>
+      <div class="muted">• Admin can reset weekly counters manually in Admin Users.</div>
+    </div>
+  </div>`;
+}
+
+/* --- ORDER --- */
+const DIAMOND_STEPS=[10,50,100,200,500,1000,2000,5000,10000,20000];
+
+function viewOrder(){
+  if(!guardLogin()) return;
+  const u=currentUser();
+  app.innerHTML=`
+  <div class="card" style="max-width:680px;margin:0 auto;">
+    <h3 style="margin-bottom:6px">Gifting Order</h3>
+    <div class="muted">Gift Recipient *</div>
+    <input id="recipient" type="number" inputmode="numeric" placeholder="Enter Profile ID or Number">
+    <div class="muted" style="margin-top:10px">Select a Gift *</div>
+    <div class="gift-grid" id="giftGrid"></div>
+    <div class="confirm-wrap">
+      <button class="btn" id="confirmBtn" disabled>Order Confirm</button>
+      <div class="balance-line" id="balLine">Balance: 💎 ${u.balance.toLocaleString()}</div>
+    </div>
+  </div>`;
+  const grid=byId('giftGrid');
+  let selected=null;
+  DIAMOND_STEPS.forEach(v=>{
+    const d=document.createElement('div');
+    d.className='gift';
+    d.textContent='💎 '+v.toLocaleString();
+    d.onclick=()=>{
+      [...grid.children].forEach(c=>c.classList.remove('selected'));
+      d.classList.add('selected'); selected=v; check();
+    };
+    grid.appendChild(d);
+  });
+  const recipient=byId('recipient'), btn=byId('confirmBtn'), balLine=byId('balLine');
+  recipient.oninput=check;
+  function check(){ btn.disabled = !(recipient.value.trim() && selected); }
+  btn.onclick=()=>{
+    const clientId = recipient.value.trim();
+    if(!selected) return;
+    const fresh=getUserByEmail(u.email); // sync balance
+    if(selected>fresh.balance){ alert('Insufficient balance'); return; }
+    // Deduct & save
+    adjustBalance(fresh.email, -selected);
+    // Create order
+    const orders=LS.get('orders',[]);
+    const id='ORD-'+Math.random().toString(36).slice(2,8).toUpperCase();
+    const o={ id, userEmail:fresh.email, clientId, amount:selected, status:'waiting', timestamp:now() };
+    orders.unshift(o);
+    LS.set('orders',orders);
+    setCurrentUser(getUserByEmail(fresh.email)); // refresh header/footer
+    alert(`Order placed: ${id} · 💎 ${selected}`);
+    location.hash='#/history';
+  };
+}
+
+/* --- ORDER HISTORY (client) --- */
+function viewHistory(){
+  if(!guardLogin()) return;
+  const u=currentUser();
+  const orders=LS.get('orders',[]).filter(o=>o.userEmail===u.email).sort((a,b)=>b.timestamp-a.timestamp);
+  renderOrdersList({
+    title:'Order History',
+    orders,
+    allowAdminActions:false,
+    showCreateButton:true,
+    onSearch: q => viewHistory() // rerender
+  });
+}
+
+/* --- ADMIN ORDERS --- */
+function viewAdminOrders(){
+  if(!guardLogin()) return;
+  const u=currentUser(); if(u.role!=='admin'){ alert('Admin only'); location.hash='#/dashboard'; return; }
+  const orders=LS.get('orders',[]).sort((a,b)=>b.timestamp-a.timestamp);
+  renderOrdersList({
+    title:'Admin · Manage Orders',
+    orders,
+    allowAdminActions:true,
+    showCreateButton:false,
+    onSearch: q => viewAdminOrders()
+  });
+}
+
+/* Shared renderer for order tables with search & pagination */
+function renderOrdersList({title,orders,allowAdminActions,showCreateButton,onSearch}){
+  const q = (val('qSearch')||'').toLowerCase();
+  const fStatus = val('qStatus')||'';
+  let list = orders;
+  // Filter by query (id, clientId, amount, time)
+  if(q){
+    list = list.filter(o =>
+      o.id.toLowerCase().includes(q) ||
+      String(o.clientId).toLowerCase().includes(q) ||
+      String(o.amount).includes(q) ||
+      fmtDT(o.timestamp).toLowerCase().includes(q)
+    );
+  }
+  if(fStatus) list = list.filter(o=>o.status===fStatus);
+  // Pagination (10 per page)
+  const page = Number(sessionStorage.getItem('page_'+location.hash)) || 1;
+  const per=10, total=list.length, pages=Math.max(1, Math.ceil(total/per));
+  const start=(page-1)*per, pageItems=list.slice(start,start+per);
+
+  app.innerHTML = `
+  <div class="card">
+    <h3 style="margin-bottom:8px">${title}</h3>
+    <div class="toolbar">
+      <input id="qSearch" placeholder="Search: Order ID, Client ID, Amount, Time" value="${q||''}">
+      <select id="qStatus">
+        <option value="">All</option>
+        <option value="waiting" ${fStatus==='waiting'?'selected':''}>Waiting</option>
+        <option value="completed" ${fStatus==='completed'?'selected':''}>Completed</option>
+        <option value="cancelled" ${fStatus==='cancelled'?'selected':''}>Cancelled</option>
+      </select>
+      <span class="right tag">Last order first · ${total} result(s)</span>
+    </div>
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Order ID</th>
+            <th>Client ID</th>
+            <th>Amount 💎</th>
+            <th>Status</th>
+            <th>Time</th>
+            ${allowAdminActions?'<th>Action</th>':''}
+          </tr>
+        </thead>
+        <tbody id="rows"></tbody>
+      </table>
+      <div class="pagination" id="pager"></div>
+    </div>
+    ${showCreateButton?'<div class="actions" style="margin-top:10px"><button class="btn" onclick="location.hash=\'#/order\'">➕ Create New Order</button></div>':''}
+  </div>`;
+
+  const rows = byId('rows');
+  for(const o of pageItems){
+    const pill = `<span class="pill status ${o.status}">${o.status}</span>`;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${o.id}</td>
+      <td>${o.clientId}</td>
+      <td>💎 ${o.amount.toLocaleString()}</td>
+      <td>${pill}</td>
+      <td>${fmtDT(o.timestamp)}</td>
+      ${allowAdminActions?`
+        <td class="actions">
+          <button class="btn" data-act="complete" data-id="${o.id}">Complete</button>
+          <button class="btn" data-act="cancel" data-id="${o.id}" style="background:var(--bad)">Cancel</button>
+        </td>`:''}
+    `;
+    rows.appendChild(tr);
+  }
+  // pager
+  const pager=byId('pager');
+  function go(p){ sessionStorage.setItem('page_'+location.hash, String(p)); render(); }
+  for(let p=1;p<=pages;p++){
+    const b=document.createElement('button');
+    b.className='pill'; b.textContent=p; if(p===page){ b.style.borderColor='var(--brand)'; }
+    b.onclick=()=>go(p);
+    pager.appendChild(b);
+  }
+  // Search handlers
+  byId('qSearch').oninput=(e)=>{ sessionStorage.setItem('qSearch', e.target.value); render(); };
+  byId('qStatus').onchange=(e)=>{ sessionStorage.setItem('qStatus', e.target.value); render(); };
+
+  // Admin actions logic
+  if(allowAdminActions){
+    rows.addEventListener('click', e=>{
+      const btn = e.target.closest('button[data-id]');
+      if(!btn) return;
+      const act = btn.dataset.act, id = btn.dataset.id;
+      const all = LS.get('orders',[]);
+      const o = all.find(x=>x.id===id); if(!o) return;
+      if(act==='complete' && o.status!=='completed'){
+        o.status='completed';
+        // NOTE: no balance change on complete (per requirement)
+      }else if(act==='cancel' && o.status!=='cancelled'){
+        o.status='cancelled';
+        // refund now
+        adjustBalance(o.userEmail, o.amount);
+      }
+      LS.set('orders',all);
+      render();
+    });
+  }
+}
+
+/* --- ADMIN USERS --- */
+function viewAdminUsers(){
+  if(!guardLogin()) return;
+  const me=currentUser(); if(me.role!=='admin'){ alert('Admin only'); location.hash='#/dashboard'; return; }
+  const users=LS.get('users',[]);
+  const q = (val('uSearch')||'').toLowerCase();
+  const list = q ? users.filter(u =>
+      u.email.toLowerCase().includes(q) ||
+      (u.name||'').toLowerCase().includes(q) ||
+      (u.phone||'').toLowerCase().includes(q)
+    ) : users;
+
+  app.innerHTML=`
+  <div class="card">
+    <h3>Admin · Users</h3>
+    <div class="toolbar">
+      <input id="uSearch" placeholder="Search users by name/email/phone" value="${q||''}">
+      <button class="pill" id="btnResetWeek">Manual Weekly Reset</button>
+      <span class="right tag">Admin balance: 💎 ${me.balance.toLocaleString()}</span>
+    </div>
+    <div id="userList"></div>
+  </div>`;
+
+  byId('btnResetWeek').onclick=()=>{
+    LS.set('lastWeeklyReset', currentWeekWindow().start);
+    alert('Weekly counters reset checkpoint updated.');
+    render();
+  };
+  byId('uSearch').oninput=(e)=>{ sessionStorage.setItem('uSearch', e.target.value); render(); };
+
+  const box=byId('userList');
+  list.forEach(u=>{
+    const weekly = weeklyCompletedSum(u.email);
+    const tier = tierFromAmount(weekly);
+    const row=document.createElement('div');
+    row.className='card';
+    row.style.marginTop='10px';
+    row.innerHTML=`
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+        <img class="avatar" src="${u.avatar||defaultAvatarSVG(u.name||u.email)}" alt="">
+        <div style="min-width:180px">
+          <div><b>${u.name||'-'}</b> · <span class="tag">${u.email}</span></div>
+          <div class="muted">Role: ${u.role} · Phone: ${u.phone||'-'} · Balance: 💎 ${u.balance.toLocaleString()}</div>
+          <div class="muted">Weekly: 💎 ${weekly.toLocaleString()} · Tier ${tier.label}</div>
+          <div class="muted">${u.approved?'Approved':'Pending approval'}</div>
+        </div>
+        <div class="right actions">
+          ${u.approved?`<button class="pill" data-act="revoke" data-email="${u.email}">Revoke</button>`:
+                        `<button class="pill" data-act="approve" data-email="${u.email}">Approve</button>`}
+          <select data-act="role" data-email="${u.email}">
+            <option value="user" ${u.role==='user'?'selected':''}>User</option>
+            <option value="admin" ${u.role==='admin'?'selected':''}>Admin</option>
+          </select>
+          <input style="width:120px" type="number" step="1" min="0" placeholder="Add 💎" data-act="addbal" data-email="${u.email}">
+          <button class="pill" data-act="save" data-email="${u.email}">Save</button>
+        </div>
+      </div>
+      <div class="row" style="margin-top:8px">
+        <input placeholder="Name" value="${escapeAttr(u.name||'')}" data-edit="name" data-email="${u.email}">
+        <input placeholder="Phone" value="${escapeAttr(u.phone||'')}" data-edit="phone" data-email="${u.email}">
+        <input placeholder="Password" value="${escapeAttr(u.password||'')}" data-edit="password" data-email="${u.email}">
+        <input type="file" accept="image/*" data-edit="avatar" data-email="${u.email}">
+      </div>
+    `;
+    box.appendChild(row);
+  });
+
+  box.addEventListener('change', e=>{
+    const t=e.target;
+    const email=t.dataset.email; if(!email) return;
+    const users=LS.get('users',[]);
+    const u=users.find(x=>x.email===email); if(!u) return;
+
+    if(t.dataset.act==='role'){
+      u.role=t.value; LS.set('users',users); if(currentUser()?.email===u.email) setCurrentUser(u); render();
+    }
+  });
+  box.addEventListener('click', e=>{
+    const btn=e.target.closest('[data-act]'); if(!btn) return;
+    const act=btn.dataset.act, email=btn.dataset.email;
+    const users=LS.get('users',[]); const u=users.find(x=>x.email===email); if(!u) return;
+    if(act==='approve'){ u.approved=true; u.pending=false; LS.set('users',users); render(); }
+    else if(act==='revoke'){ u.approved=false; u.pending=true; LS.set('users',users); render(); }
+    else if(act==='save'){
+      // read adjacent inputs
+      const root=btn.closest('.card');
+      u.name = root.querySelector('[data-edit="name"]').value.trim();
+      u.phone= root.querySelector('[data-edit="phone"]').value.trim();
+      u.password = root.querySelector('[data-edit="password"]').value;
+      const fileInput = root.querySelector('[data-edit="avatar"]');
+      if(fileInput.files && fileInput.files[0]){
+        const f=fileInput.files[0];
+        const rdr=new FileReader();
+        rdr.onload=()=>{ u.avatar=rdr.result; LS.set('users',users); if(currentUser()?.email===u.email) setCurrentUser(u); render(); };
+        rdr.readAsDataURL(f);
+      }else{
+        LS.set('users',users); if(currentUser()?.email===u.email) setCurrentUser(u); render();
+      }
+    }else if(act==='addbal'){
+      const inp = e.target.previousElementSibling; // the number input
+      const val = Number(inp.value||'0');
+      if(val<=0){ alert('Enter amount'); return; }
+      // Admin pays: deduct from me, add to user
+      if(me.email===u.email){ alert('Admin cannot transfer to self in this control.'); return; }
+      const admin=getUserByEmail(me.email);
+      if(admin.balance<val){ alert('Admin balance too low'); return; }
+      adjustBalance(admin.email, -val);
+      adjustBalance(u.email, +val);
+      alert(`Transferred 💎 ${val.toLocaleString()} to ${u.email}`);
+      render();
+    }
+  });
+}
+
+/* --- PROFILE --- */
+function viewProfile(){
+  if(!guardLogin()) return;
+  const u=currentUser();
+  app.innerHTML=`
+  <div class="card" style="max-width:560px;margin:0 auto;">
+    <h3>Profile</h3>
+    <div class="row">
+      <div class="actions" style="align-items:center">
+        <img class="avatar" id="pfAvatar" src="${u.avatar||defaultAvatarSVG(u.name||u.email)}" alt="">
+        <input type="file" id="pfAvatarFile" accept="image/*">
+      </div>
+      <input id="pfName" placeholder="Name" value="${escapeAttr(u.name||'')}">
+      <input id="pfPhone" placeholder="Phone" value="${escapeAttr(u.phone||'')}">
+      <input id="pfPassword" placeholder="Password" value="${escapeAttr(u.password||'')}">
+      <button class="btn" id="pfSave">Save</button>
+    </div>
+  </div>`;
+  byId('pfSave').onclick=()=>{
+    const me=getUserByEmail(u.email);
+    me.name=val('pfName'); me.phone=val('pfPhone'); me.password=val('pfPassword');
+    const f=byId('pfAvatarFile').files?.[0];
+    if(f){
+      const reader=new FileReader();
+      reader.onload=()=>{ me.avatar=reader.result; saveUser(me); alert('Profile updated'); render(); };
+      reader.readAsDataURL(f);
+    }else{ saveUser(me); alert('Profile updated'); render(); }
+  };
+}
+
+/* --- LOGOUT --- */
+function viewLogout(){
+  app.innerHTML=`
+    <div class="card" style="max-width:420px;margin:0 auto;">
+      <h3>Logging out...</h3>
+      <div class="muted">You will be redirected to Login in 3 seconds.</div>
+    </div>`;
+  LS.set('loggedInUser', null);
+  setTimeout(()=> location.hash='#/login', 3000);
+}
+
+/* ========= Router dispatcher ========= */
+function render(){
+  refreshHeaderFooter();
+  const h=location.hash||'#/dashboard';
+  drawer.classList.remove('open');
+  switch(h){
+    case '#/login': return viewLogin();
+    case '#/register': return viewRegister();
+    case '#/dashboard': return viewDashboard();
+    case '#/order': return viewOrder();
+    case '#/history': return viewHistory();
+    case '#/admin-orders': return viewAdminOrders();
+    case '#/admin-users': return viewAdminUsers();
+    case '#/profile': return viewProfile();
+    case '#/logout': return viewLogout();
+    default: location.hash='#/dashboard';
+  }
+}
+
+/* ========= Helpers ========= */
+function byId(id){ return document.getElementById(id); }
+function val(id){ const el=byId(id); return el?el.value:''; }
+function escapeAttr(s){ return String(s).replaceAll('"','&quot;'); }
+function defaultAvatarSVG(seed){
+  const txt=encodeURIComponent((seed||'?').slice(0,2).toUpperCase());
+  const bg='20232a', fg='61dafb';
+  return `data:image/svg+xml;utf8,`+
+    `<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100">`+
+    `<rect width="100" height="100" rx="12" ry="12" fill="#${bg}"/>`+
+    `<text x="50" y="58" font-size="42" text-anchor="middle" fill="#${fg}" font-family="Arial">${txt}</text>`+
+    `</svg>`;
+}
+
+/* Initial header/footer if any */
+refreshHeaderFooter();
+</script>
+</body>
+</html>
