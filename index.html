@@ -1,824 +1,205 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Sarkar Telecom – Diamond Portal</title>
-<meta name="theme-color" content="#121212">
-<style>
-  :root{
-    --bg:#0f1115;--card:#171a21;--muted:#a7b0c0;--line:#242938;--brand:#4cafef;
-    --good:#2ecc71;--bad:#e74c3c;--wait:#f1c40f;--txt:#e9eef7;
-  }
-  *{box-sizing:border-box}
-  html,body{height:100%}
-  body{margin:0;background:var(--bg);color:var(--txt);font-family:Inter,system-ui,Segoe UI,Arial,Helvetica,sans-serif}
-  a{color:inherit}
-  /* Header */
-  header{position:fixed;top:0;left:0;right:0;height:56px;background:var(--card);
-    display:flex;align-items:center;justify-content:space-between;padding:0 12px;border-bottom:1px solid var(--line);z-index:60}
-  .left{display:flex;align-items:center;gap:10px}
-  .brand{font-weight:800;color:var(--brand)}
-  .menu-btn{border:none;background:transparent;color:#fff;font-size:20px;cursor:pointer}
-  .right{display:flex;align-items:center;gap:8px}
-  .pill{font-size:12px;color:#fff;background:#111;border:1px solid var(--line);padding:4px 10px;border-radius:999px}
-  .user-chip{display:flex;align-items:center;gap:8px;background:#111;border:1px solid var(--line);padding:4px 8px;border-radius:10px}
-  .user-chip img{width:24px;height:24px;border-radius:50%;object-fit:cover;border:1px solid var(--line);background:#222}
-  /* Drawer */
-  .drawer{position:fixed;top:0;left:0;bottom:0;width:0;overflow:hidden;z-index:70}
-  .drawer.open{width:260px}
-  .drawer .panel{width:260px;height:100%;background:var(--card);border-right:1px solid var(--line);display:flex;flex-direction:column}
-  .nav a{display:block;padding:12px 16px;color:#cfd7e6;text-decoration:none;border-bottom:1px solid var(--line);font-size:14px}
-  .nav a:hover,.nav a.active{background:#232838}
-  .scrim{position:fixed;inset:0;background:#0008;opacity:0;pointer-events:none;transition:opacity .2s;z-index:65}
-  .drawer.open ~ .scrim{opacity:1;pointer-events:auto}
-  /* Main */
-  main{padding:72px 12px 80px;max-width:1100px;margin:0 auto}
-  h2{font-size:18px;margin:8px 0 12px}
-  .section{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:14px}
-  .row{display:flex;flex-wrap:wrap;gap:10px}
-  .field{display:flex;flex-direction:column;gap:6px;flex:1 1 220px}
-  .field label{font-size:12px;color:var(--muted)}
-  input,select,textarea,button{font:inherit}
-  input,select,textarea{background:#11161f;color:#fff;border:1px solid var(--line);border-radius:10px;padding:10px}
-  .btn{background:var(--brand);color:#fff;border:none;border-radius:10px;padding:10px 14px;cursor:pointer}
-  .btn:disabled{opacity:.6;cursor:not-allowed}
-  .btn.outline{background:transparent;border:1px solid var(--brand);color:var(--brand)}
-  .btn.danger{background:var(--bad)}
-  .btn.good{background:var(--good)}
-  .btn.wait{background:var(--wait);color:#222}
-  /* Gift grid */
-  .gift-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-  .gift{background:#11161f;border:2px solid transparent;border-radius:12px;padding:14px;text-align:center;cursor:pointer;user-select:none}
-  .gift.selected{border-color:var(--brand);background:#1a2130}
-  .gift .price{font-weight:700}
-  /* Table */
-  .table-wrap{overflow:auto;border:1px solid var(--line);border-radius:12px}
-  table{width:100%;border-collapse:collapse;background:#11161f}
-  th,td{padding:10px;border-bottom:1px solid #1f2534;text-align:center;font-size:13px}
-  th{position:sticky;top:0;background:#1a2130;color:#cde9ff;z-index:1}
-  .status{display:inline-block;padding:4px 8px;border-radius:6px;font-weight:700;font-size:12px;color:#111}
-  .status.waiting{background:var(--wait)}
-  .status.completed{background:var(--good);color:#fff}
-  .status.cancelled{background:var(--bad);color:#fff}
-  /* Footer */
-  footer{position:fixed;left:0;right:0;bottom:0;height:56px;background:var(--card);border-top:1px solid var(--line);
-    display:flex;align-items:center;justify-content:space-between;padding:0 12px;z-index:50}
-  .small{font-size:12px;color:var(--muted)}
-  .pill.badge{background:#11161f}
-  /* Utils */
-  .hide{display:none !important}
-  .center{text-align:center}
-  .nowrap{white-space:nowrap}
-  .spacer{height:8px}
-  .w100{width:100%}
-  @media (max-width:640px){
-    .gift-grid{grid-template-columns:repeat(3,1fr)}
-    th,td{font-size:12px;padding:8px}
-    .user-chip span{display:none}
-  }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Diamond Recharge Admin</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #111;
+      color: #fff;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      width: 100%;
+      max-width: 400px;
+      margin: 100px auto;
+      padding: 20px;
+      background: #222;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 5px;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      background: #0d6efd;
+      border: none;
+      border-radius: 5px;
+      color: #fff;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .hidden { display: none; }
+    .tabs { display: flex; background:#333; }
+    .tabs button {
+      flex:1; border-radius:0; border:none;
+      padding:10px; cursor:pointer;
+      background:#444; color:#fff;
+    }
+    .tabs button.active { background:#0d6efd; }
+    table {
+      width:100%; border-collapse:collapse; margin-top:10px;
+    }
+    th, td {
+      border:1px solid #444; padding:8px; text-align:left;
+    }
+  </style>
 </head>
 <body>
 
-<!-- Header -->
-<header>
-  <div class="left">
-    <button id="menuBtn" class="menu-btn" aria-label="Open menu">☰</button>
-    <div class="brand">Sarkar Telecom</div>
+  <!-- Login Form -->
+  <div id="loginDiv" class="container">
+    <h2>🔐 Login</h2>
+    <input type="email" id="email" placeholder="Email">
+    <input type="password" id="password" placeholder="Password">
+    <button onclick="login()">Login</button>
+    <p id="loginError" style="color:red;"></p>
   </div>
-  <div class="right">
-    <span id="hdrUser" class="pill">Guest</span>
-    <span id="hdrRole" class="pill">—</span>
-    <span id="hdrBalance" class="pill">💎 0</span>
-    <div class="user-chip">
-      <img id="hdrAvatar" alt="avatar"/>
-      <span id="hdrName">Not logged in</span>
-    </div>
-  </div>
-</header>
 
-<!-- Drawer -->
-<aside id="drawer" class="drawer" aria-hidden="true">
-  <div class="panel">
-    <nav id="navLinks" class="nav">
-      <a href="#/login">🔐 Login</a>
-      <a href="#/register">📝 Register</a>
-      <a href="#/dashboard">🏠 Dashboard</a>
-      <a href="#/order">➕ Create Order</a>
-      <a href="#/history">📑 Order History</a>
-      <a href="#/users">👥 Users</a>
-      <a href="#/admin">🛠 Admin Panel</a>
-      <a href="#/profile">👤 Profile</a>
-      <a href="#/logout">🚪 Logout</a>
-    </nav>
-  </div>
-</aside>
-<div id="scrim" class="scrim"></div>
-
-<main>
-  <!-- LOGIN -->
-  <section id="view-login" class="section">
-    <h2>Login</h2>
-    <div class="row">
-      <div class="field"><label>Email</label><input id="loginEmail" type="email" placeholder="you@example.com"></div>
-      <div class="field"><label>Password</label><input id="loginPass" type="password" placeholder="••••••••"></div>
+  <!-- Dashboard -->
+  <div id="dashboardDiv" class="hidden">
+    <div class="tabs">
+      <button id="usersTab" class="active" onclick="showTab('users')">Users</button>
+      <button id="ordersTab" onclick="showTab('orders')">Orders</button>
+      <button style="background:#dc3545;" onclick="logout()">Logout</button>
     </div>
-    <div class="row">
-      <button class="btn" id="btnLogin">Login</button>
-      <button class="btn outline" onclick="go('#/register')">Create account</button>
-      <a class="btn outline" href="https://accounts.google.com/signin/recovery" target="_blank" rel="noopener">Forgot Password?</a>
-    </div>
-    <p class="small">নতুন ইউজার রেজিস্টার করলে অ্যাডমিন অ্যাপ্রুভ করার পর লগইন করতে পারবে।</p>
-  </section>
-
-  <!-- REGISTER -->
-  <section id="view-register" class="section hide">
-    <h2>Register</h2>
-    <div class="row">
-      <div class="field"><label>Email</label><input id="regEmail" type="email"></div>
-      <div class="field"><label>Password</label><input id="regPass" type="password"></div>
-      <div class="field"><label>Full Name</label><input id="regName" type="text"></div>
-      <div class="field"><label>Phone</label><input id="regPhone" type="tel" placeholder="+880..."></div>
-    </div>
-    <div class="row">
-      <button class="btn" id="btnRegister">Submit for Approval</button>
-      <button class="btn outline" onclick="go('#/login')">Back to Login</button>
-    </div>
-    <p class="small">রেজিস্ট্রেশন করলে <b>Users</b> শিটে <code>approved=false</code> যাবে; অ্যাডমিন অ্যাপ্রুভ করলে ইউজার লগইন করতে পারবে।</p>
-  </section>
-
-  <!-- DASHBOARD -->
-  <section id="view-dashboard" class="section hide">
-    <h2>Welcome to Sarkar Telecom</h2>
-    <div class="row">
-      <div class="section w100">
-        <div class="row">
-          <div class="field"><label>User</label><input id="dbUser" disabled></div>
-          <div class="field"><label>Role</label><input id="dbRole" disabled></div>
-          <div class="field"><label>Balance</label><input id="dbBal" disabled></div>
-          <div class="field"><label>This Week (BD)</label><input id="dbWeekly" disabled></div>
-          <div class="field"><label>Reward Tier</label><input id="dbTier" disabled></div>
-        </div>
-        <div class="row">
-          <button class="btn" onclick="go('#/order')">➕ Create Order</button>
-          <button class="btn outline" onclick="go('#/history')">📑 Order History</button>
-          <button class="btn outline" onclick="go('#/profile')">👤 Profile</button>
-          <button class="btn outline" onclick="go('#/users')">👥 Users</button>
-          <button class="btn outline" onclick="go('#/admin')">🛠 Admin (if allowed)</button>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ORDER -->
-  <section id="view-order" class="section hide">
-    <h2>Create Order</h2>
-    <div class="field">
-      <label>Gift Recipient (Number / Profile ID)</label>
-      <input id="recipient" type="text" inputmode="numeric" placeholder="Enter Profile ID or Number" oninput="checkOrderForm()">
-    </div>
-    <div class="spacer"></div>
-    <div id="giftGrid" class="gift-grid"></div>
-    <div class="spacer"></div>
-    <div class="row">
-      <button id="btnConfirm" class="btn" disabled>Order Confirm</button>
-      <button class="btn outline" onclick="go('#/history')">View Order History</button>
-      <span class="small">Your balance: <b id="orderBal">💎 0</b></span>
-    </div>
-  </section>
-
-  <!-- ORDER HISTORY -->
-  <section id="view-history" class="section hide">
-    <h2>Order History</h2>
-    <div class="row">
-      <div class="field"><label>Search</label><input id="histSearch" placeholder="Order ID / Client ID / Amount / Time"></div>
-      <div class="field"><label>Status</label>
-        <select id="histStatus">
-          <option value="">All</option>
-          <option value="WAITING">Waiting</option>
-          <option value="COMPLETED">Completed</option>
-          <option value="CANCELLED">Cancelled</option>
-        </select>
-      </div>
-      <div class="field"><label>Weekly Total (BD)</label><input id="histWeekly" disabled></div>
-    </div>
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>Order ID</th><th>Client ID</th><th>Amount</th><th>Status</th><th>Time</th></tr></thead>
-        <tbody id="histBody"></tbody>
-      </table>
-    </div>
-    <div id="histPager" class="row" style="justify-content:center;gap:6px;margin-top:8px"></div>
-    <div class="row">
-      <button class="btn" onclick="go('#/order')">➕ Create New Order</button>
-      <div id="tierBadge" class="pill badge">Tier: –</div>
-    </div>
-  </section>
-
-  <!-- USERS -->
-  <section id="view-users" class="section hide">
-    <h2>Registered Users</h2>
-    <div class="row">
-      <div class="field"><label>Find user</label><input id="userSearch" placeholder="Email / Name / Phone"></div>
-      <div class="field"><label>Role</label>
-        <select id="userRoleFilter">
-          <option value="">All</option>
-          <option value="admin">Admin</option>
-          <option value="user">User</option>
-          <option value="pending">Pending</option>
-        </select>
-      </div>
-    </div>
-    <div class="table-wrap">
+    <div id="usersContent">
+      <h2>👤 Users</h2>
       <table>
         <thead>
-          <tr><th>Logo</th><th>Name</th><th>Email</th><th>Phone</th><th>Role</th><th>Approved</th><th>Balance</th><th>Weekly</th><th>Action</th></tr>
+          <tr>
+            <th>Email</th>
+            <th>Name</th>
+            <th>Phone</th>
+            <th>Role</th>
+            <th>Balance</th>
+          </tr>
         </thead>
-        <tbody id="usersBody"></tbody>
+        <tbody id="usersTable"></tbody>
       </table>
     </div>
-    <div class="small">Only admins can approve/reject, edit, change role, and add balance.</div>
-  </section>
-
-  <!-- ADMIN -->
-  <section id="view-admin" class="section hide">
-    <h2>Admin Panel</h2>
-    <div class="row">
-      <div class="field"><label>Admin Balance (self)</label><input id="adminBal" disabled></div>
-      <div class="field"><label>Pending Registrations</label><input id="adminPend" disabled></div>
-      <div class="field"><label>Weekly Reset (BD)</label><input id="adminResetInfo" disabled></div>
+    <div id="ordersContent" class="hidden">
+      <h2>📦 Orders</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Client ID</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>User Email</th>
+            <th>Timestamp</th>
+          </tr>
+        </thead>
+        <tbody id="ordersTable"></tbody>
+      </table>
     </div>
-
-    <div class="section">
-      <h2>Manage All Orders</h2>
-      <div class="row">
-        <div class="field w100">
-          <label>Search Orders</label>
-          <input id="admOrderSearch" placeholder="Order ID / Client ID / Email / Amount / Time">
-        </div>
-      </div>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Order ID</th><th>User</th><th>Client</th><th>Amount</th><th>Status</th><th>Time</th><th>Action</th></tr></thead>
-          <tbody id="admOrdersBody"></tbody>
-        </table>
-      </div>
-      <div id="admPager" class="row" style="justify-content:center;gap:6px;margin-top:8px"></div>
-    </div>
-  </section>
-
-  <!-- PROFILE -->
-  <section id="view-profile" class="section hide">
-    <h2>Profile</h2>
-    <div class="row">
-      <div class="field">
-        <label>Logo</label>
-        <input type="file" id="avatarFile" accept="image/*">
-        <div class="spacer"></div>
-        <img id="profAvatar" alt="avatar" style="width:72px;height:72px;border-radius:50%;border:1px solid var(--line);object-fit:cover;background:#222"/>
-      </div>
-      <div class="field"><label>Name</label><input id="profName"></div>
-      <div class="field"><label>Email (read-only)</label><input id="profEmail" disabled></div>
-      <div class="field"><label>Phone</label><input id="profPhone" placeholder="+880..."></div>
-      <div class="field"><label>Password</label><input id="profPass" type="password" placeholder="Change password"></div>
-    </div>
-    <div class="row">
-      <button class="btn" id="btnSaveProfile">Save</button>
-      <button class="btn outline" onclick="go('#/dashboard')">Back</button>
-    </div>
-  </section>
-
-  <!-- LOGOUT -->
-  <section id="view-logout" class="section hide center">
-    <h2>Logging out…</h2>
-    <p class="small">You will be redirected to Login in 3 seconds.</p>
-  </section>
-</main>
-
-<footer>
-  <div class="small">© 2025 Sarkar Telecom • All rights reserved</div>
-  <div class="right">
-    <span id="fReward" class="pill badge">Tier: –</span>
-    <span id="fWeekly" class="pill badge">Week: 0</span>
-    <span id="fBalance" class="pill badge">💎 0</span>
   </div>
-</footer>
 
-<script>
-/* ================== CONFIG (HARD-CODED) ================== */
-const SHEETDB_BASE = "https://sheetdb.io/api/v1/olia09hyw73k1";
-const SHEET_USERS = "Users";
-const SHEET_ORDERS = "Orders";
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-/* Users headers:
-email, pass, name, phone, role, approved, balance, weeklyDiamonds, avatar
-Orders headers:
-id, clientId, amount, status, userEmail, timestamp, autoCancelAt
-*/
-
-/* ================== HELPERS ================== */
-const LS = {
-  current:'st_current_user',
-  lastReset:'st_last_reset_bd'
-};
-function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
-function fmt(n){ return Number(n||0).toLocaleString(); }
-function now(){ return Date.now(); }
-function bdNow(){ return new Date(Date.now()+6*3600*1000); }
-function lastThursday22BD(ms=bdNow().getTime()){
-  const d = new Date(ms); const day = d.getUTCDay();
-  const diff = (((day-4)+7)%7); // days since Thu
-  const lastThu = new Date(ms - diff*86400000);
-  lastThu.setUTCHours(22,0,0,0);
-  if(lastThu.getTime()>ms) lastThu.setTime(lastThu.getTime()-7*86400000);
-  return lastThu.getTime();
-}
-function readLS(k,def=null){ try{const v=JSON.parse(localStorage.getItem(k)); return v??def;}catch(e){return def;} }
-function writeLS(k,v){ localStorage.setItem(k, JSON.stringify(v)); }
-function delLS(k){ localStorage.removeItem(k); }
-function setBadge(id, txt){ const el=document.getElementById(id); if(el) el.textContent = txt; }
-function uid(){ return 'ORD' + Math.random().toString(36).slice(2,6).toUpperCase() + Date.now().toString().slice(-5); }
-
-/* ================== API WRAPPER (SheetDB) ================== */
-/* NOTE: SheetDB variations থাকতে পারে। এখানে common প্যাটার্ন ব্যবহার করেছি:
-   - GET   /search?sheet=X&field=value
-   - PATCH /search?sheet=X&field=value   body: { data: { ... } }
-   - POST  ?sheet=X                     body: { data: { ... } }
-   - GET   ?sheet=X                     (সব রো)
-*/
-const API = {
-  async getAll(sheet){
-    const r = await fetch(`${SHEETDB_BASE}?sheet=${encodeURIComponent(sheet)}`);
-    if(!r.ok) throw new Error('GET failed'); return r.json();
-  },
-  async search(sheet, queryObj){
-    const q = new URLSearchParams({sheet});
-    Object.entries(queryObj).forEach(([k,v])=>q.append(k, v));
-    const r = await fetch(`${SHEETDB_BASE}/search?${q.toString()}`);
-    if(!r.ok) throw new Error('SEARCH failed'); return r.json();
-  },
-  async post(sheet, row){
-    const r = await fetch(`${SHEETDB_BASE}?sheet=${encodeURIComponent(sheet)}`,{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({data: row})
-    });
-    if(!r.ok) throw new Error('POST failed'); return r.json();
-  },
-  async patchBy(sheet, where, data){
-    const q = new URLSearchParams({sheet});
-    Object.entries(where).forEach(([k,v])=>q.append(k, v));
-    const r = await fetch(`${SHEETDB_BASE}/search?${q.toString()}`,{
-      method:'PATCH',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({data})
-    });
-    if(!r.ok) throw new Error('PATCH failed'); return r.json();
-  }
-};
-
-/* ================== AUTH & SESSION ================== */
-function getCurrent(){ return readLS(LS.current,null); }
-function setCurrent(u){ writeLS(LS.current,u); syncHeaderFooter(); }
-function logout(){
-  delLS(LS.current);
-  syncHeaderFooter();
-  go('#/login');
-  document.getElementById('view-logout').classList.remove('hide');
-  setTimeout(()=>go('#/login'), 1500);
-}
-
-/* ================== TIERS ================== */
-const TIERS = [
-  {min:800000, level:5, rate:3.5},
-  {min:80000, level:4, rate:2.6},
-  {min:40000, level:3, rate:2.1},
-  {min:20000, level:2, rate:1.6},
-  {min:5000,  level:1, rate:1.0},
-  {min:0,     level:0, rate:0}
-];
-function tierFrom(total){
-  for(const t of TIERS) if(total>=t.min) return t;
-  return TIERS[TIERS.length-1];
-}
-
-/* ================== UI ROUTER ================== */
-const VIEWS=['login','register','dashboard','order','history','users','admin','profile','logout'];
-function show(view){ VIEWS.forEach(v=>document.getElementById('view-'+v).classList.add('hide')); document.getElementById('view-'+view).classList.remove('hide'); }
-function go(hash){ location.hash = hash; }
-window.addEventListener('hashchange', onRoute);
-async function onRoute(){
-  const h = location.hash || '#/login';
-  const route = h.split('?')[0].replace('#/','');
-  const cur = getCurrent();
-
-  const authOnly=['dashboard','order','history','users','admin','profile','logout'];
-  if(authOnly.includes(route) && !cur){ alert('Please login first'); return go('#/login'); }
-  if(route==='admin' && cur?.role!=='admin'){ alert('Admin access only'); return go('#/dashboard'); }
-
-  show(route);
-
-  if(route==='dashboard') await renderDashboard();
-  else if(route==='order') await renderOrder();
-  else if(route==='history') await renderHistory();
-  else if(route==='users') await renderUsers();
-  else if(route==='admin') await renderAdmin();
-  else if(route==='profile') await renderProfile();
-  else if(route==='logout') logout();
-
-  closeDrawer();
-}
-
-/* ================== HEADER/FOOTER ================== */
-const drawer = document.getElementById('drawer');
-const scrim = document.getElementById('scrim');
-document.getElementById('menuBtn').addEventListener('click', ()=>{
-  drawer.classList.toggle('open');
-  drawer.setAttribute('aria-hidden', drawer.classList.contains('open')? 'false':'true');
-});
-scrim.addEventListener('click', closeDrawer);
-function closeDrawer(){ drawer.classList.remove('open'); drawer.setAttribute('aria-hidden','true'); }
-
-async function recomputeWeekly(email){
-  // BD window filter on Orders (COMPLETED within window)
-  const start = readLS(LS.lastReset, lastThursday22BD());
-  const all = await API.search(SHEET_ORDERS, { userEmail: email });
-  const sum = (all||[]).filter(o=>String(o.status).toUpperCase()==='COMPLETED' && Number(o.timestamp)>=start)
-    .reduce((a,b)=>a + Number(b.amount||0), 0);
-  return sum;
-}
-async function syncHeaderFooter(){
-  const cur = getCurrent();
-  if(!cur){
-    setBadge('hdrUser','Guest'); setBadge('hdrRole','—'); setBadge('hdrBalance','💎 0');
-    document.getElementById('hdrName').textContent='Not logged in';
-    document.getElementById('hdrAvatar').src='https://via.placeholder.com/40/222/888?text=ST';
-    setBadge('fBalance','💎 0'); setBadge('fReward','Tier: –'); setBadge('fWeekly','Week: 0');
-    return;
-  }
-  // fresh pull user row (in case admin changed anything)
-  const rows = await API.search(SHEET_USERS, { email: cur.email });
-  const me = rows && rows[0] ? rows[0] : cur;
-
-  const weekly = await recomputeWeekly(me.email);
-  const tier = tierFrom(weekly);
-
-  // update local cache (no write to sheet; weeklyDiamonds field you keep if you want)
-  me.weeklyDiamonds = weekly;
-  setCurrent(me);
-
-  setBadge('hdrUser', me.email);
-  setBadge('hdrRole', me.role||'-');
-  setBadge('hdrBalance', '💎 ' + fmt(me.balance||0));
-  document.getElementById('hdrName').textContent = me.name || me.email;
-  document.getElementById('hdrAvatar').src = me.avatar || 'https://via.placeholder.com/40/222/888?text=ST';
-  setBadge('fBalance','💎 ' + fmt(me.balance||0));
-  setBadge('fReward', `Tier: ${tier.level} (${tier.rate}%)`);
-  setBadge('fWeekly', 'Week: ' + fmt(weekly));
-}
-
-/* ================== AUTH (Login/Register) ================== */
-document.getElementById('btnLogin').onclick = async ()=>{
-  const email = document.getElementById('loginEmail').value.trim().toLowerCase();
-  const pass  = document.getElementById('loginPass').value;
-  if(!email || !pass) return alert('Enter email & password');
-
-  try{
-    const rows = await API.search(SHEET_USERS, { email });
-    const u = rows && rows[0];
-    if(!u) return alert('User not found.');
-    if(String(u.pass)!==pass) return alert('Wrong password.');
-    if(String(u.approved).toLowerCase()!=='true' && String(u.role)!=='admin')
-      return alert('Pending admin approval.');
-    setCurrent(u);
-    go('#/dashboard');
-  }catch(e){ alert('Login failed'); console.error(e); }
-};
-
-document.getElementById('btnRegister').onclick = async ()=>{
-  const email = document.getElementById('regEmail').value.trim().toLowerCase();
-  const pass  = document.getElementById('regPass').value;
-  const name  = document.getElementById('regName').value.trim();
-  const phone = document.getElementById('regPhone').value.trim();
-  if(!email || !pass || !name) return alert('Fill required fields');
-
-  try{
-    const exists = await API.search(SHEET_USERS, { email });
-    if(exists && exists.length) return alert('Email already exists');
-    const row = { email, pass, name, phone, role:'user', approved:'false', balance:0, weeklyDiamonds:0, avatar:'' };
-    await API.post(SHEET_USERS, row);
-    alert('Registered! Await admin approval.');
-    go('#/login');
-  }catch(e){ alert('Registration failed'); console.error(e); }
-};
-
-/* ================== DASHBOARD ================== */
-async function renderDashboard(){
-  const u=getCurrent(); if(!u) return;
-  document.getElementById('dbUser').value = u.name||u.email;
-  document.getElementById('dbRole').value = u.role||'-';
-  document.getElementById('dbBal').value  = '💎 ' + fmt(u.balance||0);
-  const weekly = await recomputeWeekly(u.email);
-  document.getElementById('dbWeekly').value = fmt(weekly);
-  const t = tierFrom(weekly);
-  document.getElementById('dbTier').value = `Level ${t.level} (${t.rate}%)`;
-}
-
-/* ================== ORDER CREATE ================== */
-const amounts=[10,50,100,200,500,1000,2000,5000,10000,20000];
-let selectedAmt=null;
-async function renderOrder(){
-  selectedAmt=null;
-  const u=getCurrent(); if(!u) return;
-  document.getElementById('recipient').value='';
-  document.getElementById('orderBal').textContent='💎 '+fmt(u.balance||0);
-  const grid=document.getElementById('giftGrid'); grid.innerHTML='';
-  amounts.forEach(a=>{
-    const div=document.createElement('div'); div.className='gift'; div.dataset.amount=a;
-    div.innerHTML=`<div class="price">💎 ${a}</div>`;
-    div.onclick=()=>{ [...grid.children].forEach(c=>c.classList.remove('selected')); div.classList.add('selected'); selectedAmt=a; checkOrderForm(); };
-    grid.appendChild(div);
-  });
-  checkOrderForm();
-}
-function checkOrderForm(){
-  const rec = document.getElementById('recipient').value.trim();
-  document.getElementById('btnConfirm').disabled = !(rec && selectedAmt);
-}
-document.getElementById('btnConfirm').onclick = async ()=>{
-  const u=getCurrent(); if(!u) return;
-  const rec=document.getElementById('recipient').value.trim();
-  const amt=selectedAmt||0;
-  if(!rec || !amt) return;
-  if(Number(u.balance||0) < amt) return alert('Insufficient balance.');
-
-  try{
-    // 1) Deduct balance (user)
-    const newBal = Number(u.balance||0) - amt;
-    await API.patchBy(SHEET_USERS, { email: u.email }, { balance: newBal });
-
-    // 2) Create order
-    const id=uid(); const ts=now(); const autoCancelAt=ts+5*60*1000;
-    const orderRow = { id, clientId: rec, amount: amt, status:'WAITING', userEmail: u.email, timestamp: ts, autoCancelAt };
-    await API.post(SHEET_ORDERS, orderRow);
-
-    // 3) Refresh local
-    const fresh = (await API.search(SHEET_USERS,{email:u.email}))[0]||u; setCurrent(fresh);
-
-    alert(`Order submitted!\nID: ${id}\nAmount: 💎 ${amt}`);
-    go('#/history');
-  }catch(e){ alert('Order failed'); console.error(e); }
-};
-
-/* ================== AUTO-CANCEL SWEEPER ================== */
-async function sweepAutoCancel(){
-  try{
-    const all = await API.getAll(SHEET_ORDERS);
-    const nowMs = now();
-    for(const o of all){
-      if(String(o.status).toUpperCase()==='WAITING' && Number(o.autoCancelAt||0) && nowMs>Number(o.autoCancelAt)){
-        // refund once then mark cancelled
-        const usrRows = await API.search(SHEET_USERS,{ email: o.userEmail });
-        if(usrRows && usrRows[0]){
-          const nb = Number(usrRows[0].balance||0) + Number(o.amount||0);
-          await API.patchBy(SHEET_USERS, { email:o.userEmail }, { balance: nb });
-        }
-        await API.patchBy(SHEET_ORDERS, { id:o.id }, { status:'CANCELLED' });
-      }
-    }
-    const cur=getCurrent(); if(cur) await syncHeaderFooter();
-  }catch(e){ /* silent */ }
-}
-setInterval(sweepAutoCancel, 45000);
-
-/* ================== HISTORY ================== */
-let histPage=1, histSize=10;
-async function renderHistory(){
-  const cur=getCurrent(); if(!cur) return;
-  const search=(document.getElementById('histSearch').value||'').toLowerCase();
-  const status=document.getElementById('histStatus').value;
-
-  let mine = await API.search(SHEET_ORDERS, { userEmail: cur.email });
-  mine = (mine||[]).sort((a,b)=>Number(b.timestamp)-Number(a.timestamp));
-
-  const filtered = mine.filter(o=>{
-    const blob = `${o.id} ${o.clientId} ${o.amount} ${new Date(Number(o.timestamp)).toLocaleString()}`.toLowerCase();
-    const okS = !status || String(o.status).toUpperCase()===status;
-    return (!search || blob.includes(search)) && okS;
-  });
-
-  const total=filtered.length; const pages=Math.max(1,Math.ceil(total/histSize));
-  if(histPage>pages) histPage=pages;
-  const start=(histPage-1)*histSize, end=start+histSize, slice=filtered.slice(start,end);
-
-  const tbody=document.getElementById('histBody');
-  tbody.innerHTML = slice.map(o=>`
-    <tr>
-      <td class="nowrap">${o.id}</td>
-      <td class="nowrap">${o.clientId}</td>
-      <td>💎 ${fmt(o.amount)}</td>
-      <td><span class="status ${String(o.status).toLowerCase()}">${String(o.status).toUpperCase()}</span></td>
-      <td class="nowrap">${new Date(Number(o.timestamp)).toLocaleString()}</td>
-    </tr>
-  `).join('');
-
-  const pager=document.getElementById('histPager'); pager.innerHTML='';
-  for(let i=1;i<=pages;i++){ const b=document.createElement('button'); b.className='btn outline'; b.textContent=i; if(i===histPage) b.classList.add('good'); b.onclick=()=>{histPage=i; renderHistory();}; pager.appendChild(b); }
-
-  const weekly = await recomputeWeekly(cur.email);
-  document.getElementById('histWeekly').value = fmt(weekly);
-  document.getElementById('tierBadge').textContent = 'Tier: ' + tierFrom(weekly).level;
-}
-document.getElementById('histSearch').oninput=()=>{histPage=1; renderHistory();};
-document.getElementById('histStatus').onchange=()=>{histPage=1; renderHistory();};
-
-/* ================== USERS (Admin) ================== */
-document.getElementById('userSearch').oninput=renderUsers;
-document.getElementById('userRoleFilter').onchange=renderUsers;
-
-async function renderUsers(){
-  const cur=getCurrent(); const isAdmin=cur?.role==='admin';
-  let users = await API.getAll(SHEET_USERS);
-  const q=(document.getElementById('userSearch').value||'').toLowerCase();
-  const rf=document.getElementById('userRoleFilter').value;
-
-  const tbody=document.getElementById('usersBody'); tbody.innerHTML='';
-  users.forEach(u=>{
-    const matches = (!q || `${u.email} ${u.name} ${u.phone}`.toLowerCase().includes(q)) &&
-                    (!rf || (rf==='pending'? String(u.approved).toLowerCase()!=='true' : u.role===rf));
-    if(!matches) return;
-
-    const tr=document.createElement('tr');
-    tr.innerHTML = `
-      <td><img src="${u.avatar||'https://via.placeholder.com/36'}" style="width:36px;height:36px;border-radius:50%;object-fit:cover;border:1px solid #222"/></td>
-      <td>${u.name||'-'}</td>
-      <td>${u.email}</td>
-      <td>${u.phone||'-'}</td>
-      <td>${u.role||'-'}</td>
-      <td>${String(u.approved).toLowerCase()==='true' ? '✅' : '⏳'}</td>
-      <td>💎 ${fmt(u.balance)}</td>
-      <td>${fmt(u.weeklyDiamonds||0)}</td>
-      <td class="nowrap" id="cell-${u.email}">
-        ${isAdmin? adminUserButtons(u): '<span class="small">View only</span>'}
-      </td>
-    `;
-    tbody.appendChild(tr);
-    if(isAdmin) attachUserActions(u);
-  });
-}
-function adminUserButtons(u){
-  const isApproved = String(u.approved).toLowerCase()==='true';
-  return `
-    ${isApproved? '' : `<button class="btn good" data-act="approve">Approve</button>
-                         <button class="btn danger" data-act="reject">Reject</button>`}
-    <button class="btn outline" data-act="edit">Edit</button>
-    <button class="btn" data-act="addbal">Add Balance</button>
-    <button class="btn outline" data-act="role">${u.role==='admin'?'Set User':'Make Admin'}</button>
-  `;
-}
-function attachUserActions(u){
-  const cell=document.getElementById(`cell-${u.email}`);
-  cell.querySelectorAll('button').forEach(b=>{
-    b.onclick=async ()=>{
-      const act=b.dataset.act;
-      if(act==='approve'){
-        await API.patchBy(SHEET_USERS,{email:u.email},{approved:'true'});
-      }else if(act==='reject'){
-        await API.patchBy(SHEET_USERS,{email:u.email},{approved:'false'});
-      }else if(act==='edit'){
-        const name=prompt('Name',u.name||''); const phone=prompt('Phone',u.phone||''); const pass=prompt('Password (leave blank to keep)','');
-        const data={}; if(name!==null) data.name=name; if(phone!==null) data.phone=phone; if(pass) data.pass=pass;
-        Object.keys(data).length && await API.patchBy(SHEET_USERS,{email:u.email},data);
-      }else if(act==='addbal'){
-        const add = Number(prompt('Add diamonds to user:', '0'))||0;
-        if(add>0){ const nb = Number(u.balance||0)+add; await API.patchBy(SHEET_USERS,{email:u.email},{balance: nb}); }
-      }else if(act==='role'){
-        const nr = u.role==='admin'?'user':'admin'; await API.patchBy(SHEET_USERS,{email:u.email},{role:nr});
-      }
-      await renderUsers(); await syncHeaderFooter();
+    const firebaseConfig = {
+      apiKey: "AIzaSyDJRm9-jRkxVrTLYBzK1gGrRmAEu29jVrU",
+      authDomain: "diamond-recharge-f7f59.firebaseapp.com",
+      projectId: "diamond-recharge-f7f59",
+      storageBucket: "diamond-recharge-f7f59.appspot.com",
+      messagingSenderId: "657717928489",
+      appId: "1:657717928489:web:70431ebc9afb7002d4b238",
+      measurementId: "G-TDK78BQ8SQ"
     };
-  });
-}
 
-/* ================== ADMIN: ORDERS MANAGE ================== */
-let admPage=1, admSize=10;
-document.getElementById('admOrderSearch').oninput=()=>{admPage=1; renderAdmin();};
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
 
-async function renderAdmin(){
-  const cur=getCurrent(); if(cur?.role!=='admin') return;
-  const me = (await API.search(SHEET_USERS,{email:cur.email}))[0]||cur;
-  document.getElementById('adminBal').value = '💎 ' + fmt(me.balance||0);
-  const allUsers = await API.getAll(SHEET_USERS);
-  const pending = allUsers.filter(x=>String(x.approved).toLowerCase()!=='true' && x.role==='user').length;
-  document.getElementById('adminPend').value = `${pending} pending`;
-  document.getElementById('adminResetInfo').value = 'Window start (BD): ' + new Date(readLS(LS.lastReset, lastThursday22BD())).toLocaleString();
+    // Login Function
+    window.login = function() {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      signInWithEmailAndPassword(auth, email, password)
+        .then(() => { document.getElementById("loginError").innerText = ""; })
+        .catch((error) => { document.getElementById("loginError").innerText = error.message; });
+    };
 
-  const q=(document.getElementById('admOrderSearch').value||'').toLowerCase();
-  let orders = await API.getAll(SHEET_ORDERS);
-  orders = orders.sort((a,b)=>Number(b.timestamp)-Number(a.timestamp));
-  const filtered = orders.filter(o=>{
-    const blob=`${o.id} ${o.clientId} ${o.amount} ${o.userEmail} ${new Date(Number(o.timestamp)).toLocaleString()}`.toLowerCase();
-    return !q || blob.includes(q);
-  });
-
-  const total=filtered.length, pages=Math.max(1,Math.ceil(total/admSize));
-  if(admPage>pages) admPage=pages;
-  const start=(admPage-1)*admSize, end=start+admSize, slice=filtered.slice(start,end);
-
-  const tbody=document.getElementById('admOrdersBody');
-  tbody.innerHTML = slice.map(o=>`
-    <tr>
-      <td>${o.id}</td><td>${o.userEmail}</td><td>${o.clientId}</td>
-      <td>💎 ${fmt(o.amount)}</td>
-      <td><span class="status ${String(o.status).toLowerCase()}">${String(o.status).toUpperCase()}</span></td>
-      <td>${new Date(Number(o.timestamp)).toLocaleString()}</td>
-      <td class="nowrap">
-        <button class="btn good" onclick="admSetStatus('${o.id}','COMPLETED')">Complete</button>
-        <button class="btn danger" onclick="admSetStatus('${o.id}','CANCELLED')">Cancel</button>
-        <button class="btn wait" onclick="admSetStatus('${o.id}','WAITING')">Waiting</button>
-      </td>
-    </tr>
-  `).join('');
-
-  const pager=document.getElementById('admPager'); pager.innerHTML='';
-  for(let i=1;i<=pages;i++){ const b=document.createElement('button'); b.className='btn outline'; b.textContent=i; if(i===admPage) b.classList.add('good'); b.onclick=()=>{admPage=i; renderAdmin();}; pager.appendChild(b); }
-}
-async function admSetStatus(id, status){
-  try{
-    // pull order
-    const rows = await API.search(SHEET_ORDERS, { id });
-    const o = rows && rows[0]; if(!o) return alert('Order not found');
-
-    if(status==='CANCELLED' && String(o.status).toUpperCase()!=='CANCELLED'){
-      // refund to user
-      const urow = (await API.search(SHEET_USERS,{email:o.userEmail}))[0];
-      if(urow){
-        const nb = Number(urow.balance||0)+Number(o.amount||0);
-        await API.patchBy(SHEET_USERS,{email:o.userEmail},{balance:nb});
+    // Auth State
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        document.getElementById("loginDiv").classList.add("hidden");
+        document.getElementById("dashboardDiv").classList.remove("hidden");
+        loadUsers();
+        loadOrders();
+      } else {
+        document.getElementById("loginDiv").classList.remove("hidden");
+        document.getElementById("dashboardDiv").classList.add("hidden");
       }
-    }
-    if(status==='WAITING' && String(o.status).toUpperCase()==='CANCELLED'){
-      // re-deduct if user has balance
-      const urow = (await API.search(SHEET_USERS,{email:o.userEmail}))[0];
-      if(urow){
-        const bal=Number(urow.balance||0), amt=Number(o.amount||0);
-        if(bal<amt) return alert('User balance insufficient to revert to WAITING.');
-        await API.patchBy(SHEET_USERS,{email:o.userEmail},{balance:bal-amt});
+    });
+
+    // Logout
+    window.logout = function() {
+      signOut(auth);
+    };
+
+    // Tabs
+    window.showTab = function(tab) {
+      document.getElementById("usersContent").classList.add("hidden");
+      document.getElementById("ordersContent").classList.add("hidden");
+      document.getElementById("usersTab").classList.remove("active");
+      document.getElementById("ordersTab").classList.remove("active");
+      if (tab === "users") {
+        document.getElementById("usersContent").classList.remove("hidden");
+        document.getElementById("usersTab").classList.add("active");
+      } else {
+        document.getElementById("ordersContent").classList.remove("hidden");
+        document.getElementById("ordersTab").classList.add("active");
       }
+    };
+
+    // Load Users
+    async function loadUsers() {
+      const querySnapshot = await getDocs(collection(db, "users"));
+      let html = "";
+      querySnapshot.forEach((doc) => {
+        const u = doc.data();
+        html += `<tr>
+          <td>${u.email || ""}</td>
+          <td>${u.name || ""}</td>
+          <td>${u.phone || ""}</td>
+          <td>${u.role || ""}</td>
+          <td>${u.balance || 0}</td>
+        </tr>`;
+      });
+      document.getElementById("usersTable").innerHTML = html;
     }
-    await API.patchBy(SHEET_ORDERS, { id }, { status });
-    await renderAdmin(); await renderHistory(); await syncHeaderFooter();
-  }catch(e){ alert('Update failed'); console.error(e); }
-}
 
-/* ================== PROFILE ================== */
-async function renderProfile(){
-  const u=getCurrent(); if(!u) return;
-  document.getElementById('profAvatar').src = u.avatar || 'https://via.placeholder.com/72';
-  document.getElementById('profName').value = u.name || '';
-  document.getElementById('profEmail').value = u.email;
-  document.getElementById('profPhone').value = u.phone || '';
-  document.getElementById('profPass').value = '';
-}
-document.getElementById('avatarFile').addEventListener('change', function(){
-  const file=this.files[0]; if(!file) return;
-  const reader=new FileReader();
-  reader.onload=async ()=>{
-    const cur=getCurrent(); if(!cur) return;
-    await API.patchBy(SHEET_USERS,{email:cur.email},{avatar:reader.result});
-    const fresh=(await API.search(SHEET_USERS,{email:cur.email}))[0]||cur; setCurrent(fresh);
-    document.getElementById('profAvatar').src = reader.result;
-    await syncHeaderFooter();
-  };
-  reader.readAsDataURL(file);
-});
-document.getElementById('btnSaveProfile').onclick = async ()=>{
-  const name=document.getElementById('profName').value.trim();
-  const phone=document.getElementById('profPhone').value.trim();
-  const pass=document.getElementById('profPass').value;
-  const cur=getCurrent(); if(!cur) return;
-  const data={name,phone}; if(pass) data.pass=pass;
-  try{
-    await API.patchBy(SHEET_USERS,{email:cur.email},data);
-    const fresh=(await API.search(SHEET_USERS,{email:cur.email}))[0]||cur; setCurrent(fresh);
-    alert('Profile updated'); await syncHeaderFooter();
-  }catch(e){ alert('Profile update failed'); console.error(e); }
-};
+    // Load Orders
+    async function loadOrders() {
+      const querySnapshot = await getDocs(collection(db, "orders"));
+      let html = "";
+      querySnapshot.forEach((doc) => {
+        const o = doc.data();
+        html += `<tr>
+          <td>${o.clientId || ""}</td>
+          <td>${o.amount || 0}</td>
+          <td>${o.status || ""}</td>
+          <td>${o.userEmail || ""}</td>
+          <td>${o.timestamp || ""}</td>
+        </tr>`;
+      });
+      document.getElementById("ordersTable").innerHTML = html;
+    }
 
-/* ================== LIVE REFRESH TICK ================== */
-setInterval(async ()=>{
-  const cur=getCurrent(); if(cur){ await syncHeaderFooter(); }
-}, 30000);
-
-/* ================== BOOT ================== */
-(function boot(){
-  if(readLS(LS.lastReset,null)===null) writeLS(LS.lastReset, lastThursday22BD());
-  // Gift amounts
-  renderOrder().catch(()=>{});
-  syncHeaderFooter().catch(()=>{});
-  onRoute();
-})();
-</script>
+  </script>
 </body>
 </html>
