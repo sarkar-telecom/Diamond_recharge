@@ -1,332 +1,744 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Diamond Recharge</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #121212;
-      color: #fff;
-    }
-    header, footer {
-      background: #1e1e1e;
-      padding: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    header h1 {
-      margin: 0;
-      font-size: 18px;
-    }
-    .menu-btn {
-      font-size: 22px;
-      cursor: pointer;
-    }
-    .sidebar {
-      position: fixed;
-      left: -250px;
-      top: 0;
-      width: 250px;
-      height: 100%;
-      background: #1e1e1e;
-      transition: left 0.3s;
-      padding-top: 50px;
-      z-index: 1000;
-    }
-    .sidebar.active { left: 0; }
-    .sidebar a {
-      display: block;
-      padding: 12px;
-      color: #fff;
-      text-decoration: none;
-    }
-    .sidebar a:hover { background: #333; }
-    main { padding: 20px; }
-    .hidden { display: none; }
-    .btn {
-      background: #007bff;
-      border: none;
-      color: white;
-      padding: 10px 15px;
-      margin: 5px;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    .btn:hover { background: #0056b3; }
-    .amount-btns button {
-      background: #444;
-      margin: 5px;
-      padding: 10px;
-      border-radius: 5px;
-      color: #fff;
-      cursor: pointer;
-    }
-    .status {
-      padding: 4px 8px;
-      border-radius: 5px;
-      color: #fff;
-      font-size: 12px;
-    }
-    .WAITING { background: orange; }
-    .COMPLETED { background: green; }
-    .CANCELLED { background: red; }
-    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-    th, td {
-      padding: 8px;
-      border: 1px solid #333;
-      text-align: center;
-    }
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Sarkar Telecom • Diamond Recharge</title>
+<link rel="icon" href="data:," />
+<style>
+  :root{
+    --bg:#0f1216; --panel:#121720; --muted:#93a4b8; --text:#e7ebf1;
+    --brand:#60a5fa; --ok:#22c55e; --warn:#f59e0b; --bad:#ef4444;
+    --card:#17202b; --border:#233041;
+  }
+  *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);font:14px/1.5 system-ui,Segoe UI,Roboto}
+  a{color:var(--brand);text-decoration:none}
+  /* Appbar */
+  .appbar{position:sticky;top:0;z-index:60;background:#0b0f15;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;padding:10px 12px}
+  .brand{font-weight:800;font-size:18px;color:#a5d8ff;letter-spacing:.2px}
+  .hamb{font-size:22px;cursor:pointer;line-height:0}
+  .spacer{flex:1}
+  .chip{background:var(--card);border:1px solid var(--border);padding:6px 10px;border-radius:999px}
+  .btn{background:#3b82f6;border:0;color:white;padding:10px 14px;border-radius:12px;font-weight:700;cursor:pointer}
+  .btn.secondary{background:#2a3342}
+  .btn.ghost{background:transparent;border:1px solid var(--border);color:var(--text)}
+  .btn.small{padding:6px 10px;border-radius:10px}
+  .grid{display:grid;gap:12px}
+  .two{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .three{grid-template-columns:repeat(3,minmax(0,1fr))}
+  @media(max-width:780px){.two,.three{grid-template-columns:1fr}}
+  .panel{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:16px}
+  .title{font-size:18px;font-weight:800;margin:0 0 10px}
+  .muted{color:var(--muted)}
+  .footer{position:sticky;bottom:0;background:#0b0f15;border-top:1px solid var(--border);padding:10px 12px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  /* Drawer */
+  .drawer{position:fixed;inset:0;pointer-events:none;z-index:70}
+  .drawer .scrim{position:absolute;inset:0;background:#0008;opacity:0;transition:.2s}
+  .drawer .side{position:absolute;top:0;bottom:0;left:0;width:290px;background:#0d1117;border-right:1px solid var(--border);transform:translateX(-100%);transition:.25s ease;overflow:auto;padding-top:8px}
+  .drawer.show{pointer-events:auto}
+  .drawer.show .scrim{opacity:1}
+  .drawer.show .side{transform:none}
+  .nav a{display:block;padding:14px 16px;border-bottom:1px solid #111825;color:#dbeafe}
+  .nav a.active{background:#111827}
+  /* Forms */
+  input,select{width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--border);background:var(--card);color:var(--text)}
+  label{display:block;margin:8px 0 6px}
+  .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .badge{display:inline-block;padding:4px 8px;border-radius:999px;font-weight:800}
+  .b-wait{background:#3b2e06;color:#facc15}
+  .b-ok{background:#063116;color:#34d399}
+  .b-bad{background:#3b0b0b;color:#f87171}
+  .hide{display:none !important}
+  table{width:100%;border-collapse:collapse}
+  th,td{padding:10px;border-bottom:1px solid var(--border);vertical-align:top;text-align:center}
+  th{text-align:center;color:#cbd5e1;background:#0f1520;position:sticky;top:0}
+  .amounts .btn{background:#1d4ed8}
+  .btn.outline{background:transparent;border:1px solid var(--border)}
+  .avatar{width:34px;height:34px;border-radius:50%;object-fit:cover;border:1px solid var(--border)}
+  .pill{padding:6px 10px;border:1px solid var(--border);background:var(--card);border-radius:999px}
+  .gift-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+  @media(max-width:680px){.gift-grid{grid-template-columns:repeat(3,1fr)}}
+</style>
 </head>
 <body>
-  <header>
-    <span class="menu-btn" onclick="toggleSidebar()">☰</span>
-    <h1>Diamond Recharge</h1>
-    <span id="userInfo"></span>
-  </header>
 
-  <!-- Sidebar -->
-  <div class="sidebar" id="sidebar">
-    <a href="#" onclick="showPage('dashboard')">Dashboard</a>
-    <a href="#" onclick="showPage('order')">Order</a>
-    <a href="#" onclick="showPage('history')">Order History</a>
-    <a href="#" onclick="showPage('profile')">Profile</a>
-    <a href="#" onclick="showPage('admin')">Admin</a>
-    <a href="#" onclick="logout()">Logout</a>
+<!-- Top App Bar -->
+<div class="appbar">
+  <button class="hamb" id="openMenu" aria-label="Open menu">☰</button>
+  <div class="brand">Sarkar <span style="color:#60a5fa">Telecom</span></div>
+  <div class="spacer"></div>
+  <div id="hdrUser" class="row">
+    <span id="hdrEmail" class="chip">—</span>
+    <span id="hdrTier" class="chip">Tier 0</span>
+    <span id="hdrBal" class="chip">💎 0</span>
+    <img id="hdrAvatar" class="avatar" src="" alt="">
+    <button class="btn small" id="newOrderBtn">New Order</button>
   </div>
+  <div id="hdrAnon" class="row">
+    <button class="btn small" onclick="showPage('login')">Login</button>
+    <button class="btn small secondary" onclick="showPage('register')">Register</button>
+  </div>
+</div>
 
-  <main>
-    <!-- Login -->
-    <div id="loginPage">
-      <h2>Login</h2>
-      <input id="loginEmail" placeholder="Email"><br>
-      <input id="loginPass" type="password" placeholder="Password"><br>
-      <button class="btn" onclick="login()">Login</button>
-    </div>
+<!-- Sidebar Drawer -->
+<div class="drawer" id="drawer" aria-hidden="true">
+  <div class="scrim" id="closeMenu" tabindex="0"></div>
+  <aside class="side" role="navigation" aria-label="Sidebar">
+    <div class="brand" style="padding:12px 16px">Sarkar Telecom</div>
+    <nav class="nav">
+      <a href="#/dashboard" data-page="dashboard" class="active">🏠 Dashboard</a>
+      <a href="#/create" data-page="create">➕ Create Order</a>
+      <a href="#/orders" data-page="orders">📑 Order History</a>
+      <a href="#/profile" data-page="profile">👤 Profile</a>
+      <a href="#/admin-orders" data-page="adminOrders" id="linkAdminOrders" class="hide">🛠️ Admin: Orders</a>
+      <a href="#/admin-users" data-page="adminUsers" id="linkAdminUsers" class="hide">👥 Admin: Users</a>
+      <a href="#/login" data-page="login" id="linkLoginAnon">🔐 Login</a>
+      <a href="#/logout" data-page="logout" id="linkLogout" class="hide">🚪 Logout</a>
+    </nav>
+  </aside>
+</div>
 
-    <!-- Dashboard -->
-    <div id="dashboard" class="hidden">
-      <h2>Dashboard</h2>
-      <p>Balance: <span id="balance">0</span> 💎</p>
-      <p>Weekly Orders: <span id="weekly">0</span></p>
-      <p>Reward Tier: <span id="tier">-</span></p>
-    </div>
-
-    <!-- Order -->
-    <div id="order" class="hidden">
-      <h2>Place Order</h2>
-      <input id="recipient" placeholder="Gift Recipient ID"><br>
-      <div class="amount-btns">
-        <button onclick="setAmount(10)">10</button>
-        <button onclick="setAmount(50)">50</button>
-        <button onclick="setAmount(100)">100</button>
-        <button onclick="setAmount(200)">200</button>
-        <button onclick="setAmount(500)">500</button>
-        <button onclick="setAmount(1000)">1000</button>
-        <button onclick="setAmount(2000)">2000</button>
-        <button onclick="setAmount(5000)">5000</button>
-        <button onclick="setAmount(10000)">10000</button>
-        <button onclick="setAmount(20000)">20000</button>
+<!-- PAGES -->
+<main style="padding:16px;max-width:1100px;margin:0 auto;">
+  <!-- Dashboard -->
+  <section id="page-dashboard" class="page">
+    <div class="grid three">
+      <div class="panel">
+        <h3 class="title">Account</h3>
+        <div class="grid">
+          <div>Email: <b id="accEmail">—</b></div>
+          <div>Phone: <b id="accPhone">—</b></div>
+          <div>Role: <b id="accRole">—</b></div>
+          <div>Approved: <b id="accApproved">—</b></div>
+        </div>
       </div>
-      <input id="amount" placeholder="Amount" readonly><br>
-      <button class="btn" onclick="placeOrder()">Submit</button>
+      <div class="panel">
+        <h3 class="title">Balance</h3>
+        <div class="grid">
+          <div>Total Balance: <b id="accBal">0</b></div>
+          <div>On Hold (WAITING): <b id="accHold">0</b></div>
+          <div>Available: <b id="accAvail">0</b></div>
+        </div>
+      </div>
+      <div class="panel">
+        <h3 class="title">Weekly & Tier</h3>
+        <div class="grid">
+          <div>Weekly Diamonds: <b id="accWeek">0</b></div>
+          <div>Tier: <b id="accTier">L0</b></div>
+        </div>
+      </div>
     </div>
 
-    <!-- History -->
-    <div id="history" class="hidden">
-      <h2>My Orders</h2>
-      <table>
+    <div class="panel" style="margin-top:12px">
+      <h3 class="title">Quick</h3>
+      <div class="row" style="gap:8px">
+        <button class="btn" onclick="showPage('create')">Create Order</button>
+        <button class="btn secondary" onclick="showPage('orders')">View History</button>
+        <button class="btn ghost" onclick="autoCancelSweep()">Auto-cancel overdue</button>
+      </div>
+      <p class="muted" style="margin-top:8px">Orders auto-cancel in <b id="cfgAutoCancel">5</b> minutes if not completed.</p>
+    </div>
+  </section>
+
+  <!-- Login -->
+  <section id="page-login" class="page hide">
+    <div class="panel" style="max-width:460px;margin:auto">
+      <h3 class="title">Login</h3>
+      <label>Email</label>
+      <input id="loginEmail" type="email" placeholder="user@email.com">
+      <label>Password</label>
+      <input id="loginPass" type="password" placeholder="••••••••">
+      <div class="row" style="margin-top:10px">
+        <button class="btn" onclick="doLogin()">Login</button>
+        <button class="btn outline" onclick="sendReset()">Forgot password?</button>
+        <button class="btn secondary" onclick="showPage('register')">Create account</button>
+      </div>
+      <div class="muted" id="loginMsg" style="margin-top:8px"></div>
+    </div>
+  </section>
+
+  <!-- Register -->
+  <section id="page-register" class="page hide">
+    <div class="panel" style="max-width:520px;margin:auto">
+      <h3 class="title">Register</h3>
+      <div class="grid two">
+        <div>
+          <label>Name</label>
+          <input id="regName" placeholder="Your name">
+        </div>
+        <div>
+          <label>Phone</label>
+          <input id="regPhone" placeholder="+880...">
+        </div>
+      </div>
+      <label>Email</label>
+      <input id="regEmail" type="email">
+      <label>Password</label>
+      <input id="regPass" type="password">
+      <div class="row" style="margin-top:10px">
+        <button class="btn" onclick="doRegister()">Create account</button>
+        <button class="btn secondary" onclick="showPage('login')">Back to Login</button>
+      </div>
+      <p class="muted" style="margin-top:10px">Admin approval required before you can use the site.</p>
+      <div class="muted" id="regMsg"></div>
+    </div>
+  </section>
+
+  <!-- Create Order -->
+  <section id="page-create" class="page hide">
+    <div class="panel">
+      <h3 class="title">Create Order</h3>
+      <label>Gift Recipient (Number / Profile ID)</label>
+      <input id="clientId" placeholder="58848454">
+      <div class="muted" style="margin:6px 0">Your available balance: 💎 <span id="availableBal">0</span></div>
+
+      <label>Select Amount</label>
+      <div class="row amounts" style="flex-wrap:wrap;margin:8px 0">
+        <button class="btn small" onclick="pickAmount(10)">💎 10</button>
+        <button class="btn small" onclick="pickAmount(50)">💎 50</button>
+        <button class="btn small" onclick="pickAmount(100)">💎 100</button>
+        <button class="btn small" onclick="pickAmount(200)">💎 200</button>
+        <button class="btn small" onclick="pickAmount(500)">💎 500</button>
+        <button class="btn small" onclick="pickAmount(1000)">💎 1000</button>
+        <button class="btn small" onclick="pickAmount(2000)">💎 2000</button>
+        <button class="btn small" onclick="pickAmount(5000)">💎 5000</button>
+        <button class="btn small" onclick="pickAmount(10000)">💎 10000</button>
+        <button class="btn small" onclick="pickAmount(20000)">💎 20000</button>
+      </div>
+
+      <label>Amount</label>
+      <input id="amount" type="number" min="1" step="1" value="50">
+      <div class="row" style="margin-top:10px">
+        <button class="btn" onclick="createOrder()">Submit</button>
+        <button class="btn secondary" onclick="showPage('orders')">Go to History</button>
+      </div>
+      <div id="createMsg" class="muted" style="margin-top:8px"></div>
+    </div>
+  </section>
+
+  <!-- Order History -->
+  <section id="page-orders" class="page hide">
+    <div class="panel">
+      <h3 class="title">Order History</h3>
+      <table id="ordersTable">
         <thead>
-          <tr><th>ID</th><th>Recipient</th><th>Amount</th><th>Status</th><th>Time</th></tr>
+          <tr><th>ID</th><th>Client</th><th>Amount</th><th>Time</th><th>Status</th><th>Action</th></tr>
         </thead>
-        <tbody id="orderList"></tbody>
+        <tbody></tbody>
       </table>
     </div>
+  </section>
 
-    <!-- Profile -->
-    <div id="profile" class="hidden">
-      <h2>My Profile</h2>
-      <p>Email: <span id="profileEmail"></span></p>
-      <p>Name: <input id="profileName"></p>
-      <p>Phone: <input id="profilePhone"></p>
-      <button class="btn" onclick="updateProfile()">Update</button>
+  <!-- Profile -->
+  <section id="page-profile" class="page hide">
+    <div class="panel grid two">
+      <div>
+        <h3 class="title">Profile</h3>
+        <label>Name</label><input id="pfName">
+        <label>Phone</label><input id="pfPhone">
+        <label>Avatar</label><input id="pfAvatar" type="file" accept="image/*">
+        <div class="row" style="margin-top:10px">
+          <button class="btn" onclick="saveProfile()">Save</button>
+          <button class="btn outline" onclick="sendReset()">Reset password via email</button>
+        </div>
+        <div id="pfMsg" class="muted" style="margin-top:8px"></div>
+      </div>
+      <div>
+        <h3 class="title">Account</h3>
+        <div class="grid">
+          <div>Email: <b id="pfEmail">—</b></div>
+          <div>Role: <b id="pfRole">—</b></div>
+          <div>Approved: <b id="pfApproved">—</b></div>
+          <div>Balance: <b id="pfBalance">—</b></div>
+          <div>Weekly Diamonds: <b id="pfWeekly">—</b></div>
+        </div>
+      </div>
     </div>
+  </section>
 
-    <!-- Admin -->
-    <div id="admin" class="hidden">
-      <h2>All Orders</h2>
-      <table>
+  <!-- Admin: Orders -->
+  <section id="page-adminOrders" class="page hide">
+    <div class="panel">
+      <h3 class="title">Admin: Orders</h3>
+      <div class="row">
+        <button class="btn ghost" onclick="autoCancelSweep()">Auto-cancel overdue</button>
+      </div>
+      <table id="adminOrdersTbl" style="margin-top:10px">
         <thead>
-          <tr><th>ID</th><th>User</th><th>Recipient</th><th>Amount</th><th>Status</th><th>Change</th></tr>
+          <tr><th>ID</th><th>Client</th><th>Amount</th><th>User</th><th>Status</th><th>Time</th><th>Actions</th></tr>
         </thead>
-        <tbody id="adminOrders"></tbody>
+        <tbody></tbody>
       </table>
     </div>
-  </main>
+  </section>
 
-  <footer>
-    <p>© 2025 Diamond Recharge</p>
-  </footer>
+  <!-- Admin: Users -->
+  <section id="page-adminUsers" class="page hide">
+    <div class="panel">
+      <h3 class="title">Admin: Users</h3>
+      <table id="adminUsersTbl">
+        <thead>
+          <tr><th>Email</th><th>Name</th><th>Phone</th><th>Role</th><th>Approved</th><th>Balance</th><th>Weekly</th><th>Tier</th><th>Actions</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
 
-  <!-- Firebase -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
-    import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
-    import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, addDoc, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore.js";
+  <!-- Logout (dummy to trigger) -->
+  <section id="page-logout" class="page hide">
+    <div class="panel"><h3 class="title">Logging out…</h3></div>
+  </section>
+</main>
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyDJRm9-jRkxVrTLYBzK1gGrRmAEu29jVrU",
-      authDomain: "diamond-recharge-f7f59.firebaseapp.com",
-      projectId: "diamond-recharge-f7f59",
-      storageBucket: "diamond-recharge-f7f59.firebasestorage.app",
-      messagingSenderId: "657717928489",
-      appId: "1:657717928489:web:70431ebc9afb7002d4b238",
-      measurementId: "G-TDK78BQ8SQ"
-    };
+<!-- Footer -->
+<div class="footer">
+  <span>© 2025 Sarkar Telecom</span>
+  <span class="spacer"></span>
+  <span class="pill">Week: <span id="ftWeek">0</span></span>
+  <span class="pill">Tier: <span id="ftTier">0</span></span>
+  <span class="pill">💎 <span id="ftBal">0</span></span>
+</div>
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
+<!-- Firebase (compat CDN) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-storage-compat.js"></script>
 
-    let currentUser = null;
+<script>
+/*** ========= CONFIG ========= ***/
+let AUTO_CANCEL_MIN = 5; // minutes (settings/general থাকলে ওটা থেকে override হবে)
+const DEFAULT_TIERS = [
+  {min:0, level:0, pct:0},
+  {min:5000, level:1, pct:1.0},
+  {min:20000, level:2, pct:1.6},
+  {min:40000, level:3, pct:2.1},
+  {min:80000, level:4, pct:2.6},
+  {min:800000, level:5, pct:3.5},
+];
 
-    // Sidebar toggle
-    window.toggleSidebar = function() {
-      document.getElementById("sidebar").classList.toggle("active");
+// ✅ Your Firebase config (as provided)
+const firebaseConfig = {
+  apiKey: "AIzaSyDJRm9-jRkxVrTLYBzK1gGrRmAEu29jVrU",
+  authDomain: "diamond-recharge-f7f59.firebaseapp.com",
+  projectId: "diamond-recharge-f7f59",
+  storageBucket: "diamond-recharge-f7f59.firebasestorage.app",
+  messagingSenderId: "657717928489",
+  appId: "1:657717928489:web:70431ebc9afb7002d4b238",
+  measurementId: "G-TDK78BQ8SQ"
+};
+/*** ===== END CONFIG ===== ***/
+
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+const db = firebase.firestore();
+const storage = firebase.storage();
+
+// UI helpers
+const $ = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+function fmt(n){return new Intl.NumberFormat().format(n||0)}
+function pageId(key){ return `page-${key}`; }
+function showPage(key){
+  $$('.page').forEach(p=>p.classList.add('hide'));
+  $('#'+pageId(key))?.classList.remove('hide');
+  // highlight nav
+  $$('.nav a').forEach(a=>a.classList.toggle('active', a.dataset.page===key));
+  if(key==='logout') doLogout();
+  if(key==='orders') loadMyOrders();
+  if(key==='adminOrders') loadAdminOrders();
+  if(key==='adminUsers') loadAdminUsers();
+}
+function toast(el,msg){ el.textContent=msg; setTimeout(()=>el.textContent='',4000); }
+
+// Drawer toggle (robust)
+const drawer = $('#drawer');
+const openMenuBtn = $('#openMenu');
+const closeMenuEl = $('#closeMenu');
+function openDrawer(){ drawer.classList.add('show'); drawer.setAttribute('aria-hidden','false'); }
+function closeDrawer(){ drawer.classList.remove('show'); drawer.setAttribute('aria-hidden','true'); }
+openMenuBtn.addEventListener('click', openDrawer);
+closeMenuEl.addEventListener('click', closeDrawer);
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeDrawer(); });
+$$('.nav a').forEach(a=>a.addEventListener('click', closeDrawer));
+$('#newOrderBtn').onclick=()=>{ showPage('create'); };
+
+// State
+let me=null;     // auth user
+let myDoc=null;  // users/{uid}
+let myWaitingSum=0;
+let TIERS = DEFAULT_TIERS;
+
+// Settings (optional)
+async function loadSettings(){
+  try{
+    const snap = await db.collection('settings').doc('general').get();
+    if(snap.exists){
+      const s = snap.data();
+      if(s.autoCancelMin) AUTO_CANCEL_MIN = s.autoCancelMin;
+      if(Array.isArray(s.tiers) && s.tiers.length) TIERS = s.tiers;
     }
+  }catch(e){ /* ignore */ }
+  $('#cfgAutoCancel').textContent = AUTO_CANCEL_MIN;
+}
 
-    // Show page
-    window.showPage = function(id) {
-      document.querySelectorAll("main > div").forEach(div => div.classList.add("hidden"));
-      document.getElementById(id).classList.remove("hidden");
-      document.getElementById("sidebar").classList.remove("active");
+// Tier helper
+function tierFrom(total){
+  let t = TIERS[0];
+  for(const x of TIERS){ if(total>=x.min) t=x; else break; }
+  return t;
+}
+
+// Auth watcher
+auth.onAuthStateChanged(async u=>{
+  me=u||null;
+  if(!me){
+    myDoc=null; myWaitingSum=0;
+    $('#hdrAnon').classList.remove('hide');
+    $('#hdrUser').classList.add('hide');
+    $('#linkLogout').classList.add('hide');
+    $('#linkLoginAnon').classList.remove('hide');
+    $('#linkAdminOrders').classList.add('hide');
+    $('#linkAdminUsers').classList.add('hide');
+    showPage('login');
+    return;
+  }
+  await loadSettings();
+
+  // ensure user doc exists or load it
+  const ref=db.collection('users').doc(me.uid);
+  const got = await ref.get();
+  if(!got.exists){
+    await ref.set({
+      email: me.email, name: me.displayName||'', phone:'', role:'user',
+      approved:false, balance:0, weeklyDiamonds:0, tier:0, avatar:''
+    },{merge:true});
+  }
+  // live snapshot
+  ref.onSnapshot(s=>{
+    myDoc = {...s.data(), id:s.id};
+    refreshHeaderFooter();
+    if(!myDoc.approved){
+      $('#loginMsg').textContent='Your account is pending admin approval.';
+      showPage('profile');
+    }else{
+      const hash = location.hash.replace('#/','') || 'dashboard';
+      showPage(hash);
     }
+    computeWaitingHold(); // recalc hold whenever user doc changes
+    // admin links
+    const isAdmin = myDoc.role==='admin';
+    $('#linkAdminOrders').classList.toggle('hide', !isAdmin);
+    $('#linkAdminUsers').classList.toggle('hide', !isAdmin);
+    $('#linkLogout').classList.remove('hide');
+    $('#linkLoginAnon').classList.add('hide');
+  });
+});
 
-    // Login
-    window.login = async function() {
-      const email = document.getElementById("loginEmail").value;
-      const pass = document.getElementById("loginPass").value;
-      try {
-        await signInWithEmailAndPassword(auth, email, pass);
-      } catch (e) {
-        alert("Login failed: " + e.message);
-      }
+// waiting sum
+async function computeWaitingHold(){
+  if(!me) return;
+  const qs = await db.collection('orders')
+    .where('uid','==',me.uid).where('status','==','WAITING').get();
+  myWaitingSum = qs.docs.reduce((a,d)=>a+(d.data().amount||0),0);
+  refreshHeaderFooter();
+}
+
+function refreshHeaderFooter(){
+  if(!me || !myDoc) return;
+  $('#hdrAnon').classList.add('hide');
+  $('#hdrUser').classList.remove('hide');
+
+  const avail = (myDoc.balance||0) - (myWaitingSum||0);
+  const tinfo = tierFrom(myDoc.weeklyDiamonds||0);
+
+  $('#hdrEmail').textContent = me.email||'';
+  $('#hdrTier').textContent = `Tier L${tinfo.level} (${tinfo.pct}%)`;
+  $('#hdrBal').textContent = '💎 '+fmt(avail);
+  $('#availableBal').textContent = fmt(avail);
+
+  $('#accEmail').textContent=me.email||'';
+  $('#accPhone').textContent=myDoc.phone||'';
+  $('#accRole').textContent=myDoc.role||'user';
+  $('#accApproved').textContent=String(!!myDoc.approved);
+
+  $('#accBal').textContent=fmt(myDoc.balance||0);
+  $('#accHold').textContent=fmt(myWaitingSum||0);
+  $('#accAvail').textContent=fmt(avail);
+
+  $('#accWeek').textContent=fmt(myDoc.weeklyDiamonds||0);
+  $('#accTier').textContent='L'+(tinfo.level||0);
+
+  $('#pfEmail').textContent=me.email||'';
+  $('#pfRole').textContent=myDoc.role||'user';
+  $('#pfApproved').textContent=String(!!myDoc.approved);
+  $('#pfBalance').textContent=fmt(myDoc.balance||0);
+  $('#pfWeekly').textContent=fmt(myDoc.weeklyDiamonds||0);
+  $('#pfName').value = myDoc.name||'';
+  $('#pfPhone').value = myDoc.phone||'';
+  $('#hdrAvatar').src = myDoc.avatar || 'https://i.imgur.com/2QfG8z7.png';
+
+  $('#ftWeek').textContent = fmt(myDoc.weeklyDiamonds||0);
+  $('#ftTier').textContent = (tinfo.level||0);
+  $('#ftBal').textContent = fmt(avail);
+}
+
+// Auth actions
+async function doLogin(){
+  const email = $('#loginEmail').value.trim();
+  const pass = $('#loginPass').value;
+  try{
+    await auth.signInWithEmailAndPassword(email, pass);
+    $('#loginMsg').textContent='';
+  }catch(e){
+    console.error(e); toast($('#loginMsg'), 'Login failed: '+e.message);
+  }
+}
+async function sendReset(){
+  const email = me?.email || $('#loginEmail').value.trim();
+  if(!email){ toast($('#loginMsg'),'Enter your email first'); return; }
+  try{ await auth.sendPasswordResetEmail(email); alert('Reset mail sent to '+email); }
+  catch(e){ alert('Error: '+e.message); }
+}
+async function doRegister(){
+  const name=$('#regName').value.trim();
+  const phone=$('#regPhone').value.trim();
+  const email=$('#regEmail').value.trim();
+  const pass=$('#regPass').value;
+  try{
+    const cred = await auth.createUserWithEmailAndPassword(email, pass);
+    await db.collection('users').doc(cred.user.uid).set({
+      email,name,phone,role:'user',approved:false,balance:0,weeklyDiamonds:0,tier:0,avatar:''
+    },{merge:true});
+    alert('Account created. Wait for admin approval.');
+    showPage('profile');
+  }catch(e){
+    toast($('#regMsg'),'Register failed: '+e.message);
+  }
+}
+async function doLogout(){ await auth.signOut(); }
+
+// Profile
+async function saveProfile(){
+  const name=$('#pfName').value.trim();
+  const phone=$('#pfPhone').value.trim();
+  try{
+    await db.collection('users').doc(me.uid).update({name,phone});
+    const file = $('#pfAvatar').files[0];
+    if(file){
+      const ref = storage.ref(`avatars/${me.uid}/${file.name}`);
+      await ref.put(file);
+      const url = await ref.getDownloadURL();
+      await db.collection('users').doc(me.uid).update({avatar:url});
     }
+    toast($('#pfMsg'),'Profile updated.');
+  }catch(e){ toast($('#pfMsg'),'Error: '+e.message); }
+}
 
-    // Logout
-    window.logout = async function() {
-      await signOut(auth);
-      location.reload();
-    }
+// Amount picker
+function pickAmount(n){ $('#amount').value = n; }
 
-    // Auth state
-    onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        currentUser = user;
-        document.getElementById("loginPage").classList.add("hidden");
-        showPage("dashboard");
-        document.getElementById("userInfo").innerText = user.email;
-        loadProfile();
-        loadOrders();
-      } else {
-        document.getElementById("loginPage").classList.remove("hidden");
-      }
+// Create order
+async function createOrder(){
+  if(!myDoc?.approved) { alert('Your account is not approved yet.'); return; }
+  const clientId = $('#clientId').value.trim();
+  const amount = parseInt($('#amount').value||'0',10);
+  const avail = (myDoc.balance||0) - (myWaitingSum||0);
+  if(!clientId) return alert('Enter client/profile ID');
+  if(amount<=0) return alert('Enter a valid amount');
+  if(amount>avail) return alert('Insufficient available balance');
+
+  try{
+    const autoCancelAt = new Date(Date.now()+AUTO_CANCEL_MIN*60*1000);
+    await db.collection('orders').add({
+      clientId, amount, status:'WAITING',
+      userEmail: me.email, uid: me.uid,
+      timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+      autoCancelAt: firebase.firestore.Timestamp.fromDate(autoCancelAt),
+      settled:false
     });
+    $('#createMsg').textContent='Order placed ✓';
+    computeWaitingHold(); // hold refresh
+    showPage('orders');
+  }catch(e){
+    toast($('#createMsg'),'Error: '+e.message);
+  }
+}
 
-    // Profile
-    async function loadProfile() {
-      const ref = doc(db, "users", currentUser.uid);
-      const snap = await getDoc(ref);
-      if (snap.exists()) {
-        const u = snap.data();
-        document.getElementById("balance").innerText = u.balance || 0;
-        document.getElementById("weekly").innerText = u.weeklyDiamonds || 0;
-        document.getElementById("tier").innerText = u.tier || "-";
-        document.getElementById("profileEmail").innerText = currentUser.email;
-        document.getElementById("profileName").value = u.name || "";
-        document.getElementById("profilePhone").value = u.phone || "";
-      }
-    }
-
-    window.updateProfile = async function() {
-      const ref = doc(db, "users", currentUser.uid);
-      await updateDoc(ref, {
-        name: document.getElementById("profileName").value,
-        phone: document.getElementById("profilePhone").value
+// My orders (live)
+let unsubMyOrders=null;
+function loadMyOrders(){
+  unsubMyOrders && unsubMyOrders();
+  const tbody = $('#ordersTable tbody');
+  tbody.innerHTML = '';
+  unsubMyOrders = db.collection('orders')
+    .where('uid','==',me.uid)
+    .orderBy('timestamp','desc')
+    .limit(200)
+    .onSnapshot(snap=>{
+      tbody.innerHTML='';
+      snap.forEach(doc=>{
+        const d=doc.data(); const id=doc.id;
+        const ts=d.timestamp?.toDate?.()||new Date();
+        const badge = d.status==='WAITING'?'b-wait': d.status==='COMPLETED'?'b-ok':'b-bad';
+        const action = d.status==='WAITING'
+          ? `<button class="btn small outline" onclick="cancelOwnOrder('${id}')">Cancel</button>`
+          : `<button class="btn small outline" onclick="showPage('create')">Re-order</button>`;
+        const tr=document.createElement('tr');
+        tr.innerHTML = `
+          <td>${id.slice(-6)}</td>
+          <td>${d.clientId||''}</td>
+          <td>💎 ${fmt(d.amount)}</td>
+          <td>${ts.toLocaleString()}</td>
+          <td><span class="badge ${badge}">${d.status}</span></td>
+          <td>${action}</td>`;
+        tbody.appendChild(tr);
       });
-      alert("Profile updated!");
+    });
+  autoCancelSweep(false); // own overdue
+}
+async function cancelOwnOrder(id){
+  try{ await db.collection('orders').doc(id).update({status:'CANCELLED'}); }
+  catch(e){ alert('Cancel failed: '+e.message); }
+}
+
+// Auto-cancel overdue (admin = all, user = own)
+async function autoCancelSweep(adminScope){
+  const isAdmin = myDoc?.role==='admin';
+  const q = db.collection('orders')
+    .where('status','==','WAITING')
+    .where('autoCancelAt','<=',firebase.firestore.Timestamp.now());
+  const snap = await q.get();
+  const batch = db.batch();
+  snap.forEach(doc=>{
+    const d=doc.data();
+    if(isAdmin || d.uid===me.uid){
+      batch.update(doc.ref,{status:'CANCELLED'});
     }
+  });
+  if(!snap.empty) await batch.commit();
+}
 
-    // Order
-    let selectedAmount = 0;
-    window.setAmount = function(val) {
-      selectedAmount = val;
-      document.getElementById("amount").value = val;
-    }
-
-    window.placeOrder = async function() {
-      if (!selectedAmount) return alert("Select amount!");
-      const recipient = document.getElementById("recipient").value;
-      const ref = collection(db, "orders");
-      await addDoc(ref, {
-        user: currentUser.uid,
-        email: currentUser.email,
-        recipient,
-        amount: selectedAmount,
-        status: "WAITING",
-        timestamp: new Date().toISOString()
-      });
-      alert("Order placed!");
-      loadOrders();
-      showPage("history");
-    }
-
-    async function loadOrders() {
-      // User Orders
-      const q = query(collection(db, "orders"), where("email", "==", currentUser.email));
-      const qs = await getDocs(q);
-      let rows = "";
-      qs.forEach(d => {
-        const o = d.data();
-        rows += `<tr>
-          <td>${d.id}</td>
-          <td>${o.recipient}</td>
-          <td>${o.amount}</td>
-          <td><span class="status ${o.status}">${o.status}</span></td>
-          <td>${o.timestamp}</td>
-        </tr>`;
-      });
-      document.getElementById("orderList").innerHTML = rows;
-
-      // Admin Orders
-      const all = await getDocs(collection(db, "orders"));
-      let adminRows = "";
-      all.forEach(d => {
-        const o = d.data();
-        adminRows += `<tr>
-          <td>${d.id}</td>
-          <td>${o.email}</td>
-          <td>${o.recipient}</td>
-          <td>${o.amount}</td>
-          <td><span class="status ${o.status}">${o.status}</span></td>
+// Admin: Orders (all admins can see)
+let unsubAdminOrders=null;
+function loadAdminOrders(){
+  if(myDoc?.role!=='admin'){ showPage('dashboard'); return; }
+  unsubAdminOrders && unsubAdminOrders();
+  const tbody = $('#adminOrdersTbl tbody');
+  tbody.innerHTML='';
+  unsubAdminOrders = db.collection('orders').orderBy('timestamp','desc').limit(500)
+    .onSnapshot(snap=>{
+      tbody.innerHTML='';
+      snap.forEach(doc=>{
+        const d=doc.data(); const id=doc.id;
+        const badge = d.status==='WAITING'?'b-wait': d.status==='COMPLETED'?'b-ok':'b-bad';
+        const ts=d.timestamp?.toDate?.()||new Date();
+        const tr=document.createElement('tr');
+        tr.innerHTML = `
+          <td>${id.slice(-6)}</td>
+          <td>${d.clientId}</td>
+          <td>💎 ${fmt(d.amount)}</td>
+          <td>${d.userEmail}</td>
+          <td><span class="badge ${badge}">${d.status}</span></td>
+          <td>${ts.toLocaleString()}</td>
           <td>
-            <button onclick="updateStatus('${d.id}','COMPLETED')">✔</button>
-            <button onclick="updateStatus('${d.id}','CANCELLED')">✖</button>
-          </td>
-        </tr>`;
+            <button class="btn small" onclick="adminComplete('${id}')">Complete</button>
+            <button class="btn small outline" onclick="adminCancel('${id}')">Cancel</button>
+          </td>`;
+        tbody.appendChild(tr);
       });
-      document.getElementById("adminOrders").innerHTML = adminRows;
+    });
+}
+async function adminCancel(id){
+  try{ await db.collection('orders').doc(id).update({status:'CANCELLED'}); }
+  catch(e){ alert('Cancel failed: '+e.message); }
+}
+async function adminComplete(id){
+  // status = COMPLETED, and if not settled, decrease user's balance, increase weeklyDiamonds & tier
+  const ref = db.collection('orders').doc(id);
+  await db.runTransaction(async tr=>{
+    const o = await tr.get(ref);
+    if(!o.exists) throw new Error('Order not found');
+    const d=o.data();
+    if(d.status!=='WAITING') return; // already handled
+    tr.update(ref,{status:'COMPLETED', settled:true});
+    const uref = db.collection('users').doc(d.uid);
+    const u = await tr.get(uref);
+    if(u.exists){
+      const ud = u.data();
+      const newBal = (ud.balance||0) - (d.amount||0);
+      const newWeekly = (ud.weeklyDiamonds||0) + (d.amount||0);
+      const tinfo = tierFrom(newWeekly);
+      tr.update(uref,{balance:newBal, weeklyDiamonds:newWeekly, tier:tinfo.level});
     }
+  });
+}
 
-    window.updateStatus = async function(id, status) {
-      const ref = doc(db, "orders", id);
-      await updateDoc(ref, { status });
-      loadOrders();
-    }
-  </script>
+// Admin: Users
+let unsubAdminUsers=null;
+function loadAdminUsers(){
+  if(myDoc?.role!=='admin'){ showPage('dashboard'); return; }
+  unsubAdminUsers && unsubAdminUsers();
+  const tbody = $('#adminUsersTbl tbody');
+  tbody.innerHTML='';
+  unsubAdminUsers = db.collection('users').orderBy('email').onSnapshot(snap=>{
+    tbody.innerHTML='';
+    snap.forEach(doc=>{
+      const d=doc.data(); const id=doc.id;
+      const tr=document.createElement('tr');
+      tr.innerHTML = `
+        <td>${d.email||''}</td>
+        <td><input value="${d.name||''}" data-id="${id}" data-key="name" onblur="editUser(this)"></td>
+        <td><input value="${d.phone||''}" data-id="${id}" data-key="phone" onblur="editUser(this)"></td>
+        <td>
+          <select data-id="${id}" data-key="role" onchange="editUser(this)">
+            <option value="user" ${d.role==='user'?'selected':''}>user</option>
+            <option value="admin" ${d.role==='admin'?'selected':''}>admin</option>
+          </select>
+        </td>
+        <td>
+          <select data-id="${id}" data-key="approved" onchange="editUser(this)">
+            <option value="true" ${d.approved?'selected':''}>true</option>
+            <option value="false" ${!d.approved?'selected':''}>false</option>
+          </select>
+        </td>
+        <td><input type="number" value="${d.balance||0}" data-id="${id}" data-key="balance" onblur="editUser(this)"></td>
+        <td>${fmt(d.weeklyDiamonds||0)}</td>
+        <td>L${d.tier||0}</td>
+        <td class="row">
+          <button class="btn small outline" onclick="impersonate('${id}')">Impersonate</button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+  });
+}
+async function editUser(el){
+  const id=el.dataset.id, key=el.dataset.key;
+  let val = el.value;
+  if(key==='approved') val = (val==='true');
+  if(key==='balance') val = Number(val||0);
+  try{
+    const patch = {[key]:val};
+    if(key==='balance' || key==='approved'){ /* keep */ }
+    await db.collection('users').doc(id).update(patch);
+  }catch(e){ alert('Update failed: '+e.message); }
+}
+function impersonate(uid){
+  alert('Open Firestore → users/'+uid+' to view details.\n(Full impersonation needs Cloud Functions; skipped.)');
+}
+
+// Router (hash)
+window.addEventListener('hashchange',()=>{
+  const key = (location.hash.replace('#/','')||'dashboard');
+  showPage(key);
+});
+
+// Initial landing
+loadSettings();
+showPage('dashboard');
+</script>
 </body>
 </html>
