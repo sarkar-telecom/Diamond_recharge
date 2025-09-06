@@ -1,710 +1,285 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Sarkar Telecom — Diamond Recharge</title>
-<meta name="theme-color" content="#111111" />
-<style>
-  :root{
-    --bg:#0f1115;--panel:#151922;--muted:#9aa4b2;--line:#242b38;--brand:#4c8bf7;
-    --ok:#22c55e;--warn:#f59e0b;--bad:#ef4444;--text:#e8edf3;
-  }
-  *{box-sizing:border-box}
-  body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
-       background:var(--bg);color:var(--text);overflow-x:hidden}
-  a{color:inherit;text-decoration:none}
-  /* header */
-  header{position:sticky;top:0;z-index:1000;background:var(--panel);border-bottom:1px solid var(--line);
-         height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 12px}
-  .h-left{display:flex;align-items:center;gap:10px}
-  .brand{font-weight:700;color:#a9c1ff}
-  .hamb{background:transparent;border:0;color:#fff;font-size:24px}
-  .h-right{display:flex;align-items:center;gap:8px}
-  .chip{border:1px solid var(--line);background:#121722;border-radius:999px;padding:6px 10px;color:#c8d2e0;font-size:12px}
-  .btn{background:var(--brand);border:0;color:#fff;padding:10px 14px;border-radius:10px;cursor:pointer}
-  .btn.ghost{background:#1c2330}
-  .btn.ok{background:var(--ok)} .btn.warn{background:var(--warn)} .btn.bad{background:var(--bad)}
-  .btn:disabled{opacity:.6;cursor:not-allowed}
-  /* drawer */
-  .drawer{position:fixed;inset:0 40% 0 0;max-width:260px;background:var(--panel);border-right:1px solid var(--line);
-          transform:translateX(-100%);transition:.25s;z-index:999}
-  .drawer.open{transform:none}
-  .nav a{display:block;padding:12px 16px;border-bottom:1px solid var(--line);color:#dbe2ee}
-  .admin-only{display:none}
-  /* content */
-  main{max-width:1024px;margin:16px auto 96px;padding:0 12px}
-  .page{display:none}.page.active{display:block}
-  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px}
-  .grid{display:grid;gap:12px}
-  @media(min-width:768px){ .grid.cols-2{grid-template-columns:1fr 1fr} .grid.cols-3{grid-template-columns:repeat(3,1fr)} }
-  label{font-size:13px;color:var(--muted)}
-  input,select,button,textarea{font:inherit;border-radius:10px;border:1px solid var(--line);background:#0f141d;color:var(--text);padding:10px;width:100%}
-  .row{display:flex;gap:10px;flex-wrap:wrap}.grow{flex:1}
-  .pill{padding:6px 10px;border:1px solid var(--line);background:#0f141d;border-radius:999px}
-  .center{text-align:center}
-  .mt6{margin-top:6px}.mt10{margin-top:10px}.mt14{margin-top:14px}.mt16{margin-top:16px}.mt20{margin-top:20px}
-  .right-actions{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
-  /* gifts */
-  .gift-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-  .gift{background:#0f141d;border:2px solid transparent;border-radius:12px;padding:18px;text-align:center;cursor:pointer}
-  .gift:hover{background:#121a26}
-  .gift.selected{border-color:var(--brand);background:#121a26}
-  /* tables */
-  .table-wrap{overflow:auto}
-  table{width:100%;border-collapse:collapse}
-  th,td{padding:10px;border-bottom:1px solid #243043;text-align:center}
-  th{background:#0f141d;color:#a8c1ff;position:sticky;top:0}
-  .status{display:inline-block;padding:5px 8px;border-radius:8px;font-size:12px}
-  .waiting{background:var(--warn);color:#000}.completed{background:var(--ok);color:#000}.cancelled{background:var(--bad);color:#fff}
-  /* footer */
-  footer{position:fixed;left:0;right:0;bottom:0;background:var(--panel);border-top:1px solid var(--line);
-         display:flex;justify-content:space-between;align-items:center;padding:10px 12px;gap:10px;z-index:900;flex-wrap:wrap}
-  /* small helpers */
-  .avatar{width:28px;height:28px;border-radius:50%;object-fit:cover;background:#222}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Diamond Recharge</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #121212;
+      color: #f1f1f1;
+    }
+    header, footer {
+      background: #1f1f1f;
+      padding: 10px;
+      text-align: center;
+    }
+    .sidebar {
+      width: 220px;
+      background: #1c1c1c;
+      position: fixed;
+      top: 0; left: -220px;
+      height: 100%;
+      transition: left 0.3s;
+      padding-top: 50px;
+    }
+    .sidebar.active { left: 0; }
+    .sidebar a {
+      display: block;
+      padding: 12px;
+      text-decoration: none;
+      color: #f1f1f1;
+    }
+    .toggle-btn {
+      font-size: 20px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      color: #fff;
+      position: absolute;
+      top: 10px;
+      left: 10px;
+    }
+    .page {
+      display: none;
+      padding: 20px;
+    }
+    .page.active { display: block; }
+    .btn {
+      background: #6200ea;
+      color: #fff;
+      border: none;
+      padding: 10px 15px;
+      margin: 5px;
+      cursor: pointer;
+      border-radius: 6px;
+    }
+    .btn:hover { background: #3700b3; }
+    .order-btn {
+      display: inline-block;
+      background: #333;
+      padding: 10px 15px;
+      margin: 5px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .status {
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+    }
+    .waiting { background: orange; }
+    .completed { background: green; }
+    .cancelled { background: red; }
+  </style>
 </head>
 <body>
+  <header>
+    <button class="toggle-btn" onclick="toggleSidebar()">☰</button>
+    <h2 id="siteTitle">💎 Diamond Recharge</h2>
+    <div id="headerUser"></div>
+  </header>
 
-<header>
-  <div class="h-left">
-    <button id="hamb" class="hamb">☰</button>
-    <div class="brand">Sarkar Telecom</div>
+  <div class="sidebar" id="sidebar">
+    <a href="#" onclick="showPage('loginPage')">Login</a>
+    <a href="#" onclick="showPage('dashboardPage')">Dashboard</a>
+    <a href="#" onclick="showPage('orderPage')">Order</a>
+    <a href="#" onclick="showPage('historyPage')">Order History</a>
+    <a href="#" onclick="showPage('profilePage')">Profile</a>
+    <a href="#" onclick="logout()">Logout</a>
   </div>
-  <div class="h-right">
-    <span id="hudEmail" class="chip">Guest</span>
-    <span id="hudTier" class="chip">Tier 0</span>
-    <span id="hudBal" class="chip">💎 0</span>
-    <button class="btn" data-page="order">New Order</button>
-  </div>
-</header>
 
-<nav id="drawer" class="drawer">
-  <div class="nav">
-    <a href="#" data-page="dashboard">🏠 Dashboard</a>
-    <a href="#" data-page="order">➕ Create Order</a>
-    <a href="#" data-page="history">📑 Order History</a>
-    <a href="#" data-page="profile">👤 Profile</a>
-    <a class="admin-only" href="#" data-page="adminOrders">🛠 Admin: Manage Orders</a>
-    <a class="admin-only" href="#" data-page="adminUsers">👥 Admin: Manage Users</a>
-    <a class="admin-only" href="#" data-page="settings">⚙️ Admin: Settings</a>
-    <a id="toLogin" href="#" data-page="login">🔐 Login / Register</a>
-    <a id="doLogout" href="#">🚪 Logout</a>
-  </div>
-</nav>
+  <main>
+    <!-- Login -->
+    <section id="loginPage" class="page active">
+      <h2>Login</h2>
+      <input id="loginEmail" type="email" placeholder="Email"><br>
+      <input id="loginPassword" type="password" placeholder="Password"><br>
+      <button class="btn" onclick="login()">Login</button>
+      <div id="loginMsg"></div>
+    </section>
 
-<main>
-  <!-- Dashboard -->
-  <section id="page-dashboard" class="page active">
-    <div class="card">
-      <h2 class="center">Welcome</h2>
-      <div class="grid cols-3 mt10">
-        <div class="card">
-          <label>Total Balance</label>
-          <div class="mt6"><span id="dashBal" class="pill">💎 0</span></div>
-        </div>
-        <div class="card">
-          <label>Weekly Diamonds (Thu 10 PM BD → Thu 10 PM BD)</label>
-          <div class="mt6"><span id="dashWeekly" class="pill">0</span></div>
-        </div>
-        <div class="card">
-          <label>Reward Tier</label>
-          <div class="mt6"><span id="dashTier" class="pill">L0 (0%)</span></div>
-        </div>
-      </div>
-      <div class="right-actions mt16">
-        <button class="btn" data-page="order">Create Order</button>
-        <button class="btn ghost" data-page="history">View History</button>
-        <button class="btn ghost admin-only" data-page="adminOrders">Admin Panel</button>
-      </div>
-    </div>
-  </section>
+    <!-- Dashboard -->
+    <section id="dashboardPage" class="page">
+      <h2>Dashboard</h2>
+      <p>Welcome <span id="dashName"></span>!</p>
+      <p>Balance: <span id="dashBalance">0</span> 💎</p>
+      <p>Weekly Orders: <span id="dashWeekly">0</span></p>
+      <p>Reward Tier: <span id="dashTier">-</span></p>
+    </section>
 
-  <!-- Order -->
-  <section id="page-order" class="page">
-    <div class="card">
-      <h2 class="center">Create Order</h2>
-      <div class="row mt10">
-        <div class="pill">Balance: <b id="orderBal">💎 0</b></div>
-      </div>
-      <div class="mt10">
-        <label>Gift Recipient *</label>
-        <input id="recipient" placeholder="Enter Profile ID or Number" />
-      </div>
-      <div class="mt14">
-        <label>Select a Gift *</label>
-        <div id="giftGrid" class="gift-grid mt10"></div>
-      </div>
-      <div class="right-actions mt16">
-        <button id="confirmOrder" class="btn" disabled>Confirm Order</button>
-      </div>
-      <div style="font-size:12px;color:var(--muted)" class="mt10">
-        Note: Orders auto-cancel after <span id="autoCancelMin">5</span> minutes if not completed by admin. Cancel refunds balance instantly.
-      </div>
-    </div>
-  </section>
+    <!-- Order -->
+    <section id="orderPage" class="page">
+      <h2>Place Order</h2>
+      <div id="orderButtons"></div>
+      <button class="btn" onclick="submitOrder()">Submit Order</button>
+      <div id="orderMsg"></div>
+    </section>
 
-  <!-- History -->
-  <section id="page-history" class="page">
-    <div class="card">
-      <h2 class="center">Order History</h2>
-      <div class="row">
-        <input id="histSearch" class="grow" placeholder="Search by Order ID / Amount / Time …" />
-        <select id="histStatus">
-          <option value="">All</option><option value="waiting">Waiting</option>
-          <option value="completed">Completed</option><option value="cancelled">Cancelled</option>
-        </select>
-      </div>
-      <div class="table-wrap mt14">
-        <table>
-          <thead><tr><th>Order ID</th><th>Client ID</th><th>Amount</th><th>Status</th><th>Time</th></tr></thead>
-          <tbody id="histBody"></tbody>
-        </table>
-      </div>
-    </div>
-  </section>
+    <!-- History -->
+    <section id="historyPage" class="page">
+      <h2>Order History</h2>
+      <table border="1" width="100%" id="historyTable">
+        <tr><th>ID</th><th>Amount</th><th>Status</th><th>Time</th></tr>
+      </table>
+    </section>
 
-  <!-- Profile -->
-  <section id="page-profile" class="page">
-    <div class="card">
-      <h2 class="center">Profile</h2>
-      <div class="grid cols-2">
-        <div class="card">
-          <label>Name</label>
-          <input id="profName" class="mt6" placeholder="Your name" />
-          <label class="mt10">Phone</label>
-          <input id="profPhone" placeholder="+8801..." />
-          <div class="right-actions mt16"><button id="saveProfile" class="btn">Save</button></div>
-        </div>
-        <div class="card">
-          <h3>Account</h3>
-          <div class="mt10">Email: <b id="accEmail">—</b></div>
-          <div class="mt6">Role: <b id="accRole">—</b></div>
-          <div class="mt6">Approved: <b id="accApproved">—</b></div>
-          <div class="mt6">Balance: <b id="accBal">0</b></div>
-          <div class="mt6">Weekly Diamonds: <b id="accWeekly">0</b></div>
-          <div class="mt14">
-            <button id="resetPass" class="btn ghost">Reset password via email</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+    <!-- Profile -->
+    <section id="profilePage" class="page">
+      <h2>Profile</h2>
+      <p>Email: <span id="profileEmail"></span></p>
+      <p>Name: <input id="profileName"></p>
+      <p>Phone: <input id="profilePhone"></p>
+      <button class="btn" onclick="updateProfile()">Update</button>
+      <div id="profileMsg"></div>
+    </section>
+  </main>
 
-  <!-- Admin: Orders -->
-  <section id="page-adminOrders" class="page">
-    <div class="card">
-      <h2 class="center">Admin — Manage Orders</h2>
-      <div class="row">
-        <input id="adminOrderSearch" class="grow" placeholder="Search by Order/Client/Email/Amount/Time" />
-        <select id="adminOrderStatus">
-          <option value="">All</option><option value="waiting">Waiting</option><option value="completed">Completed</option><option value="cancelled">Cancelled</option>
-        </select>
-      </div>
-      <div class="table-wrap mt14">
-        <table>
-          <thead><tr><th>Order</th><th>User Email</th><th>Client</th><th>Amount</th><th>Status</th><th>Time</th><th>Actions</th></tr></thead>
-          <tbody id="adminOrdersBody"></tbody>
-        </table>
-      </div>
-    </div>
-  </section>
+  <footer>
+    <p>Balance: <span id="footBalance">0</span> | Weekly: <span id="footWeekly">0</span></p>
+    <p>© 2025 Diamond Recharge</p>
+  </footer>
 
-  <!-- Admin: Users -->
-  <section id="page-adminUsers" class="page">
-    <div class="card">
-      <h2 class="center">Admin — Manage Users</h2>
-      <div class="row">
-        <input id="userSearch" class="grow" placeholder="Search by name/email/phone…" />
-        <button id="addUser" class="btn">Add User</button>
-      </div>
-      <div class="table-wrap mt14">
-        <table>
-          <thead>
-            <tr><th>Name</th><th>Email</th><th>Phone</th><th>Role</th><th>Approved</th><th>Balance</th><th>Weekly</th><th>Tier</th><th>± Balance</th><th>Save</th></tr>
-          </thead>
-          <tbody id="adminUsersBody"></tbody>
-        </table>
-      </div>
-    </div>
-  </section>
-
-  <!-- Admin: Settings -->
-  <section id="page-settings" class="page">
-    <div class="card">
-      <h2 class="center">Settings</h2>
-      <label>Auto-cancel (minutes)</label>
-      <input id="setAutoCancel" type="number" class="mt6" />
-      <div class="right-actions mt16"><button id="saveSettings" class="btn">Save Settings</button></div>
-    </div>
-  </section>
-
-  <!-- Login / Register -->
-  <section id="page-login" class="page">
-    <div class="card">
-      <h2 class="center">Login / Register</h2>
-      <div class="grid cols-2 mt10">
-        <div class="card">
-          <h3 class="mt0">Login</h3>
-          <label>Email</label><input id="loginEmail" class="mt6" placeholder="email@example.com"/>
-          <label class="mt10">Password</label><input id="loginPass" type="password" placeholder="password"/>
-          <div class="mt14"><button id="doLogin" class="btn">Login</button></div>
-        </div>
-        <div class="card">
-          <h3 class="mt0">Register</h3>
-          <label>Email</label><input id="regEmail" class="mt6" placeholder="email@example.com"/>
-          <label class="mt10">Password</label><input id="regPass" type="password" placeholder="password"/>
-          <label class="mt10">Name</label><input id="regName" placeholder="Your name"/>
-          <label class="mt10">Phone</label><input id="regPhone" placeholder="+8801..."/>
-          <div class="mt14"><button id="doRegister" class="btn">Register (needs admin approval)</button></div>
-        </div>
-      </div>
-    </div>
-  </section>
-</main>
-
-<footer>
-  <div>© 2025 Sarkar Telecom. All rights reserved.</div>
-  <div class="row">
-    <span id="footWeek" class="chip">Week: 0</span>
-    <span id="footTier" class="chip">Tier: 0</span>
-    <span id="footBal" class="chip">💎 0</span>
-  </div>
-</footer>
-
-<!-- Firebase -->
 <script type="module">
-/* ======== Firebase SDK (v10+) ======== */
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
-import {
-  getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword,
-  sendPasswordResetEmail, signOut, setPersistence, browserLocalPersistence
-} from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
-import {
-  getFirestore, doc, getDoc, setDoc, updateDoc, addDoc, collection,
-  serverTimestamp, onSnapshot, query, where, orderBy, limit, runTransaction
-} from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+  import { getFirestore, doc, getDoc, setDoc, updateDoc, addDoc, collection, query, where, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-/* ======== CONFIG ======== */
-// TODO: paste your firebaseConfig here
-const firebaseConfig = {
-  apiKey: "PASTE",
-  authDomain: "PASTE",
-  projectId: "PASTE",
-  storageBucket: "PASTE",
-  messagingSenderId: "PASTE",
-  appId: "PASTE"
-};
+  // Firebase Config
+  const firebaseConfig = {
+    apiKey: "AIzaSyDJRm9-jRkxVrTLYBzK1gGrRmAEu29jVrU",
+    authDomain: "diamond-recharge-f7f59.firebaseapp.com",
+    projectId: "diamond-recharge-f7f59",
+    storageBucket: "diamond-recharge-f7f59.firebasestorage.app",
+    messagingSenderId: "657717928489",
+    appId: "1:657717928489:web:70431ebc9afb7002d4b238",
+    measurementId: "G-TDK78BQ8SQ"
+  };
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-await setPersistence(auth, browserLocalPersistence);
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
 
-/* ======== Helpers / UI ======== */
-const $ = (id)=>document.getElementById(id);
-const drawer = $('drawer'); $('hamb').onclick=()=>drawer.classList.toggle('open');
-document.querySelectorAll('[data-page]').forEach(a=>a.onclick=(e)=>{e.preventDefault();showPage(a.getAttribute('data-page'));drawer.classList.remove('open');});
-function showPage(key){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  const map={dashboard:'page-dashboard',order:'page-order',history:'page-history',profile:'page-profile',
-             adminOrders:'page-adminOrders',adminUsers:'page-adminUsers',settings:'page-settings',login:'page-login'};
-  ( $(map[key]||'page-dashboard') ).classList.add('active');
-}
-function fmt(n){return Number(n||0).toLocaleString();}
-function tierInfo(total){
-  const t = Number(total||0);
-  if(t>=800000) return {level:5,pct:3.5};
-  if(t>=80000)  return {level:4,pct:2.6};
-  if(t>=40000)  return {level:3,pct:2.1};
-  if(t>=20000)  return {level:2,pct:1.6};
-  if(t>=5000)   return {level:1,pct:1.0};
-  return {level:0,pct:0};
-}
-// BD week boundary (Thu 22:00 BD)
-function bdNow(){const d=new Date();return new Date(d.getTime()+d.getTimezoneOffset()*60000+6*3600000);}
-function weekBoundaryEpoch(){
-  const d=bdNow(); const day=d.getDay(); const diff=(day-4+7)%7;
-  const lastThu = new Date(d.getFullYear(), d.getMonth(), d.getDate()-diff, 22,0,0,0);
-  return lastThu.getTime();
-}
+  let currentUser = null;
+  let orderAmount = 0;
 
-/* ======== App State ======== */
-let me=null;              // current user doc data
-let meUnsub=null;         // snapshot unsubscribe
-let histUnsub=null;       // history listener
-let adminOrdersUnsub=null;// admin orders
-let settingsUnsub=null;   // settings
-let settings={autoCancelMinutes:5};
-
-const AMOUNTS=[10,50,100,200,500,1000,2000,5000,10000,20000];
-function renderGiftButtons(){
-  const grid=$('giftGrid'); grid.innerHTML='';
-  AMOUNTS.forEach(v=>{
-    const d=document.createElement('div');
-    d.className='gift'; d.innerHTML=`<div>💎 ${fmt(v)}</div>`;
-    d.onclick=()=>{
-      document.querySelectorAll('.gift').forEach(g=>g.classList.remove('selected'));
-      d.classList.add('selected');
-      d.setAttribute('data-selected','1');
-      $('confirmOrder').disabled = !($('recipient').value.trim() && v<=Number(me?.balance||0) && (me?.approved===true));
-      $('confirmOrder').dataset.amount=String(v);
-    };
-    grid.appendChild(d);
-  });
-}
-$('recipient').addEventListener('input', ()=>{
-  const v = Number($('confirmOrder').dataset.amount||0);
-  $('confirmOrder').disabled = !( $('recipient').value.trim() && v>0 && me && me.approved===true && v<=Number(me.balance||0) );
-});
-
-/* ======== Live HUD ======== */
-function updateHud(){
-  const weekly = Number(me?.weekly || 0);
-  const t = tierInfo(weekly);
-  $('hudEmail').textContent = me?.email || 'Guest';
-  $('hudBal').textContent = `💎 ${fmt(me?.balance||0)}`;
-  $('hudTier').textContent = `Tier ${t.level}`;
-  $('dashBal').textContent = `💎 ${fmt(me?.balance||0)}`;
-  $('orderBal').textContent = `💎 ${fmt(me?.balance||0)}`;
-  $('dashWeekly').textContent = fmt(weekly);
-  $('dashTier').textContent = `L${t.level} (${t.pct}%)`;
-  $('accBal').textContent = fmt(me?.balance||0);
-  $('accEmail').textContent = me?.email||'';
-  $('accRole').textContent = me?.role||'user';
-  $('accApproved').textContent = String(me?.approved===true);
-  $('accWeekly').textContent = fmt(weekly);
-  $('footWeek').textContent = `Week: ${fmt(weekly)}`;
-  $('footTier').textContent = `Tier: ${t.level}`;
-  $('footBal').textContent = `💎 ${fmt(me?.balance||0)}`;
-  // admin menus
-  document.querySelectorAll('.admin-only').forEach(el=> el.style.display = (me?.role==='admin')?'block':'none');
-  $('toLogin').style.display = me ? 'none':'block';
-}
-function computeWeeklyFromOrders(userEmail){
-  if(histUnsub) histUnsub();
-  const qb = query(
-    collection(db,'orders'),
-    where('userEmail','==',userEmail),
-    where('timestamp','>=', new Date(weekBoundaryEpoch())),
-    where('status','==','completed'),
-    orderBy('timestamp','desc'),
-    limit(500)
-  );
-  histUnsub = onSnapshot(qb, snap=>{
-    const sum = snap.docs.reduce((s,d)=> s + Number(d.data().amount||0), 0);
-    me.weekly = sum;
-    updateHud();
-    renderHistory(); // re-render table if open
-  });
-}
-
-/* ======== Auth ======== */
-onAuthStateChanged(auth, async (user)=>{
-  if(!user){
-    me=null; updateHud();
-    showPage('login');
-    if(meUnsub){meUnsub();meUnsub=null}
-    if(histUnsub){histUnsub();histUnsub=null}
-    if(adminOrdersUnsub){adminOrdersUnsub();adminOrdersUnsub=null}
-    return;
+  // Sidebar toggle
+  window.toggleSidebar = function(){
+    document.getElementById("sidebar").classList.toggle("active");
   }
-  // ensure users/{uid} exists
-  const uref=doc(db,'users',user.uid);
-  const udoc=await getDoc(uref);
-  if(!udoc.exists()){
-    await setDoc(uref,{
-      uid:user.uid,email:user.email||'',name:'',phone:'',
-      role:'user',approved:false,balance:0,createdAt:serverTimestamp()
+
+  // Show page
+  window.showPage = function(id){
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+  }
+
+  // Login
+  window.login = async function(){
+    let email = document.getElementById("loginEmail").value;
+    let pass = document.getElementById("loginPassword").value;
+    try {
+      await signInWithEmailAndPassword(auth, email, pass);
+      document.getElementById("loginMsg").innerText = "Login success!";
+    } catch(e){
+      document.getElementById("loginMsg").innerText = "Login failed: " + e.message;
+    }
+  }
+
+  // Logout
+  window.logout = async function(){
+    await signOut(auth);
+    showPage("loginPage");
+  }
+
+  // Profile Update
+  window.updateProfile = async function(){
+    if(!currentUser) return;
+    let name = document.getElementById("profileName").value;
+    let phone = document.getElementById("profilePhone").value;
+    await updateDoc(doc(db,"users",currentUser.uid), {name, phone});
+    document.getElementById("profileMsg").innerText="Updated!";
+  }
+
+  // Submit Order
+  window.submitOrder = async function(){
+    if(!currentUser) return;
+    if(orderAmount<=0){ alert("Select amount"); return; }
+    let userDoc = await getDoc(doc(db,"users",currentUser.uid));
+    if(!userDoc.exists() || !userDoc.data().approved){
+      document.getElementById("orderMsg").innerText="You are not approved!";
+      return;
+    }
+    let bal = userDoc.data().balance || 0;
+    if(bal < orderAmount){
+      document.getElementById("orderMsg").innerText="Insufficient balance!";
+      return;
+    }
+    await addDoc(collection(db,"orders"), {
+      userEmail: currentUser.email,
+      amount: orderAmount,
+      status: "WAITING",
+      timestamp: serverTimestamp()
+    });
+    await updateDoc(doc(db,"users",currentUser.uid), {
+      balance: bal - orderAmount,
+      weeklyDiamonds: (userDoc.data().weeklyDiamonds||0)+orderAmount
+    });
+    document.getElementById("orderMsg").innerText="Order placed!";
+    loadOrders();
+  }
+
+  // Load Orders
+  async function loadOrders(){
+    if(!currentUser) return;
+    let q = query(collection(db,"orders"), where("userEmail","==",currentUser.email));
+    let snap = await getDocs(q);
+    let table = document.getElementById("historyTable");
+    table.innerHTML = "<tr><th>ID</th><th>Amount</th><th>Status</th><th>Time</th></tr>";
+    snap.forEach(docu=>{
+      let d = docu.data();
+      let statusClass = d.status=="WAITING"?"waiting":d.status=="COMPLETED"?"completed":"cancelled";
+      table.innerHTML += `<tr><td>${docu.id}</td><td>${d.amount}</td><td><span class="status ${statusClass}">${d.status}</span></td><td>${d.timestamp?.toDate()}</td></tr>`;
     });
   }
-  // live user doc
-  if(meUnsub) meUnsub();
-  meUnsub = onSnapshot(uref,(d)=>{
-    me = d.data(); if(!me) return;
-    // sanity defaults
-    me.weekly = me.weekly || 0;
-    updateHud(); renderGiftButtons();
-    $('autoCancelMin').textContent = settings.autoCancelMinutes;
-    computeWeeklyFromOrders(me.email);
-    // default landing:
-    showPage('dashboard');
-  });
-  // settings listener
-  if(!settingsUnsub){
-    settingsUnsub = onSnapshot(doc(db,'settings','app'), (s)=>{
-      if(s.exists()) settings = {...settings, ...s.data()};
-      $('autoCancelMin').textContent = settings.autoCancelMinutes;
-      $('setAutoCancel').value = settings.autoCancelMinutes;
-    });
-  }
-});
-$('doLogout').onclick=async (e)=>{e.preventDefault(); await signOut(auth);};
 
-/* ======== Login / Register ======== */
-$('doLogin').onclick=async ()=>{
-  const email=$('loginEmail').value.trim().toLowerCase();
-  const pass=$('loginPass').value;
-  if(!email||!pass) return alert('Enter email & password');
-  await signInWithEmailAndPassword(auth,email,pass);
-  showPage('dashboard');
-};
-$('doRegister').onclick=async ()=>{
-  const email=$('regEmail').value.trim().toLowerCase();
-  const pass=$('regPass').value;
-  const name=$('regName').value.trim();
-  const phone=$('regPhone').value.trim();
-  if(!email||!pass) return alert('Email & password required');
-  const cr = await createUserWithEmailAndPassword(auth,email,pass);
-  await setDoc(doc(db,'users',cr.user.uid),{
-    uid:cr.user.uid,email,name,phone,role:'user',approved:false,balance:0,createdAt:serverTimestamp()
-  });
-  alert('Registered! Wait for admin approval.');
-  showPage('dashboard');
-};
-$('resetPass').onclick=async ()=>{
-  if(!me?.email) return alert('No email');
-  await sendPasswordResetEmail(auth, me.email);
-  alert('Password reset email sent.');
-};
-
-/* ======== Profile ======== */
-function loadProfileForm(){
-  $('profName').value = me?.name||'';
-  $('profPhone').value = me?.phone||'';
-}
-$('saveProfile').onclick=async ()=>{
-  if(!me) return;
-  await updateDoc(doc(db,'users',me.uid),{
-    name:$('profName').value.trim(),
-    phone:$('profPhone').value.trim()
-  });
-  alert('Profile updated');
-};
-document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='visible' && me) loadProfileForm(); });
-
-/* ======== Order Create (transaction) ======== */
-$('confirmOrder').onclick=async ()=>{
-  if(!me) return alert('Login first');
-  if(me.approved!==true) return alert('You are not approved yet.');
-  const clientId = $('recipient').value.trim();
-  const amt = Number($('confirmOrder').dataset.amount||0);
-  if(!clientId) return alert('Enter recipient');
-  if(amt<=0) return alert('Select amount');
-  // transaction: deduct balance and create order
-  await runTransaction(db, async (tx)=>{
-    const uref = doc(db,'users',me.uid);
-    const u = await tx.get(uref);
-    if(!u.exists()) throw 'User missing';
-    const ub = Number(u.data().balance||0);
-    if(ub < amt) throw 'Insufficient balance';
-    tx.update(uref, { balance: ub - amt });
-    const expires = new Date(Date.now() + (settings.autoCancelMinutes||5)*60*1000);
-    tx.set( doc(collection(db,'orders')), {
-      userEmail: me.email, uid: me.uid, clientId, amount: amt,
-      status:'waiting', autoCancelMinutes: settings.autoCancelMinutes||5,
-      timestamp: serverTimestamp(), expiresAt: expires
-    });
-  });
-  $('recipient').value=''; document.querySelectorAll('.gift').forEach(g=>g.classList.remove('selected'));
-  $('confirmOrder').disabled=true;
-  alert('Order placed!');
-};
-/* ======== History (live) ======== */
-function renderHistory(){
-  if(!me) return;
-  const q1 = query(
-    collection(db,'orders'),
-    where('uid','==',me.uid),
-    orderBy('timestamp','desc'),
-    limit(200)
-  );
-  if(histUnsub) histUnsub(); // replaced by computeWeeklyFromOrders, but we need table too
-  histUnsub = onSnapshot(q1,(snap)=>{
-    const text= $('histSearch').value.trim().toLowerCase();
-    const st = $('histStatus').value;
-    const body=$('histBody'); body.innerHTML='';
-    snap.docs
-      .map(d=>({id:d.id,...d.data()}))
-      .filter(o=>{
-        const f=[o.id,o.clientId,String(o.amount),(o.timestamp?.toDate?.()||new Date()).toLocaleString()].join(' ').toLowerCase();
-        if(text && !f.includes(text)) return false;
-        if(st && o.status!==st) return false;
-        return true;
-      })
-      .forEach(o=>{
-        const tr=document.createElement('tr');
-        tr.innerHTML=`
-          <td>${o.id}</td>
-          <td>${o.clientId}</td>
-          <td>${fmt(o.amount)}</td>
-          <td><span class="status ${o.status}">${o.status}</span></td>
-          <td>${(o.timestamp?.toDate?.()||new Date()).toLocaleString()}</td>`;
-        body.appendChild(tr);
-      });
-  });
-}
-$('histSearch').oninput=renderHistory; $('histStatus').onchange=renderHistory;
-
-/* ======== Admin: Orders ======== */
-function listenAdminOrders(){
-  if(me?.role!=='admin') return;
-  const qAdmin = query(collection(db,'orders'), orderBy('timestamp','desc'), limit(300));
-  if(adminOrdersUnsub) adminOrdersUnsub();
-  adminOrdersUnsub = onSnapshot(qAdmin,(snap)=>{
-    const text=$('adminOrderSearch').value.trim().toLowerCase();
-    const st=$('adminOrderStatus').value;
-    const body=$('adminOrdersBody'); body.innerHTML='';
-    snap.docs.map(d=>({id:d.id,...d.data()}))
-      .filter(o=>{
-        const f=[o.id,o.clientId,o.userEmail,String(o.amount),(o.timestamp?.toDate?.()||new Date()).toLocaleString()].join(' ').toLowerCase();
-        if(text && !f.includes(text)) return false;
-        if(st && o.status!==st) return false;
-        return true;
-      })
-      .forEach(o=>{
-        const tr=document.createElement('tr');
-        tr.innerHTML=`
-          <td>${o.id}</td>
-          <td>${o.userEmail||''}</td>
-          <td>${o.clientId}</td>
-          <td>${fmt(o.amount)}</td>
-          <td><span class="status ${o.status}">${o.status}</span></td>
-          <td>${(o.timestamp?.toDate?.()||new Date()).toLocaleString()}</td>
-          <td>
-            <button class="btn ok" data-act="complete" data-id="${o.id}" ${o.status==='completed'?'disabled':''}>Complete</button>
-            <button class="btn bad" data-act="cancel" data-id="${o.id}" ${o.status==='cancelled'?'disabled':''}>Cancel</button>
-          </td>`;
-        body.appendChild(tr);
-      });
-    // wire actions
-    body.querySelectorAll('button[data-act]').forEach(b=>{
-      b.onclick=()=> adminSetOrderStatus(b.dataset.id, b.dataset.act);
-    });
-  });
-}
-async function adminSetOrderStatus(orderId, act){
-  if(me?.role!=='admin') return alert('Admin only');
-  await runTransaction(db, async (tx)=>{
-    const oref = doc(db,'orders',orderId);
-    const odoc = await tx.get(oref);
-    if(!odoc.exists()) throw 'Order missing';
-    const o = odoc.data();
-    if(o.status==='completed' && act==='complete') return;
-    if(o.status==='cancelled' && act==='cancel') return;
-
-    if(act==='cancel'){
-      // refund if not already cancelled
-      const uref = doc(db,'users', o.uid);
-      const udoc = await tx.get(uref);
-      const bal = Number(udoc.data().balance||0);
-      tx.update(uref,{balance: bal + Number(o.amount||0)});
-      tx.update(oref,{status:'cancelled'});
-    }else if(act==='complete'){
-      tx.update(oref,{status:'completed'});
-      // weekly is computed live from completed orders; no need to touch user here
+  // Auth State
+  onAuthStateChanged(auth, async(user)=>{
+    if(user){
+      currentUser=user;
+      let udoc = await getDoc(doc(db,"users",user.uid));
+      if(udoc.exists()){
+        let data=udoc.data();
+        document.getElementById("dashName").innerText=data.name||user.email;
+        document.getElementById("dashBalance").innerText=data.balance||0;
+        document.getElementById("dashWeekly").innerText=data.weeklyDiamonds||0;
+        document.getElementById("dashTier").innerText=data.rewardTier||"-";
+        document.getElementById("profileEmail").innerText=user.email;
+        document.getElementById("profileName").value=data.name||"";
+        document.getElementById("profilePhone").value=data.phone||"";
+        document.getElementById("footBalance").innerText=data.balance||0;
+        document.getElementById("footWeekly").innerText=data.weeklyDiamonds||0;
+      }
+      loadOrders();
+      showPage("dashboardPage");
+    } else {
+      currentUser=null;
+      showPage("loginPage");
     }
   });
-}
 
-/* ======== Admin: Users ======== */
-function renderAdminUsers(){
-  if(me?.role!=='admin') return;
-  const body=$('adminUsersBody'); body.innerHTML='';
-  onSnapshot(collection(db,'users'), (snap)=>{
-    const text=$('userSearch').value.trim().toLowerCase();
-    body.innerHTML='';
-    snap.docs.map(d=>d.data())
-      .filter(x=>{
-        const f=[x.name,x.email,x.phone,x.role,String(x.approved)].join(' ').toLowerCase();
-        return !text || f.includes(text);
-      })
-      .forEach(x=>{
-        const tr=document.createElement('tr');
-        tr.innerHTML=`
-          <td><input data-k="name" data-id="${x.uid}" value="${x.name||''}"/></td>
-          <td><input data-k="email" data-id="${x.uid}" value="${x.email||''}"/></td>
-          <td><input data-k="phone" data-id="${x.uid}" value="${x.phone||''}"/></td>
-          <td>
-            <select data-k="role" data-id="${x.uid}">
-              <option ${x.role==='user'?'selected':''}>user</option>
-              <option ${x.role==='admin'?'selected':''}>admin</option>
-            </select>
-          </td>
-          <td>
-            <select data-k="approved" data-id="${x.uid}">
-              <option value="true" ${x.approved?'selected':''}>true</option>
-              <option value="false" ${!x.approved?'selected':''}>false</option>
-            </select>
-          </td>
-          <td>💎 ${fmt(x.balance||0)}</td>
-          <td id="w_${x.uid}">Live</td>
-          <td id="t_${x.uid}">—</td>
-          <td>
-            <div class="row">
-              <input type="number" style="width:110px" placeholder="Amount" data-k="delta" data-id="${x.uid}" />
-              <button class="btn" data-act="add" data-id="${x.uid}">Add</button>
-              <button class="btn bad" data-act="sub" data-id="${x.uid}">Sub</button>
-            </div>
-          </td>
-          <td><button class="btn ok" data-act="save" data-id="${x.uid}">Save</button></td>`;
-        body.appendChild(tr);
-      });
-
-    // actions
-    body.querySelectorAll('button[data-act="add"],button[data-act="sub"]').forEach(b=>{
-      b.onclick=async ()=>{
-        const uid=b.dataset.id;
-        const inp=body.querySelector(`input[data-k="delta"][data-id="${uid}"]`);
-        const amt=Number(inp.value||0); if(amt<=0) return;
-        await runTransaction(db, async (tx)=>{
-          const uref=doc(db,'users',uid); const ud=await tx.get(uref);
-          if(!ud.exists()) throw 'user missing';
-          const bal=Number(ud.data().balance||0);
-          tx.update(uref, {balance: bal + (b.dataset.act==='add'?amt:-amt)});
-        });
-        inp.value='';
-      };
-    });
-    body.querySelectorAll('button[data-act="save"]').forEach(b=>{
-      b.onclick=async ()=>{
-        const uid=b.dataset.id;
-        const name=body.querySelector(`input[data-k="name"][data-id="${uid}"]`).value;
-        const email=body.querySelector(`input[data-k="email"][data-id="${uid}"]`).value.toLowerCase();
-        const phone=body.querySelector(`input[data-k="phone"][data-id="${uid}"]`).value;
-        const role=body.querySelector(`select[data-k="role"][data-id="${uid}"]`).value;
-        const approved=body.querySelector(`select[data-k="approved"][data-id="${uid}"]`).value==='true';
-        await updateDoc(doc(db,'users',uid),{name,email,phone,role,approved});
-        alert('Saved');
-      };
-    });
+  // Create order buttons
+  let orderList=[10,50,100,200,500,1000,2000,5000,10000,20000];
+  let orderDiv=document.getElementById("orderButtons");
+  orderList.forEach(a=>{
+    let btn=document.createElement("div");
+    btn.className="order-btn";
+    btn.innerText=a;
+    btn.onclick=()=>{ orderAmount=a; document.querySelectorAll(".order-btn").forEach(b=>b.style.background="#333"); btn.style.background="#6200ea"; };
+    orderDiv.appendChild(btn);
   });
-}
-$('addUser').onclick=async ()=>{
-  const email=prompt('Email?'); if(!email) return;
-  const name=prompt('Name?')||'New User';
-  // create auth-less user row (no password)
-  const uid='u_'+Date.now();
-  await setDoc(doc(db,'users',uid),{uid,email:email.toLowerCase(),name,role:'user',approved:true,balance:0,createdAt:serverTimestamp()});
-};
-
-/* ======== Settings (admin) ======== */
-$('saveSettings').onclick=async ()=>{
-  if(me?.role!=='admin') return alert('Admin only');
-  const m = Number($('setAutoCancel').value||5);
-  await setDoc(doc(db,'settings','app'), {autoCancelMinutes: m}, {merge:true});
-  alert('Saved.');
-};
-
-/* ======== Page hooks ======== */
-document.querySelector('[data-page="adminOrders"]').addEventListener('click', ()=>listenAdminOrders());
-document.querySelector('[data-page="adminUsers"]').addEventListener('click', ()=>renderAdminUsers());
-document.querySelector('[data-page="profile"]').addEventListener('click', ()=>loadProfileForm());
-document.querySelector('[data-page="history"]').addEventListener('click', ()=>renderHistory());
-
-/* ======== Init ======== */
-renderGiftButtons();
-showPage('login'); // auto switch when auth changes
 </script>
 </body>
 </html>
