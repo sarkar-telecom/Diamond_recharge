@@ -11,7 +11,7 @@
       background: #121212;
       color: #fff;
     }
-    header {
+    header, footer {
       background: #1e1e1e;
       padding: 10px;
       display: flex;
@@ -35,22 +35,17 @@
       background: #1e1e1e;
       transition: left 0.3s;
       padding-top: 50px;
+      z-index: 1000;
     }
-    .sidebar.active {
-      left: 0;
-    }
+    .sidebar.active { left: 0; }
     .sidebar a {
       display: block;
       padding: 12px;
       color: #fff;
       text-decoration: none;
     }
-    .sidebar a:hover {
-      background: #333;
-    }
-    main {
-      padding: 20px;
-    }
+    .sidebar a:hover { background: #333; }
+    main { padding: 20px; }
     .hidden { display: none; }
     .btn {
       background: #007bff;
@@ -65,6 +60,10 @@
     .amount-btns button {
       background: #444;
       margin: 5px;
+      padding: 10px;
+      border-radius: 5px;
+      color: #fff;
+      cursor: pointer;
     }
     .status {
       padding: 4px 8px;
@@ -75,11 +74,7 @@
     .WAITING { background: orange; }
     .COMPLETED { background: green; }
     .CANCELLED { background: red; }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
-    }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
     th, td {
       padding: 8px;
       border: 1px solid #333;
@@ -94,6 +89,7 @@
     <span id="userInfo"></span>
   </header>
 
+  <!-- Sidebar -->
   <div class="sidebar" id="sidebar">
     <a href="#" onclick="showPage('dashboard')">Dashboard</a>
     <a href="#" onclick="showPage('order')">Order</a>
@@ -120,7 +116,7 @@
       <p>Reward Tier: <span id="tier">-</span></p>
     </div>
 
-    <!-- Order Page -->
+    <!-- Order -->
     <div id="order" class="hidden">
       <h2>Place Order</h2>
       <input id="recipient" placeholder="Gift Recipient ID"><br>
@@ -140,7 +136,7 @@
       <button class="btn" onclick="placeOrder()">Submit</button>
     </div>
 
-    <!-- Order History -->
+    <!-- History -->
     <div id="history" class="hidden">
       <h2>My Orders</h2>
       <table>
@@ -172,6 +168,10 @@
     </div>
   </main>
 
+  <footer>
+    <p>© 2025 Diamond Recharge</p>
+  </footer>
+
   <!-- Firebase -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
@@ -194,15 +194,19 @@
 
     let currentUser = null;
 
-    function toggleSidebar() {
+    // Sidebar toggle
+    window.toggleSidebar = function() {
       document.getElementById("sidebar").classList.toggle("active");
     }
 
-    function showPage(id) {
+    // Show page
+    window.showPage = function(id) {
       document.querySelectorAll("main > div").forEach(div => div.classList.add("hidden"));
       document.getElementById(id).classList.remove("hidden");
+      document.getElementById("sidebar").classList.remove("active");
     }
 
+    // Login
     window.login = async function() {
       const email = document.getElementById("loginEmail").value;
       const pass = document.getElementById("loginPass").value;
@@ -213,11 +217,13 @@
       }
     }
 
+    // Logout
     window.logout = async function() {
       await signOut(auth);
       location.reload();
     }
 
+    // Auth state
     onAuthStateChanged(auth, async (user) => {
       if (user) {
         currentUser = user;
@@ -228,10 +234,10 @@
         loadOrders();
       } else {
         document.getElementById("loginPage").classList.remove("hidden");
-        document.getElementById("dashboard").classList.add("hidden");
       }
     });
 
+    // Profile
     async function loadProfile() {
       const ref = doc(db, "users", currentUser.uid);
       const snap = await getDoc(ref);
@@ -255,6 +261,7 @@
       alert("Profile updated!");
     }
 
+    // Order
     let selectedAmount = 0;
     window.setAmount = function(val) {
       selectedAmount = val;
@@ -318,7 +325,6 @@
     window.updateStatus = async function(id, status) {
       const ref = doc(db, "orders", id);
       await updateDoc(ref, { status });
-      alert("Status updated!");
       loadOrders();
     }
   </script>
