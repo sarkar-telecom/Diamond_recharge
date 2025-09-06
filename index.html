@@ -2,99 +2,109 @@
 <html lang="bn">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Sarkar Telecom — All-in-One Portal</title>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Sarkar Telecom — Diamond Portal</title>
+<meta name="color-scheme" content="dark light">
 <style>
   :root{
-    --bg:#121212;--panel:#1e1e1e;--muted:#aaa;--line:#333;--brand:#4cafef;
-    --ok:#2ecc71;--warn:#f1c40f;--bad:#e74c3c;--text:#f1f1f1;
+    --bg:#0f1115;--panel:#161a22;--muted:#aab0bd;--line:#232937;--brand:#4cafef;
+    --ok:#2ecc71;--warn:#f1c40f;--bad:#e74c3c;--text:#e9eef7;
   }
   *{box-sizing:border-box}
-  body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden}
+  html,body{height:100%}
+  body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
   a{color:inherit}
   /* Header */
   header{
-    position:fixed;top:0;left:0;right:0;height:56px;background:var(--panel);
-    display:flex;align-items:center;justify-content:space-between;
-    padding:0 12px;border-bottom:1px solid var(--line);z-index:2000
+    position:fixed;top:0;left:0;right:0;height:60px;background:var(--panel);
+    display:flex;align-items:center;justify-content:space-between;padding:0 12px;
+    border-bottom:1px solid var(--line);z-index:1001
   }
   .left{display:flex;align-items:center;gap:10px}
   .brand{margin:0;font-size:16px;color:var(--brand);white-space:nowrap}
-  .hamb{border:none;background:transparent;color:#fff;font-size:24px;cursor:pointer;line-height:1}
+  .hamb{border:none;background:transparent;color:#fff;font-size:26px;cursor:pointer;line-height:1}
   .right{display:flex;align-items:center;gap:10px}
-  .user-pill{display:flex;align-items:center;gap:10px;background:#191919;border:1px solid var(--line);padding:6px 10px;border-radius:999px}
+  .user-pill{display:flex;align-items:center;gap:10px;background:#121620;border:1px solid var(--line);padding:6px 10px;border-radius:999px}
   .user-pill img{width:28px;height:28px;border-radius:50%;object-fit:cover;background:#222}
   .user-meta{display:flex;flex-direction:column;line-height:1.1}
   .user-meta .name{font-size:12px}
   .user-meta .role{font-size:11px;color:var(--muted)}
-  .hud{display:flex;gap:10px;font-size:12px;color:var(--muted)}
-  .chip{padding:3px 8px;border-radius:999px;border:1px solid var(--line);background:#191919}
-  /* Sidebar + overlay */
-  .overlay{position:fixed;inset:0;background:#0008;opacity:0;pointer-events:none;transition:.2s;z-index:1800}
-  .overlay.show{opacity:1;pointer-events:auto}
+  .hud{display:flex;gap:8px;flex-wrap:wrap}
+  .chip{padding:5px 10px;border-radius:999px;border:1px solid var(--line);background:#121620;font-size:12px;color:#dfe6f3}
+  /* Sidebar */
+  .backdrop{position:fixed;inset:0;background:rgba(0,0,0,.35);backdrop-filter:saturate(120%) blur(2px);opacity:0;pointer-events:none;transition:.2s;z-index:1000}
+  .backdrop.show{opacity:1;pointer-events:auto}
   .sidebar{
     position:fixed;top:0;left:-260px;width:260px;height:100vh;background:var(--panel);
-    border-right:1px solid var(--line);z-index:1900;transition:left .25s ease; padding-top:56px;overflow-y:auto
+    border-right:1px solid var(--line);z-index:1001;transition:left .25s ease; padding-top:60px;overflow-y:auto
   }
   .sidebar.open{left:0}
-  .side-link{display:block;padding:12px 16px;border-bottom:1px solid var(--line);color:#ddd;text-decoration:none;font-size:14px}
-  .side-link:hover{background:#2a2a2a}
-  /* Main wrapper */
-  main{padding:16px;max-width:1100px;margin:72px auto 84px}
+  .side-link{display:block;padding:12px 16px;border-bottom:1px solid var(--line);color:#dbe5f7;text-decoration:none;font-size:14px}
+  .side-link:hover{background:#1b2130}
+  /* Main */
+  main{padding:14px;max-width:1100px;margin:76px auto 90px}
   .page{display:none}
   .page.active{display:block}
   h2.section{margin:6px 0 14px 0;font-size:18px;color:var(--brand);text-align:center}
-  /* Cards / panels */
-  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px}
+  .sub{font-size:12px;color:var(--muted)}
+  /* Cards / grid */
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px}
   .grid{display:grid;gap:12px}
-  @media(min-width:768px){ .grid.cols-2{grid-template-columns:1fr 1fr} .grid.cols-3{grid-template-columns:repeat(3,1fr)} }
+  @media(min-width:768px){
+    .grid.cols-2{grid-template-columns:1fr 1fr}
+    .grid.cols-3{grid-template-columns:repeat(3,1fr)}
+  }
   /* Forms */
   input,select,button,textarea{
-    font:inherit;border-radius:8px;border:1px solid var(--line);background:#181818;color:var(--text);padding:10px
+    font:inherit;border-radius:10px;border:1px solid var(--line);background:#121620;color:var(--text);padding:10px
   }
   label{font-size:13px;color:var(--muted)}
   .row{display:flex;gap:10px;flex-wrap:wrap}
   .grow{flex:1}
-  .btn{background:var(--brand);border:none;color:#fff;cursor:pointer}
+  .btn{background:var(--brand);border:none;color:#00101c;cursor:pointer;font-weight:700}
   .btn:disabled{opacity:.6;cursor:not-allowed}
-  .btn.warn{background:#d29400}
-  .btn.ok{background:var(--ok)}
-  .btn.bad{background:var(--bad)}
-  .btn.ghost{background:#222;border:1px solid var(--line);color:#ddd}
-  /* Gift grid */
-  .gift-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-  .gift{background:#181818;border:2px solid transparent;border-radius:12px;padding:18px;text-align:center;cursor:pointer}
-  .gift .amt{font-weight:bold}
-  .gift:hover{background:#222}
-  .gift.selected{border-color:var(--brand);background:#202020}
-  /* Status pill */
-  .status{display:inline-block;padding:5px 8px;border-radius:8px;font-size:12px;color:#000;font-weight:bold}
-  .waiting{background:var(--warn);color:#000}
-  .completed{background:var(--ok);color:#000}
-  .cancelled{background:var(--bad);color:#fff}
+  .btn.warn{background:#f5c14f}
+  .btn.ok{background:#66e095}
+  .btn.bad{background:#ff7575}
+  .btn.ghost{background:#0f131c;border:1px solid var(--line);color:#dbe5f7}
+  .right-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+  .pill{padding:6px 10px;border:1px solid var(--line);background:#121620;border-radius:999px}
+  /* Gift buttons */
+  .gift-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  @media(min-width:520px){ .gift-grid{grid-template-columns:repeat(5,1fr)} }
+  .gift{background:#121620;border:2px solid transparent;border-radius:12px;padding:14px;text-align:center;cursor:pointer}
+  .gift .amt{font-weight:800}
+  .gift:hover{background:#161c29}
+  .gift.selected{border-color:var(--brand);background:#162030}
   /* Tables */
   .table-wrap{overflow:auto}
   table{width:100%;border-collapse:collapse}
-  th,td{padding:10px;border-bottom:1px solid #2b2b2b;text-align:center}
-  th{background:#181818;color:var(--brand);position:sticky;top:0}
+  th,td{padding:10px;border-bottom:1px solid #2b3447;text-align:center}
+  th{background:#121620;color:var(--brand);position:sticky;top:0}
+  /* Status pill */
+  .status{display:inline-block;padding:5px 8px;border-radius:8px;font-size:12px;color:#000;font-weight:800}
+  .waiting{background:var(--warn);color:#000}
+  .completed{background:var(--ok);color:#000}
+  .cancelled{background:var(--bad);color:#fff}
+  /* Pager */
+  .pager{display:flex;justify-content:center;gap:8px;margin-top:10px}
   /* Footer */
   footer{
     position:fixed;left:0;right:0;bottom:0;background:var(--panel);border-top:1px solid var(--line);
-    padding:10px 12px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;z-index:1500
+    padding:10px 12px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;z-index:1001
   }
   .foot-left{font-size:12px;color:var(--muted)}
   .foot-right{display:flex;gap:8px;flex-wrap:wrap}
-  /* Login/Register gate */
+  /* Utility */
+  .mt8{margin-top:8px}.mt12{margin-top:12px}.mt16{margin-top:16px}.mt20{margin-top:20px}
   .center{text-align:center}
   .hide{display:none !important}
-  /* Utilities */
-  .mt8{margin-top:8px}.mt12{margin-top:12px}.mt16{margin-top:16px}.mt20{margin-top:20px}
-  .inline{display:inline-flex;gap:8px;align-items:center}
-  .right-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
-  .pill{padding:6px 10px;border:1px solid var(--line);background:#191919;border-radius:999px}
 </style>
 </head>
 <body>
+
+<!-- Backdrop for drawer -->
+<div id="backdrop" class="backdrop"></div>
 
 <!-- Header -->
 <header>
@@ -105,6 +115,7 @@
   <div class="right">
     <div class="hud">
       <span class="chip" id="hudBalance">Balance: 💎 0</span>
+      <span class="chip" id="hudWeekly">Weekly: 0</span>
       <span class="chip" id="hudTier">Tier: L0 (0%)</span>
     </div>
     <div class="user-pill" id="userPill">
@@ -117,14 +128,13 @@
   </div>
 </header>
 
-<!-- Sidebar + overlay -->
-<div class="overlay" id="overlay"></div>
+<!-- Sidebar -->
 <nav class="sidebar" id="sidebar">
   <a href="#dashboard" class="side-link" data-page="dashboard">🏠 Dashboard</a>
   <a href="#order" class="side-link" data-page="order">➕ Create Order</a>
   <a href="#history" class="side-link" data-page="history">📑 Order History</a>
   <a href="#admin-orders" class="side-link admin-only" data-page="adminOrders">🛠 Manage Orders</a>
-  <a href="#admin-users" class="side-link admin-only" data-page="adminUsers">👥 Manage Users</a>
+  <a href="#admin-users" class="side-link admin-only" data-page="adminUsers">👥 User Management</a>
   <a href="#profile" class="side-link" data-page="profile">👤 Profile</a>
   <a href="#login" class="side-link" data-page="login" id="loginLink">🔐 Login / Register</a>
   <a href="#logout" class="side-link" id="logoutLink">🚪 Logout</a>
@@ -132,6 +142,7 @@
 
 <!-- Main -->
 <main id="main">
+
   <!-- Dashboard -->
   <section id="page-dashboard" class="page active">
     <div class="card">
@@ -158,14 +169,14 @@
     </div>
   </section>
 
-  <!-- Create Order -->
+  <!-- Order -->
   <section id="page-order" class="page">
     <div class="card">
       <h2 class="section">Gifting Order</h2>
       <div class="grid cols-2">
         <div class="card">
           <label>Gift Recipient (Number / Profile ID)</label>
-          <input id="recipientInput" type="number" placeholder="Enter Profile ID or Number" class="mt8"/>
+          <input id="recipientInput" type="text" placeholder="Enter Profile ID or Number" class="mt8"/>
         </div>
         <div class="card">
           <label>Selected Amount (💎)</label>
@@ -179,8 +190,8 @@
       <div class="right-actions mt16">
         <button class="btn" id="confirmOrderBtn" disabled>Order Confirm</button>
       </div>
-      <div class="mt12" style="font-size:12px;color:var(--muted)">
-        Note: Orders auto-cancel after 5 minutes if not marked completed by admin. Cancel refunds the client balance immediately.
+      <div class="mt12 sub">
+        Note: Orders auto-cancel after 5 minutes if not completed by admin. Cancel refunds the client balance immediately.
       </div>
     </div>
   </section>
@@ -189,6 +200,22 @@
   <section id="page-history" class="page">
     <div class="card">
       <h2 class="section">Order History</h2>
+      <div class="row">
+        <input id="histSearch" class="grow" placeholder="Search by Order ID, Client ID, Amount, Time…" />
+        <select id="histStatus">
+          <option value="">All Status</option>
+          <option value="waiting">Waiting</option>
+          <option value="completed">Completed</option>
+          <option value="cancelled">Cancelled</option>
+        </select>
+        <button class="btn" data-page="order">➕ Create Order</button>
+      </div>
+      <div class="mt12">
+        <div class="row">
+          <span class="pill">Weekly Diamonds: <b id="histWeekly">0</b></span>
+          <span class="pill">Reward Tier: <b id="histTier">L0 (0%)</b></span>
+        </div>
+      </div>
       <div class="table-wrap mt12">
         <table>
           <thead>
@@ -203,8 +230,10 @@
           <tbody id="histBody"></tbody>
         </table>
       </div>
-      <div class="right-actions mt16">
-        <button class="btn" data-page="order">➕ Create Order</button>
+      <div class="pager mt12">
+        <button class="btn ghost" id="histPrev">Prev</button>
+        <span id="histPageInfo" class="pill">Page 1</span>
+        <button class="btn ghost" id="histNext">Next</button>
       </div>
     </div>
   </section>
@@ -213,6 +242,16 @@
   <section id="page-adminOrders" class="page">
     <div class="card">
       <h2 class="section">Admin — Manage All Orders</h2>
+      <div class="row">
+        <input id="adminOrderSearch" class="grow" placeholder="Search by Order ID, Client ID, Email, Amount, Time…" />
+        <select id="adminOrderStatus">
+          <option value="">All Status</option>
+          <option value="waiting">Waiting</option>
+          <option value="completed">Completed</option>
+          <option value="cancelled">Cancelled</option>
+        </select>
+        <button id="manualSweep" class="btn warn">Run Auto-Cancel Sweep</button>
+      </div>
       <div class="table-wrap mt12">
         <table>
           <thead>
@@ -229,13 +268,22 @@
           <tbody id="adminOrdersBody"></tbody>
         </table>
       </div>
+      <div class="pager mt12">
+        <button class="btn ghost" id="adminOrdersPrev">Prev</button>
+        <span id="adminOrdersPageInfo" class="pill">Page 1</span>
+        <button class="btn ghost" id="adminOrdersNext">Next</button>
+      </div>
     </div>
   </section>
 
   <!-- Admin: Manage Users -->
   <section id="page-adminUsers" class="page">
     <div class="card">
-      <h2 class="section">Admin — Manage Users</h2>
+      <h2 class="section">Admin — User Management</h2>
+      <div class="row">
+        <input id="userSearch" class="grow" placeholder="Search by name, email, phone…" />
+        <button id="addUserBtn" class="btn">Add New User</button>
+      </div>
       <div class="table-wrap mt12">
         <table>
           <thead>
@@ -250,7 +298,7 @@
               <th>Weekly</th>
               <th>Tier</th>
               <th>+ / − Balance</th>
-              <th>Save</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody id="adminUsersBody"></tbody>
@@ -299,13 +347,11 @@
           <input id="loginPass" type="password" placeholder="password"/>
           <div class="mt12">
             <button id="doLogin" class="btn">Login</button>
-            <button id="doReset" class="btn ghost mt8">Forgot Password</button>
+            <button id="forgotPass" class="btn ghost mt8">Forgot password?</button>
           </div>
-          <div class="mt8" style="font-size:12px;color:var(--muted)">
-            New here? <a href="#" data-page="register" id="gotoReg">Create an account</a>
-          </div>
+          <div class="mt8 sub">No account? Go to Register →</div>
         </div>
-        <div class="card" id="registerCard">
+        <div class="card">
           <h3 class="section" style="margin-top:0">Register</h3>
           <label>Email</label>
           <input id="regEmail" placeholder="email@example.com" class="mt8"/>
@@ -318,13 +364,14 @@
           <div class="mt12">
             <button id="doRegister" class="btn">Register (Needs Admin Approval)</button>
           </div>
-          <div class="mt8" style="font-size:12px;color:var(--muted)">
+          <div class="mt8 sub">
             After registering, an admin must approve your account before you can log in.
           </div>
         </div>
       </div>
     </div>
   </section>
+
 </main>
 
 <!-- Footer -->
@@ -332,512 +379,668 @@
   <div class="foot-left">© 2025 Sarkar Telecom. All rights reserved.</div>
   <div class="foot-right">
     <span class="chip" id="footBalance">Balance: 💎 0</span>
+    <span class="chip" id="footWeekly">Weekly: 0</span>
     <span class="chip" id="footTier">Tier: L0 (0%)</span>
   </div>
 </footer>
 
-<!-- Firebase SDKs -->
+<!-- Firebase (Modular v10 CDN) -->
 <script type="module">
-/* ===== Firebase Init (Your Config) ===== */
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-import {
-  getAuth, onAuthStateChanged, signInWithEmailAndPassword,
-  createUserWithEmailAndPassword, sendPasswordResetEmail, signOut, updatePassword
-} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
-import {
-  getFirestore, doc, getDoc, setDoc, updateDoc, serverTimestamp,
-  onSnapshot, collection, addDoc, query, where, orderBy, limit, Timestamp,
-  runTransaction, getDocs
-} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
-import {
-  getStorage, ref as sRef, uploadBytes, getDownloadURL
-} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-storage.js";
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import {
+    getAuth, setPersistence, browserLocalPersistence,
+    onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword,
+    sendPasswordResetEmail, signOut, updatePassword
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  import {
+    getFirestore, doc, getDoc, setDoc, updateDoc, onSnapshot,
+    collection, addDoc, serverTimestamp, query, where, orderBy, limit, getDocs,
+    runTransaction, writeBatch, Timestamp
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  import { getStorage, ref as sRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
-/* ---- Your Provided Config ---- */
-const firebaseConfig = {
-  apiKey: "AIzaSyDJRm9-jRkxVrTLYBzK1gGrRmAEu29jVrU",
-  authDomain: "diamond-recharge-f7f59.firebaseapp.com",
-  projectId: "diamond-recharge-f7f59",
-  storageBucket: "diamond-recharge-f7f59.firebasestorage.app",
-  messagingSenderId: "657717928489",
-  appId: "1:657717928489:web:70431ebc9afb7002d4b238",
-  measurementId: "G-TDK78BQ8SQ"
-};
+  /* ========= Config (Your given config) ========= */
+  const firebaseConfig = {
+    apiKey: "AIzaSyDJRm9-jRkxVrTLYBzK1gGrRmAEu29jVrU",
+    authDomain: "diamond-recharge-f7f59.firebaseapp.com",
+    projectId: "diamond-recharge-f7f59",
+    storageBucket: "diamond-recharge-f7f59.firebasestorage.app",
+    messagingSenderId: "657717928489",
+    appId: "1:657717928489:web:70431ebc9afb7002d4b238",
+    measurementId: "G-TDK78BQ8SQ"
+  };
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-const storage = getStorage(app);
+  /* ========= Init ========= */
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db   = getFirestore(app);
+  const storage = getStorage(app);
+  await setPersistence(auth, browserLocalPersistence);
 
-/* ======= UI Helpers ======= */
-const $ = id => document.getElementById(id);
-const pages = {
-  dashboard:'page-dashboard', order:'page-order', history:'page-history',
-  adminOrders:'page-adminOrders', adminUsers:'page-adminUsers',
-  profile:'page-profile', login:'page-login'
-};
-function showPage(key){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  $(pages[key]||'page-dashboard').classList.add('active');
-  if(key!=='login') sidebarClose();
-}
-function avatarFallback(){return 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64"><rect width="100%" height="100%" fill="%23222"/><text x="50%" y="54%" font-size="20" fill="%23aaa" text-anchor="middle">👤</text></svg>'}
+  /* ========= UI Helpers ========= */
+  const $ = id => document.getElementById(id);
+  const sidebar = $('sidebar'), backdrop = $('backdrop');
+  const pages = {
+    dashboard:'page-dashboard', order:'page-order', history:'page-history',
+    adminOrders:'page-adminOrders', adminUsers:'page-adminUsers', profile:'page-profile', login:'page-login'
+  };
+  const giftAmounts = [10,50,100,200,500,1000,2000,5000,10000,20000];
 
-/* ======= Sidebar Toggle ======= */
-const sidebar = $('sidebar'), overlay = $('overlay'), hamb = $('hamb');
-function sidebarOpen(){ sidebar.classList.add('open'); overlay.classList.add('show'); }
-function sidebarClose(){ sidebar.classList.remove('open'); overlay.classList.remove('show'); }
-hamb.addEventListener('click',()=> sidebar.classList.contains('open')?sidebarClose():sidebarOpen());
-overlay.addEventListener('click', sidebarClose);
-window.addEventListener('keydown', e=>{ if(e.key==='Escape') sidebarClose(); });
-document.querySelectorAll('.side-link[data-page], .btn[data-page], a[data-page]').forEach(el=>{
-  el.addEventListener('click', (e)=>{ e.preventDefault(); showPage(el.getAttribute('data-page')); });
-});
-
-/* ======= Gift Buttons ======= */
-const GIFT_AMOUNTS = [10,50,100,200,500,1000,2000,5000,10000,20000];
-function renderGifts(){
-  const grid = $('giftGrid'); grid.innerHTML='';
-  GIFT_AMOUNTS.forEach(amt=>{
-    const d = document.createElement('div');
-    d.className='gift'; d.dataset.amount=String(amt);
-    d.innerHTML = `<div class="amt">💎 ${amt.toLocaleString()}</div>`;
-    d.addEventListener('click', ()=>{
-      document.querySelectorAll('.gift').forEach(g=>g.classList.remove('selected'));
-      d.classList.add('selected');
-      $('selectedAmount').value = amt;
-      enableOrderConfirmCheck();
+  function showSidebar(open){
+    sidebar.classList.toggle('open', open);
+    backdrop.classList.toggle('show', open);
+  }
+  $('hamb').addEventListener('click', ()=> showSidebar(true));
+  backdrop.addEventListener('click', ()=> showSidebar(false));
+  document.querySelectorAll('.side-link[data-page], .btn[data-page]').forEach(el=>{
+    el.addEventListener('click', (e)=>{
+      e.preventDefault();
+      const page = el.getAttribute('data-page');
+      showPage(page);
+      showSidebar(false);
     });
-    grid.appendChild(d);
   });
-}
-renderGifts();
+  function showPage(key){
+    Object.values(pages).forEach(id=>$(id).classList.remove('active'));
+    const id = pages[key] || pages.dashboard;
+    $(id).classList.add('active');
+  }
 
-/* ======= Reward Tiers ======= */
-function tierInfo(total){
-  if(total>=800000) return {level:5, pct:3.5};
-  if(total>=80000)  return {level:4, pct:2.6};
-  if(total>=40000)  return {level:3, pct:2.1};
-  if(total>=20000)  return {level:2, pct:1.6};
-  if(total>=5000)   return {level:1, pct:1.0};
-  return {level:0, pct:0};
-}
+  function tierInfo(total){
+    if(total>=800000) return {level:5, pct:3.5};
+    if(total>=80000)  return {level:4, pct:2.6};
+    if(total>=40000)  return {level:3, pct:2.1};
+    if(total>=20000)  return {level:2, pct:1.6};
+    if(total>=5000)   return {level:1, pct:1.0};
+    return {level:0, pct:0};
+  }
+  // BD time boundary: last Thursday 22:00
+  function bdNow(){ const d=new Date(); return new Date(d.getTime()+d.getTimezoneOffset()*60000+6*3600000); }
+  function currentBoundary(){
+    const d = bdNow(); const day=d.getDay(); // 0 Sun..4 Thu
+    const diffToThu = (day - 4 + 7) % 7;
+    const lastThu = new Date(d.getFullYear(), d.getMonth(), d.getDate()-diffToThu, 22,0,0,0);
+    return lastThu.getTime();
+  }
 
-/* ======= Weekly Boundary (Asia/Dhaka UTC+6) ======= */
-function nowBd(){ const d=new Date(), utc=d.getTime()+d.getTimezoneOffset()*60000; return new Date(utc+6*3600000); }
-function currentBoundaryEpoch(){
-  const d = nowBd(); const day = d.getDay(); const diffToThu = (day - 4 + 7) % 7;
-  const lastThu = new Date(d.getFullYear(),d.getMonth(),d.getDate()-diffToThu,22,0,0,0);
-  return lastThu.getTime();
-}
+  /* ========= State ========= */
+  let me = null;          // auth user
+  let meDoc = null;       // users/{uid}
+  let unsubUser = null;
+  let unsubMyOrders = null;
+  let unsubAllOrders = null;
+  let unsubUsersAdmin = null;
 
-/* ======= Auth State & Live User Doc ======= */
-let me = null;           // auth user (firebase)
-let meDoc = null;        // users/{uid} snapshot data
-let unsubUser = null, unsubOwnOrders = null, unsubAllOrders = null, unsubAllUsers = null;
-
-function resetSubs(){
-  if(unsubUser){unsubUser();unsubUser=null}
-  if(unsubOwnOrders){unsubOwnOrders();unsubOwnOrders=null}
-  if(unsubAllOrders){unsubAllOrders();unsubAllOrders=null}
-  if(unsubAllUsers){unsubAllUsers();unsubAllUsers=null}
-  $('histBody').innerHTML='';
-  $('adminOrdersBody').innerHTML='';
-  $('adminUsersBody').innerHTML='';
-  updateHud(null);
-}
-
-function updateHud(userData){
-  const u = userData;
-  const avatar = u?.photoURL || avatarFallback();
-  $('userAvatar').src = avatar;
-  $('userName').textContent = u ? (u.name || u.email || 'User') : 'Guest';
-  $('userRole').textContent = u ? `${u.email} (${u.role||'user'})` : 'Not logged in';
-  const bal = u?.balance||0;
-  $('hudBalance').textContent = `Balance: 💎 ${bal.toLocaleString()}`;
-  $('footBalance').textContent = `Balance: 💎 ${bal.toLocaleString()}`;
-  $('dashBalance').textContent = `💎 ${bal.toLocaleString()}`;
-  const info = tierInfo(u?.weeklyTotal||0);
-  $('hudTier').textContent = `Tier: L${info.level} (${info.pct}%)`;
-  $('footTier').textContent = `Tier: L${info.level} (${info.pct}%)`;
-  $('dashWeekly').textContent = (u?.weeklyTotal||0).toLocaleString();
-  $('dashTier').textContent = `L${info.level} (${info.pct}%)`;
-  // admin links show/hide
-  document.querySelectorAll('.admin-only').forEach(el=>{ el.style.display = (u&&u.role==='admin')?'inline-block':'none'; });
-  $('loginLink').style.display = u ? 'none' : 'block';
-  $('logoutLink').style.display = u ? 'block' : 'none';
-}
-
-onAuthStateChanged(auth, async (user)=>{
-  me = user || null;
-  resetSubs();
-  if(!me){ showPage('login'); return; }
-
-  // attach users/{uid}
-  const uRef = doc(db,'users',me.uid);
-  unsubUser = onSnapshot(uRef, async snap=>{
-    if(!snap.exists()){
-      // If missing, create a minimal doc (active only after admin approves)
-      await setDoc(uRef,{
-        email: me.email||'',
-        role:'user',
-        status:'pending',
-        balance:0,
-        weeklyTotal:0,
-        tier:0,
-        name:'',
-        phone:'',
-        photoURL: me.photoURL||'',
-        createdAt: serverTimestamp(),
-        weekBoundary: currentBoundaryEpoch()
-      },{merge:true});
-      return;
-    }
-    meDoc = snap.data();
-    // weekly boundary check (client side)
-    const curB = currentBoundaryEpoch();
-    if((meDoc.weekBoundary||0) < curB){
-      await updateDoc(uRef, { weeklyTotal:0, tier:0, weekBoundary:curB });
-    }
-    updateHud({...meDoc, email: me.email||meDoc.email});
-
-    // access gate
-    if(meDoc.status!=='active'){
-      showPage('login');
-      alert('Your account is not approved yet.');
-      return;
-    }
-
-    // own orders live
-    const myQ = query(
+  /* ========= Render HUD from user + weekly ========= */
+  async function computeWeeklyAndRender(){
+    if(!me) return;
+    const startEpoch = currentBoundary();
+    const qRef = query(
       collection(db,'orders'),
-      where('userId','==',me.uid),
-      orderBy('createdAt','desc'),
-      limit(100)
+      where('userId','==', me.uid),
+      where('status','==','completed'),
+      where('ts','>=', Timestamp.fromMillis(startEpoch))
     );
-    unsubOwnOrders = onSnapshot(myQ, (qs)=>{
-      renderHistory(qs.docs.map(d=>({id:d.id, ...d.data()})));
+    let weekly = 0;
+    const snap = await getDocs(qRef);
+    snap.forEach(d=> weekly += (d.data().amount||0));
+
+    const info = tierInfo(weekly);
+
+    // Header/Foot/Dashboard
+    const bal = meDoc?.balance||0;
+    $('hudBalance').textContent = `Balance: 💎 ${bal.toLocaleString()}`;
+    $('hudWeekly').textContent = `Weekly: ${weekly.toLocaleString()}`;
+    $('hudTier').textContent    = `Tier: L${info.level} (${info.pct}%)`;
+
+    $('footBalance').textContent = `Balance: 💎 ${bal.toLocaleString()}`;
+    $('footWeekly').textContent  = `Weekly: ${weekly.toLocaleString()}`;
+    $('footTier').textContent    = `Tier: L${info.level} (${info.pct}%)`;
+
+    $('dashBalance').textContent = `💎 ${bal.toLocaleString()}`;
+    $('dashWeekly').textContent  = weekly.toLocaleString();
+    $('dashTier').textContent    = `L${info.level} (${info.pct}%)`;
+
+    // History header badges
+    $('histWeekly').textContent  = weekly.toLocaleString();
+    $('histTier').textContent    = `L${info.level} (${info.pct}%)`;
+  }
+
+  function renderUserHeader(){
+    const avatar = meDoc?.avatar || '';
+    $('userAvatar').src = avatar || 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64"><rect width="100%" height="100%" fill="%23222"/><text x="50%" y="54%" font-size="20" fill="%23aaa" text-anchor="middle">👤</text></svg>';
+    $('userName').textContent = meDoc ? (meDoc.name || me.email) : 'Guest';
+    $('userRole').textContent = meDoc ? `${me.email} (${meDoc.role||'user'})` : 'Not logged in';
+    // Admin links
+    document.querySelectorAll('.admin-only').forEach(el=>{
+      el.style.display = (meDoc && meDoc.role==='admin') ? 'inline-block' : 'none';
     });
+    $('loginLink').style.display = me ? 'none':'block';
+    $('logoutLink').style.display = me ? 'block':'none';
+  }
 
-    // if admin, attach admin panels
-    if(meDoc.role==='admin'){
-      // all orders
-      const allQ = query(collection(db,'orders'), orderBy('createdAt','desc'), limit(200));
-      unsubAllOrders = onSnapshot(allQ, (qs)=>{
-        renderAdminOrders(qs.docs.map(d=>({id:d.id, ...d.data()})));
+  /* ========= Gifts UI ========= */
+  function renderGifts(){
+    const grid = $('giftGrid'); if(!grid) return;
+    grid.innerHTML='';
+    giftAmounts.forEach(amt=>{
+      const d = document.createElement('div');
+      d.className='gift'; d.dataset.amount=String(amt);
+      d.innerHTML = `<div class="amt">💎 ${amt.toLocaleString()}</div>`;
+      d.addEventListener('click', ()=>{
+        document.querySelectorAll('.gift').forEach(g=>g.classList.remove('selected'));
+        d.classList.add('selected'); $('selectedAmount').value = amt;
+        enableOrderConfirmCheck();
       });
-      // all users
-      unsubAllUsers = onSnapshot(collection(db,'users'), (qs)=>{
-        renderAdminUsers(qs.docs.map(d=>({id:d.id, ...d.data()})));
-      });
-    }
-  });
-
-  showPage('dashboard');
-});
-
-/* ======= Login / Register / Logout ======= */
-$('doLogin').addEventListener('click', async ()=>{
-  try{
-    const email=$('loginEmail').value.trim().toLowerCase();
-    const pass=$('loginPass').value;
-    const res=await signInWithEmailAndPassword(auth,email,pass);
-    // approved check happens in onSnapshot(userDoc)
-    showPage('dashboard');
-  }catch(e){ alert(e.message); }
-});
-$('doReset').addEventListener('click', async ()=>{
-  const email = prompt('Enter your email for reset link:');
-  if(!email) return;
-  try{ await sendPasswordResetEmail(auth,email.trim().toLowerCase()); alert('Password reset email sent.'); }
-  catch(e){ alert(e.message); }
-});
-$('gotoReg').addEventListener('click', (e)=>{ e.preventDefault(); showPage('login'); $('registerCard').scrollIntoView({behavior:'smooth'}); });
-$('doRegister').addEventListener('click', async ()=>{
-  try{
-    const email=$('regEmail').value.trim().toLowerCase();
-    const pass=$('regPass').value;
-    const name=$('regName').value.trim(); const phone=$('regPhone').value.trim();
-    if(!email||!pass) return alert('Email and password required.');
-    const {user}=await createUserWithEmailAndPassword(auth,email,pass);
-    await setDoc(doc(db,'users',user.uid),{
-      email, role:'user', status:'pending', balance:0, weeklyTotal:0, tier:0,
-      name, phone, photoURL:'', createdAt:serverTimestamp(), weekBoundary: currentBoundaryEpoch()
-    },{merge:true});
-    alert('Registered! Waiting for admin approval.');
-    await signOut(auth);
-    showPage('login');
-  }catch(e){ alert(e.message); }
-});
-$('logoutLink').addEventListener('click', async (e)=>{ e.preventDefault(); await signOut(auth); showPage('login'); });
-
-/* ======= Profile ======= */
-function loadProfileForm(){
-  if(!me || !meDoc) return;
-  $('profName').value = meDoc.name||'';
-  $('profPhone').value = meDoc.phone||'';
-  $('profPass').value = '';
-  $('profAvatarPreview').src = meDoc.photoURL || avatarFallback();
-}
-$('profAvatarInput').addEventListener('change', async (e)=>{
-  const file = e.target.files[0]; if(!file || !me) return;
-  try{
-    const r = sRef(storage, `avatars/${me.uid}`);
-    await uploadBytes(r, file);
-    const url = await getDownloadURL(r);
-    await updateDoc(doc(db,'users',me.uid), { photoURL:url });
-  }catch(err){ alert(err.message); }
-});
-$('saveProfileBtn').addEventListener('click', async ()=>{
-  try{
-    if(!me||!meDoc) return alert('Login first.');
-    const up = {};
-    const nm = $('profName').value.trim(); if(nm) up.name=nm;
-    const ph = $('profPhone').value.trim(); up.phone=ph;
-    if($('profPass').value){ await updatePassword(me, $('profPass').value); }
-    if(Object.keys(up).length) await updateDoc(doc(db,'users',me.uid), up);
-    alert('Profile updated.');
-  }catch(e){ alert(e.message); }
-});
-
-/* ======= Order Create (transaction) ======= */
-$('recipientInput').addEventListener('input', enableOrderConfirmCheck);
-function enableOrderConfirmCheck(){
-  const recip = $('recipientInput').value.trim();
-  const amt = Number($('selectedAmount').value||0);
-  const bal = meDoc?.balance||0;
-  $('confirmOrderBtn').disabled = !(me && meDoc && meDoc.status==='active' && recip && amt>0 && bal>=amt);
-}
-
-async function createOrderTx(clientId, amount){
-  await runTransaction(db, async (tx)=>{
-    const uRef = doc(db,'users',me.uid);
-    const uSnap = await tx.get(uRef);
-    if(!uSnap.exists()) throw new Error('User not found.');
-    const u = uSnap.data();
-    if(u.status!=='active') throw new Error('You are not approved.');
-    if(u.balance < amount) throw new Error('Insufficient balance.');
-    // deduct
-    tx.update(uRef,{ balance: u.balance - amount });
-
-    // create order
-    const createdAt = serverTimestamp();
-    const expiresAt = Timestamp.fromMillis(Date.now()+5*60*1000);
-    const oRef = doc(collection(db,'orders'));
-    tx.set(oRef,{
-      userId: me.uid, userEmail: me.email, clientId,
-      amount, status:'waiting', createdAt, expiresAt, refunded:false
+      grid.appendChild(d);
     });
-  });
-}
-$('confirmOrderBtn').addEventListener('click', async ()=>{
-  try{
+  }
+  function enableOrderConfirmCheck(){
+    const recip = $('recipientInput').value.trim();
+    const amt = Number($('selectedAmount').value || 0);
+    const bal = meDoc?.balance||0;
+    $('confirmOrderBtn').disabled = !(me && meDoc && meDoc.status==='active' && recip && amt>0 && bal>=amt);
+  }
+  $('recipientInput')?.addEventListener('input', enableOrderConfirmCheck);
+
+  /* ========= Orders ========= */
+  function uid(){ return 'ORD' + Date.now().toString(36) + Math.random().toString(36).slice(2,6).toUpperCase(); }
+
+  async function createOrder(){
+    if(!me || !meDoc) return alert('Login first.');
+    if(meDoc.status!=='active') return alert('You are not approved yet.');
     const clientId = $('recipientInput').value.trim();
     const amt = Number($('selectedAmount').value||0);
-    if(!clientId||!amt) return;
-    await createOrderTx(clientId, amt);
-    // reset form
+    if(!clientId) return alert('Enter client ID/number.');
+    if(!amt) return alert('Select a diamond amount.');
+    if((meDoc.balance||0) < amt) return alert('Insufficient balance.');
+
+    const ordersCol = collection(db,'orders');
+    const userRef = doc(db,'users', me.uid);
+
+    // Transaction: deduct balance, create order
+    await runTransaction(db, async (trx)=>{
+      const userSnap = await trx.get(userRef);
+      if(!userSnap.exists()) throw new Error('User doc missing.');
+      const bal = userSnap.data().balance||0;
+      if(bal < amt) throw new Error('Insufficient balance.');
+      trx.update(userRef, { balance: bal - amt });
+
+      const orderRef = doc(ordersCol); // custom id
+      trx.set(orderRef, {
+        id: orderRef.id,
+        userId: me.uid,
+        userEmail: me.email,
+        clientId,
+        amount: amt,
+        status: 'waiting',
+        ts: serverTimestamp(),
+        expiresAt: Timestamp.fromMillis(Date.now()+5*60*1000),
+        refunded: false
+      });
+    });
+
+    // reset form, go to history
     $('recipientInput').value=''; $('selectedAmount').value='0';
     document.querySelectorAll('.gift').forEach(g=>g.classList.remove('selected'));
     $('confirmOrderBtn').disabled = true;
     showPage('history');
-  }catch(e){ alert(e.message); }
-});
+  }
+  $('confirmOrderBtn').addEventListener('click', createOrder);
 
-/* ======= History Render (own) ======= */
-function renderHistory(list){
-  const tbody = $('histBody'); tbody.innerHTML='';
-  list.forEach(o=>{
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td>${o.id}</td>
-      <td>${o.clientId}</td>
-      <td>${Number(o.amount||0).toLocaleString()}</td>
-      <td><span class="status ${o.status}">${o.status}</span></td>
-      <td>${o.createdAt?.toDate ? o.createdAt.toDate().toLocaleString() : ''}</td>
-    `;
-    tbody.appendChild(tr);
-  });
-}
-
-/* ======= Admin: Orders ======= */
-async function adminSetOrderStatus(orderId, newStatus){
-  if(meDoc?.role!=='admin') return alert('Admin only.');
-  await runTransaction(db, async (tx)=>{
-    const oRef = doc(db,'orders',orderId);
-    const oSnap = await tx.get(oRef); if(!oSnap.exists()) throw new Error('Order not found.');
-    const o = oSnap.data();
-    if(o.status===newStatus) return;
-
-    const uRef = doc(db,'users', o.userId);
-    const uSnap = await tx.get(uRef); if(!uSnap.exists()) throw new Error('User not found.');
-    const u = uSnap.data();
-
-    if(newStatus==='cancelled'){
-      // refund if not refunded
-      if(!o.refunded){
-        tx.update(uRef,{ balance: (u.balance||0) + (o.amount||0) });
+  // Auto-cancel sweep (admin cancels globally; user cancels own expired)
+  async function autoCancelSweepGlobal(){
+    if(!meDoc || meDoc.role!=='admin') return;
+    const qRef = query(collection(db,'orders'), where('status','==','waiting'), orderBy('ts','desc'), limit(200));
+    const snap = await getDocs(qRef);
+    const batch = writeBatch(db);
+    let changed=0;
+    const now = Date.now();
+    snap.forEach(d=>{
+      const o=d.data();
+      const exp = (o.expiresAt?.toMillis?.() ?? 0);
+      if(exp && now>exp){
+        // refund user balance if not refunded
+        const userRef = doc(db,'users', o.userId);
+        batch.update(doc(db,'orders', d.id), { status:'cancelled', refunded:true });
+        batch.update(userRef, { balance: (o._bal_noop||0) }); // placeholder: we will use transaction per doc
+        changed++;
       }
-      tx.update(oRef,{ status:'cancelled', refunded:true });
-    }else if(newStatus==='completed'){
-      // add to weekly & tier (only once from waiting)
-      if(o.status==='waiting'){
-        const newWeekly = (u.weeklyTotal||0) + (o.amount||0);
-        const info = tierInfo(newWeekly);
-        tx.update(uRef,{ weeklyTotal:newWeekly, tier: info.level });
-      }
-      tx.update(oRef,{ status:'completed' });
-    }
-  });
-}
-
-function renderAdminOrders(list){
-  const tbody = $('adminOrdersBody'); tbody.innerHTML='';
-  list.forEach(o=>{
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td>${o.id}</td>
-      <td>${o.userEmail}</td>
-      <td>${o.clientId}</td>
-      <td>${Number(o.amount||0).toLocaleString()}</td>
-      <td><span class="status ${o.status}">${o.status}</span></td>
-      <td>${o.createdAt?.toDate ? o.createdAt.toDate().toLocaleString() : ''}</td>
-      <td class="inline">
-        <button class="btn ok" data-act="complete" data-id="${o.id}" ${o.status==='completed'?'disabled':''}>Complete</button>
-        <button class="btn bad" data-act="cancel" data-id="${o.id}" ${o.status==='cancelled'?'disabled':''}>Cancel</button>
-      </td>
-    `;
-    tbody.appendChild(tr);
-  });
-  tbody.querySelectorAll('button[data-act]').forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-      const id = btn.getAttribute('data-id');
-      const act = btn.getAttribute('data-act');
-      adminSetOrderStatus(id, act==='complete'?'completed':'cancelled').catch(e=>alert(e.message));
     });
-  });
-}
-
-/* ======= Admin: Users ======= */
-function renderAdminUsers(list){
-  const tbody = $('adminUsersBody'); tbody.innerHTML='';
-  list.forEach(x=>{
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td><img src="${x.photoURL||avatarFallback()}" style="width:36px;height:36px;border-radius:50%;object-fit:cover"/></td>
-      <td><input data-k="name" data-id="${x.id}" value="${x.name||''}"/></td>
-      <td><input data-k="email" data-id="${x.id}" value="${x.email||''}" disabled/></td>
-      <td><input data-k="phone" data-id="${x.id}" value="${x.phone||''}"/></td>
-      <td>
-        <select data-k="role" data-id="${x.id}">
-          <option ${x.role==='user'?'selected':''}>user</option>
-          <option ${x.role==='admin'?'selected':''}>admin</option>
-        </select>
-      </td>
-      <td>
-        <select data-k="status" data-id="${x.id}">
-          <option ${x.status==='active'?'selected':''}>active</option>
-          <option ${x.status==='pending'?'selected':''}>pending</option>
-          <option ${x.status==='blocked'?'selected':''}>blocked</option>
-        </select>
-      </td>
-      <td>💎 ${(x.balance||0).toLocaleString()}</td>
-      <td>${(x.weeklyTotal||0).toLocaleString()}</td>
-      <td>L${x.tier||0}</td>
-      <td class="inline">
-        <input type="number" style="width:100px" placeholder="Amount" data-k="delta" data-id="${x.id}"/>
-        <button class="btn" data-act="add" data-id="${x.id}">Add</button>
-        <button class="btn bad" data-act="sub" data-id="${x.id}">Sub</button>
-      </td>
-      <td class="inline">
-        <button class="btn ok" data-act="save" data-id="${x.id}">Save</button>
-      </td>
-    `;
-    tbody.appendChild(tr);
-  });
-
-  // Balance Add/Sub
-  tbody.querySelectorAll('button[data-act="add"],button[data-act="sub"]').forEach(b=>{
-    b.addEventListener('click', async ()=>{
-      if(meDoc?.role!=='admin') return alert('Admin only.');
-      const uid = b.getAttribute('data-id');
-      const deltaInput = tbody.querySelector(`input[data-k="delta"][data-id="${uid}"]`);
-      const amt = Number(deltaInput.value||0);
-      if(amt<=0) return alert('Enter amount.');
-      const sign = b.getAttribute('data-act')==='add' ? +1 : -1;
-      try{
-        await runTransaction(db, async (tx)=>{
-          const uRef = doc(db,'users',uid);
-          const uSnap = await tx.get(uRef); if(!uSnap.exists()) throw new Error('User missing');
-          const cur = uSnap.data();
-          const newBal = (cur.balance||0) + sign*amt;
-          if(newBal<0) throw new Error('Negative balance not allowed');
-          tx.update(uRef,{ balance:newBal });
+    // Because we need to add exact refund amounts, do per-order transaction:
+    for (const d of snap.docs){
+      const o=d.data();
+      const exp = (o.expiresAt?.toMillis?.() ?? 0);
+      if(exp && now>exp && o.status==='waiting'){
+        await runTransaction(db, async (trx)=>{
+          const oRef = doc(db,'orders', d.id);
+          const fresh = await trx.get(oRef);
+          const curr = fresh.data();
+          if(curr.status!=='waiting') return;
+          const uRef = doc(db,'users', curr.userId);
+          const uSnap = await trx.get(uRef);
+          if(!uSnap.exists()) return;
+          const ubal = uSnap.data().balance||0;
+          trx.update(uRef, { balance: ubal + (curr.amount||0) });
+          trx.update(oRef, { status:'cancelled', refunded:true });
         });
-      }catch(e){ alert(e.message); }
-      deltaInput.value='';
-    });
-  });
+      }
+    }
+  }
+  $('manualSweep').addEventListener('click', autoCancelSweepGlobal);
+  // Also run periodically (only for admins)
+  setInterval(()=>{ if(meDoc?.role==='admin') autoCancelSweepGlobal().catch(()=>{}); }, 15000);
 
-  // Save row
-  tbody.querySelectorAll('button[data-act="save"]').forEach(b=>{
-    b.addEventListener('click', async ()=>{
-      if(meDoc?.role!=='admin') return alert('Admin only.');
-      const uid = b.getAttribute('data-id');
-      const name = tbody.querySelector(`input[data-k="name"][data-id="${uid}"]`)?.value||'';
-      const phone = tbody.querySelector(`input[data-k="phone"][data-id="${uid}"]`)?.value||'';
-      const role = tbody.querySelector(`select[data-k="role"][data-id="${uid}"]`)?.value||'user';
-      const status = tbody.querySelector(`select[data-k="status"][data-id="${uid}"]`)?.value||'pending';
-      try{
+  /* ========= Order History (my orders) ========= */
+  let histPage=1, histPageSize=10;
+  let myOrders = [];
+  function matchFilter(order, text, status){
+    const t = text.toLowerCase();
+    const fields = [
+      order.id, order.clientId, String(order.amount),
+      (order.ts?.toDate?.()||new Date()).toLocaleString().toLowerCase()
+    ].join(' ').toLowerCase();
+    if(t && !fields.includes(t)) return false;
+    if(status && order.status!==status) return false;
+    return true;
+  }
+  function renderHistory(){
+    if(!me) return;
+    const text = $('histSearch').value.trim();
+    const status = $('histStatus').value;
+    const all = [...myOrders].sort((a,b)=> (b.ts?.toMillis?.()||0)-(a.ts?.toMillis?.()||0));
+    const filtered = all.filter(o=>matchFilter(o,text,status));
+
+    const totalPages = Math.max(1, Math.ceil(filtered.length/histPageSize));
+    histPage = Math.min(histPage, totalPages);
+    const start = (histPage-1)*histPageSize;
+    const pageData = filtered.slice(start, start+histPageSize);
+
+    const tbody = $('histBody'); tbody.innerHTML='';
+    pageData.forEach(o=>{
+      const tr = document.createElement('tr');
+      const dt = o.ts?.toDate?.() || new Date();
+      tr.innerHTML = `
+        <td>${o.id}</td>
+        <td>${o.clientId}</td>
+        <td>${(o.amount||0).toLocaleString()}</td>
+        <td><span class="status ${o.status}">${o.status}</span></td>
+        <td>${dt.toLocaleString()}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+    $('histPageInfo').textContent = `Page ${histPage} / ${totalPages}`;
+    $('histPrev').disabled = histPage<=1;
+    $('histNext').disabled = histPage>=totalPages;
+  }
+  $('histPrev').addEventListener('click', ()=>{ histPage=Math.max(1,histPage-1); renderHistory(); });
+  $('histNext').addEventListener('click', ()=>{ histPage=histPage+1; renderHistory(); });
+  $('histSearch').addEventListener('input', ()=>{ histPage=1; renderHistory(); });
+  $('histStatus').addEventListener('change', ()=>{ histPage=1; renderHistory(); });
+
+  /* ========= Admin Orders ========= */
+  let adminOrdersPage=1, adminOrdersPageSize=10;
+  let allOrders = [];
+  function renderAdminOrders(){
+    if(!(meDoc && meDoc.role==='admin')) return;
+    const text = $('adminOrderSearch').value.trim().toLowerCase();
+    const status = $('adminOrderStatus').value;
+    const filtered = allOrders
+      .filter(o=>{
+        const fields = [
+          o.id, o.clientId, String(o.amount), o.userEmail,
+          (o.ts?.toDate?.()||new Date()).toLocaleString().toLowerCase()
+        ].join(' ').toLowerCase();
+        if(text && !fields.includes(text)) return false;
+        if(status && o.status!==status) return false;
+        return true;
+      })
+      .sort((a,b)=> (b.ts?.toMillis?.()||0)-(a.ts?.toMillis?.()||0));
+
+    const totalPages = Math.max(1, Math.ceil(filtered.length/adminOrdersPageSize));
+    adminOrdersPage = Math.min(adminOrdersPage, totalPages);
+    const start = (adminOrdersPage-1)*adminOrdersPageSize;
+    const pageData = filtered.slice(start, start+adminOrdersPageSize);
+
+    const tbody = $('adminOrdersBody'); tbody.innerHTML='';
+    pageData.forEach(o=>{
+      const dt = o.ts?.toDate?.()||new Date();
+      const disabledC = (o.status==='completed')?'disabled':'';
+      const disabledX = (o.status==='cancelled')?'disabled':'';
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${o.id}</td>
+        <td>${o.userEmail||''}</td>
+        <td>${o.clientId}</td>
+        <td>${(o.amount||0).toLocaleString()}</td>
+        <td><span class="status ${o.status}">${o.status}</span></td>
+        <td>${dt.toLocaleString()}</td>
+        <td class="row">
+          <button class="btn ok" data-act="complete" data-id="${o.id}" ${disabledC}>Complete</button>
+          <button class="btn bad" data-act="cancel" data-id="${o.id}" ${disabledX}>Cancel</button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    tbody.querySelectorAll('button[data-act]').forEach(btn=>{
+      btn.addEventListener('click', async ()=>{
+        const id = btn.getAttribute('data-id');
+        const act = btn.getAttribute('data-act');
+        if(act==='complete') await adminSetOrderStatus(id,'completed');
+        if(act==='cancel')   await adminSetOrderStatus(id,'cancelled');
+      });
+    });
+
+    $('adminOrdersPageInfo').textContent = `Page ${adminOrdersPage} / ${totalPages}`;
+    $('adminOrdersPrev').disabled = adminOrdersPage<=1;
+    $('adminOrdersNext').disabled = adminOrdersPage>=totalPages;
+  }
+  $('adminOrdersPrev').addEventListener('click', ()=>{ adminOrdersPage=Math.max(1,adminOrdersPage-1); renderAdminOrders(); });
+  $('adminOrdersNext').addEventListener('click', ()=>{ adminOrdersPage=adminOrdersPage+1; renderAdminOrders(); });
+  $('adminOrderSearch').addEventListener('input', ()=>{ adminOrdersPage=1; renderAdminOrders(); });
+  $('adminOrderStatus').addEventListener('change', ()=>{ adminOrdersPage=1; renderAdminOrders(); });
+
+  async function adminSetOrderStatus(orderId, newStatus){
+    if(!(meDoc && meDoc.role==='admin')) return alert('Admin only.');
+    const oRef = doc(db,'orders', orderId);
+    await runTransaction(db, async (trx)=>{
+      const oSnap = await trx.get(oRef);
+      if(!oSnap.exists()) throw new Error('Order not found.');
+      const o = oSnap.data();
+      if(o.status===newStatus) return;
+      const userRef = doc(db,'users', o.userId);
+
+      if(newStatus==='cancelled'){
+        if(o.status==='waiting' && !o.refunded){
+          const uSnap = await trx.get(userRef);
+          const bal = uSnap.data().balance||0;
+          trx.update(userRef, { balance: bal + (o.amount||0) });
+          trx.update(oRef, { status:'cancelled', refunded:true });
+        }else{
+          trx.update(oRef, { status:'cancelled' });
+        }
+      }else if(newStatus==='completed'){
+        // no wallet change; weekly is computed from completed orders
+        trx.update(oRef, { status:'completed' });
+      }
+    });
+  }
+
+  /* ========= Admin Users ========= */
+  function renderAdminUsers(users){
+    if(!(meDoc && meDoc.role==='admin')) return;
+    const text = $('userSearch').value.trim().toLowerCase();
+    const tbody = $('adminUsersBody'); tbody.innerHTML='';
+    users
+      .filter(x=>{
+        const f = [x.name,x.email,x.phone,x.role,x.status].join(' ').toLowerCase();
+        return !text || f.includes(text);
+      })
+      .forEach(x=>{
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><img src="${x.avatar||$('userAvatar').src}" style="width:36px;height:36px;border-radius:50%;object-fit:cover"/></td>
+          <td><input data-k="name" data-id="${x.id}" value="${x.name||''}"/></td>
+          <td><input data-k="email" data-id="${x.id}" value="${x.email||''}" disabled/></td>
+          <td><input data-k="phone" data-id="${x.id}" value="${x.phone||''}"/></td>
+          <td>
+            <select data-k="role" data-id="${x.id}">
+              <option ${x.role==='user'?'selected':''}>user</option>
+              <option ${x.role==='admin'?'selected':''}>admin</option>
+            </select>
+          </td>
+          <td>
+            <select data-k="status" data-id="${x.id}">
+              <option ${x.status==='active'?'selected':''}>active</option>
+              <option ${x.status==='pending'?'selected':''}>pending</option>
+              <option ${x.status==='blocked'?'selected':''}>blocked</option>
+            </select>
+          </td>
+          <td>💎 ${(x.balance||0).toLocaleString()}</td>
+          <td>${(x.weekly||0).toLocaleString()}</td>
+          <td>L${x.tier||0}</td>
+          <td class="row">
+            <input type="number" style="width:100px" placeholder="Amount" data-k="delta" data-id="${x.id}"/>
+            <button class="btn" data-act="add" data-id="${x.id}">Add</button>
+            <button class="btn bad" data-act="sub" data-id="${x.id}">Sub</button>
+          </td>
+          <td class="row">
+            <button class="btn ok" data-act="save" data-id="${x.id}">Save</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+    // Balance add/sub
+    tbody.querySelectorAll('button[data-act="add"],button[data-act="sub"]').forEach(b=>{
+      b.addEventListener('click', async ()=>{
+        const uid = b.getAttribute('data-id');
+        const deltaInput = tbody.querySelector(`input[data-k="delta"][data-id="${uid}"]`);
+        const amt = Number(deltaInput.value||0);
+        if(amt<=0) return alert('Enter amount.');
+        const act = b.getAttribute('data-act');
+        let delta = act==='add' ? amt : -amt;
+        await adjustBalance(uid, delta);
+        deltaInput.value='';
+      });
+    });
+
+    // Save row
+    tbody.querySelectorAll('button[data-act="save"]').forEach(b=>{
+      b.addEventListener('click', async ()=>{
+        const uid = b.getAttribute('data-id');
+        const name  = tbody.querySelector(`input[data-k="name"][data-id="${uid}"]`)?.value || '';
+        const phone = tbody.querySelector(`input[data-k="phone"][data-id="${uid}"]`)?.value || '';
+        const role  = tbody.querySelector(`select[data-k="role"][data-id="${uid}"]`)?.value || 'user';
+        const status= tbody.querySelector(`select[data-k="status"][data-id="${uid}"]`)?.value || 'pending';
         await updateDoc(doc(db,'users',uid), { name, phone, role, status });
         alert('Saved.');
-      }catch(e){ alert(e.message); }
+      });
     });
-  });
-}
+  }
 
-/* ======= Auto-cancel Sweep (every 10s) ======= */
-async function sweepExpired(){
-  // admin sweeps all; user sweeps own
-  if(!me) return;
-  const isAdmin = meDoc?.role==='admin';
-  const baseQ = isAdmin
-    ? query(collection(db,'orders'), where('status','==','waiting'))
-    : query(collection(db,'orders'), where('userId','==',me.uid), where('status','==','waiting'));
-  try{
-    const qs = await getDocs(baseQ);
-    const now = Date.now();
-    for(const d of qs.docs){
-      const o = d.data();
-      const exp = o.expiresAt?.toMillis?.()||0;
-      if(exp && exp<now){
-        // perform cancel+refund via transaction
-        await runTransaction(db, async (tx)=>{
-          const oRef = doc(db,'orders',d.id);
-          const oSnap = await tx.get(oRef);
-          const cur = oSnap.data();
-          if(cur.status!=='waiting') return;
-          const uRef = doc(db,'users', cur.userId);
-          const uSnap = await tx.get(uRef); if(!uSnap.exists()) return;
-          const ub = (uSnap.data().balance||0) + (cur.amount||0);
-          tx.update(uRef,{ balance: ub });
-          tx.update(oRef,{ status:'cancelled', refunded:true });
-        });
+  async function adjustBalance(clientUid, delta){
+    if(!(meDoc && meDoc.role==='admin')) return alert('Admin only.');
+    await runTransaction(db, async (trx)=>{
+      const adminRef = doc(db,'users', me.uid);
+      const userRef  = doc(db,'users', clientUid);
+      const aSnap = await trx.get(adminRef);
+      const cSnap = await trx.get(userRef);
+      if(!cSnap.exists()) throw new Error('User not found.');
+      const aBal = aSnap.data().balance||0;
+      const cBal = cSnap.data().balance||0;
+      if(delta>0){
+        if(aBal<delta) throw new Error('Admin insufficient balance.');
+        trx.update(adminRef, { balance: aBal - delta });
+        trx.update(userRef,  { balance: cBal + delta });
+      }else{
+        const take = -delta;
+        if(cBal<take) throw new Error('Client insufficient balance.');
+        trx.update(userRef,  { balance: cBal - take });
+        trx.update(adminRef, { balance: aBal + take });
       }
+    });
+  }
+
+  $('addUserBtn').addEventListener('click', async ()=>{
+    if(!(meDoc && meDoc.role==='admin')) return alert('Admin only.');
+    const email = prompt('Email?'); if(!email) return;
+    // Create an inactive user shell (no auth). Admin can later share temp password manually.
+    const id = 'shell_'+Date.now();
+    await setDoc(doc(db,'users',id), {
+      id, email: email.toLowerCase(), name:'New User', phone:'', role:'user', status:'pending',
+      balance:0, avatar:''
+    });
+    alert('Shell user created (pending). Ask user to Register with same email, then approve.');
+  });
+
+  /* ========= Profile ========= */
+  function loadProfileForm(){
+    if(!meDoc) return;
+    $('profName').value = meDoc.name||'';
+    $('profPhone').value = meDoc.phone||'';
+    $('profPass').value = '';
+    $('profAvatarPreview').src = meDoc.avatar || $('userAvatar').src;
+  }
+  $('profAvatarInput').addEventListener('change', async (e)=>{
+    const f = e.target.files?.[0]; if(!f || !me) return;
+    const r = new FileReader();
+    r.onload = ()=>{ $('profAvatarPreview').src = r.result; };
+    r.readAsDataURL(f);
+
+    const path = `avatars/${me.uid}/${Date.now()}_${f.name}`;
+    const rf = sRef(storage, path);
+    await uploadBytes(rf, f);
+    const url = await getDownloadURL(rf);
+    await updateDoc(doc(db,'users', me.uid), { avatar: url });
+  });
+  $('saveProfileBtn').addEventListener('click', async ()=>{
+    if(!me) return;
+    const name = $('profName').value.trim();
+    const phone= $('profPhone').value.trim();
+    const pass = $('profPass').value.trim();
+    if(name || phone) await updateDoc(doc(db,'users',me.uid), { name, phone });
+    if(pass) await updatePassword(me, pass).catch(err=>alert(err.message));
+    alert('Profile updated.');
+  });
+
+  /* ========= Auth ========= */
+  $('doLogin').addEventListener('click', async ()=>{
+    const email = $('loginEmail').value.trim().toLowerCase();
+    const pass  = $('loginPass').value;
+    try{
+      await signInWithEmailAndPassword(auth, email, pass);
+      showPage('dashboard');
+    }catch(e){ alert(e.message); }
+  });
+  $('forgotPass').addEventListener('click', async ()=>{
+    const email = $('loginEmail').value.trim().toLowerCase();
+    if(!email) return alert('Enter your email above first.');
+    await sendPasswordResetEmail(auth, email).then(()=> alert('Password reset email sent.'));
+  });
+  $('doRegister').addEventListener('click', async ()=>{
+    const email = $('regEmail').value.trim().toLowerCase();
+    const pass  = $('regPass').value;
+    const name  = $('regName').value.trim();
+    const phone = $('regPhone').value.trim();
+    if(!email||!pass) return alert('Email and password are required.');
+    try{
+      const cred = await createUserWithEmailAndPassword(auth,email,pass);
+      const u = cred.user;
+      await setDoc(doc(db,'users', u.uid), {
+        id:u.uid, email, name, phone, role:'user', status:'pending', balance:0, avatar:''
+      });
+      alert('Registered! Awaiting admin approval.');
+      await signOut(auth);
+      showPage('login');
+    }catch(e){ alert(e.message); }
+  });
+  $('logoutLink').addEventListener('click', async (e)=>{
+    e.preventDefault();
+    await signOut(auth);
+    showPage('login');
+  });
+
+  // Route guard + live subscriptions
+  onAuthStateChanged(auth, async (user)=>{
+    me = user;
+    // Cleanup
+    unsubUser && unsubUser(); unsubUser=null;
+    unsubMyOrders && unsubMyOrders(); unsubMyOrders=null;
+    unsubAllOrders && unsubAllOrders(); unsubAllOrders=null;
+    unsubUsersAdmin && unsubUsersAdmin(); unsubUsersAdmin=null;
+
+    if(!user){
+      meDoc = null;
+      renderUserHeader();
+      computeWeeklyAndRender();
+      showPage('login');
+      return;
     }
-  }catch(e){ /* silent */ }
-}
-setInterval(sweepExpired, 10000);
+    // Ensure user doc exists
+    const uRef = doc(db,'users', user.uid);
+    const uSnap = await getDoc(uRef);
+    if(!uSnap.exists()){
+      await setDoc(uRef, { id:user.uid, email:user.email, name:'', phone:'', role:'user', status:'pending', balance:0, avatar:'' });
+    }
 
-/* ======= Navigation helpers ======= */
-$('userPill').addEventListener('click', ()=> showPage('profile'));
-function refreshAll(){
-  updateHud(meDoc?{...meDoc, email:me?.email}:null);
-  loadProfileForm();
-  enableOrderConfirmCheck();
-}
-document.addEventListener('visibilitychange', ()=>{ if(!document.hidden) refreshAll(); });
+    // Subscribe my user doc
+    unsubUser = onSnapshot(uRef, async (snap)=>{
+      meDoc = snap.data();
+      renderUserHeader();
+      renderGifts();
+      enableOrderConfirmCheck();
+      loadProfileForm();
+      await computeWeeklyAndRender();
 
+      if(meDoc.status!=='active'){
+        showPage('login');
+      }else{
+        // If just logged in and active, land dashboard
+        if(document.querySelector('#page-login.active')) showPage('dashboard');
+      }
+    });
+
+    // My orders (history)
+    const myQ = query(collection(db,'orders'), where('userId','==', user.uid));
+    unsubMyOrders = onSnapshot(myQ, (snap)=>{
+      myOrders = snap.docs.map(d=> ({id:d.id, ...d.data()}));
+      // if the client's own expired waiting order found, auto-cancel & refund
+      myOrders.forEach(async o=>{
+        if(o.status==='waiting' && (o.expiresAt?.toMillis?.()||0) < Date.now()){
+          // cancel only own order
+          await runTransaction(db, async (trx)=>{
+            const ref = doc(db,'orders', o.id);
+            const fresh = await trx.get(ref);
+            const cur=fresh.data();
+            if(cur.status!=='waiting') return;
+            const uRef = doc(db,'users', me.uid);
+            const uSnap = await trx.get(uRef);
+            const bal = uSnap.data().balance||0;
+            trx.update(uRef, { balance: bal + (cur.amount||0) });
+            trx.update(ref, { status:'cancelled', refunded:true });
+          }).catch(()=>{});
+        }
+      });
+      renderHistory();
+      computeWeeklyAndRender();
+    });
+
+    // Admin views
+    if((meDoc?.role||'user')==='admin'){
+      const allQ = query(collection(db,'orders'));
+      unsubAllOrders = onSnapshot(allQ, (snap)=>{
+        allOrders = snap.docs.map(d=> ({id:d.id, ...d.data()}));
+        renderAdminOrders();
+      });
+
+      // Users table: need weekly & tier computed; we’ll compute per user by query completed orders in boundary
+      unsubUsersAdmin = onSnapshot(collection(db,'users'), async (snap)=>{
+        let users = snap.docs.map(d=> ({id:d.id, ...d.data()}));
+        const start = Timestamp.fromMillis(currentBoundary());
+        // compute weekly for each user (simple, may cost reads for many users)
+        for (let u of users){
+          const qRef = query(collection(db,'orders'),
+            where('userId','==', u.id),
+            where('status','==','completed'),
+            where('ts','>=', start)
+          );
+          let w=0; const r=await getDocs(qRef); r.forEach(x=> w+=(x.data().amount||0));
+          const info = tierInfo(w);
+          u.weekly = w; u.tier = info.level;
+        }
+        renderAdminUsers(users);
+      });
+    }
+  });
+
+  /* ========= Init UI ========= */
+  function init(){
+    renderGifts();
+    // nav buttons already wired
+  }
+  init();
 </script>
 </body>
 </html>
