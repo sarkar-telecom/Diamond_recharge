@@ -2,78 +2,97 @@
 <html lang="bn">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Sarkar Telecom • Diamond Recharge</title>
 <link rel="icon" href="data:," />
 <style>
   :root{
-    --bg:#0f1216; --panel:#121720; --muted:#93a4b8; --text:#e7ebf1;
-    --brand:#60a5fa; --ok:#22c55e; --warn:#f59e0b; --bad:#ef4444;
-    --card:#17202b; --border:#233041;
+    --bg:#0f1216; --surface:#121821; --panel:#161b22; --muted:#8aa0b7; --text:#e8eef6;
+    --brand:#5db2ff; --ok:#22c55e; --warn:#f59e0b; --bad:#ef4444;
+    --card:#1b2430; --line:#263244;
   }
-  *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);font:14px/1.5 system-ui,Segoe UI,Roboto}
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{margin:0;background:var(--bg);color:var(--text);font:14px/1.5 system-ui,Segoe UI,Roboto}
   a{color:var(--brand);text-decoration:none}
+
   /* Appbar */
-  .appbar{position:sticky;top:0;z-index:60;background:#0b0f15;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;padding:10px 12px}
-  .brand{font-weight:800;font-size:18px;color:#a5d8ff;letter-spacing:.2px}
-  .hamb{font-size:22px;cursor:pointer;line-height:0}
+  .appbar{position:sticky;top:0;z-index:40;background:#0b1118d0;backdrop-filter:saturate(1.2) blur(6px);
+    border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px;padding:10px 12px}
+  .brand{font-weight:800;font-size:18px;color:#bfe1ff;letter-spacing:.3px}
+  .hamb{font-size:22px;cursor:pointer;padding:6px 8px;border-radius:10px;border:1px solid transparent}
+  .hamb:hover{background:#0d1520;border-color:#132033}
   .spacer{flex:1}
-  .chip{background:var(--card);border:1px solid var(--border);padding:6px 10px;border-radius:999px}
-  .btn{background:#3b82f6;border:0;color:white;padding:10px 14px;border-radius:12px;font-weight:700;cursor:pointer}
-  .btn.secondary{background:#2a3342}
-  .btn.ghost{background:transparent;border:1px solid var(--border);color:var(--text)}
-  .btn.small{padding:6px 10px;border-radius:10px}
+  .chip{background:var(--card);border:1px solid var(--line);padding:6px 10px;border-radius:999px;color:#cfe7ff}
+  .btn{background:#2b6de9;border:0;color:white;padding:10px 14px;border-radius:12px;font-weight:700;cursor:pointer}
+  .btn.secondary{background:#243244}
+  .btn.ghost{background:transparent;border:1px solid var(--line);color:var(--text)}
+  .btn.small{padding:6px 10px;border-radius:10px;font-weight:600}
+  button:disabled{opacity:.55;cursor:not-allowed}
+
+  /* Drawer */
+  .drawer{position:fixed;inset:0;pointer-events:none}
+  .drawer .scrim{position:absolute;inset:0;background:#000a;opacity:0;transition:.2s}
+  .drawer .side{position:absolute;top:0;bottom:0;left:0;width:280px;background:#0e1522;border-right:1px solid var(--line);
+    transform:translateX(-100%);transition:.2s;overflow:auto;padding-top:10px}
+  .drawer.show{pointer-events:auto}
+  .drawer.show .scrim{opacity:1}
+  .drawer.show .side{transform:none}
+  .nav a{display:block;padding:13px 16px;border-bottom:1px solid #121b2d;color:#d7ecff}
+  .nav a.active{background:#121a2a}
+  .adminOnly{display:none}
+
+  /* Layout */
+  main{padding:16px;max-width:1100px;margin:0 auto}
   .grid{display:grid;gap:12px}
   .two{grid-template-columns:repeat(2,minmax(0,1fr))}
   .three{grid-template-columns:repeat(3,minmax(0,1fr))}
   @media(max-width:780px){.two,.three{grid-template-columns:1fr}}
-  .panel{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:16px}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px}
   .title{font-size:18px;font-weight:800;margin:0 0 10px}
   .muted{color:var(--muted)}
-  .footer{position:sticky;bottom:0;background:#0b0f15;border-top:1px solid var(--border);padding:10px 12px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-  /* Drawer */
-  .drawer{position:fixed;inset:0;pointer-events:none;z-index:70}
-  .drawer .scrim{position:absolute;inset:0;background:#0008;opacity:0;transition:.2s}
-  .drawer .side{position:absolute;top:0;bottom:0;left:0;width:290px;background:#0d1117;border-right:1px solid var(--border);transform:translateX(-100%);transition:.25s ease;overflow:auto;padding-top:8px}
-  .drawer.show{pointer-events:auto}
-  .drawer.show .scrim{opacity:1}
-  .drawer.show .side{transform:none}
-  .nav a{display:block;padding:14px 16px;border-bottom:1px solid #111825;color:#dbeafe}
-  .nav a.active{background:#111827}
-  /* Forms */
-  input,select{width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--border);background:var(--card);color:var(--text)}
-  label{display:block;margin:8px 0 6px}
   .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-  .badge{display:inline-block;padding:4px 8px;border-radius:999px;font-weight:800}
+  .hide{display:none !important}
+  .avatar{width:34px;height:34px;border-radius:50%;object-fit:cover;border:1px solid var(--line);background:#172030}
+
+  /* Forms & tables */
+  input,select{width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--text)}
+  label{display:block;margin:8px 0 6px}
+  table{width:100%;border-collapse:collapse}
+  th,td{padding:10px;border-bottom:1px solid var(--line);vertical-align:top;text-align:left}
+  th{color:#c9def5}
+  .badge{display:inline-block;padding:4px 8px;border-radius:999px;font-weight:800;font-size:12px}
   .b-wait{background:#3b2e06;color:#facc15}
   .b-ok{background:#063116;color:#34d399}
   .b-bad{background:#3b0b0b;color:#f87171}
-  .hide{display:none !important}
-  table{width:100%;border-collapse:collapse}
-  th,td{padding:10px;border-bottom:1px solid var(--border);vertical-align:top;text-align:center}
-  th{text-align:center;color:#cbd5e1;background:#0f1520;position:sticky;top:0}
-  .amounts .btn{background:#1d4ed8}
-  .btn.outline{background:transparent;border:1px solid var(--border)}
-  .avatar{width:34px;height:34px;border-radius:50%;object-fit:cover;border:1px solid var(--border)}
-  .pill{padding:6px 10px;border:1px solid var(--border);background:var(--card);border-radius:999px}
-  .gift-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
-  @media(max-width:680px){.gift-grid{grid-template-columns:repeat(3,1fr)}}
+
+  /* Amount buttons */
+  .amounts{display:flex;flex-wrap:wrap;gap:8px}
+  .amounts .btn{background:#1e293b}
+  .amounts .btn.sel{background:#2b6de9}
+
+  /* Footer */
+  .footer{position:sticky;bottom:0;background:#0b1118d0;border-top:1px solid var(--line);padding:10px 12px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 </style>
 </head>
 <body>
 
 <!-- Top App Bar -->
 <div class="appbar">
-  <button class="hamb" id="openMenu" aria-label="Open menu">☰</button>
+  <span class="hamb" id="openMenu">☰</span>
   <div class="brand">Sarkar <span style="color:#60a5fa">Telecom</span></div>
   <div class="spacer"></div>
-  <div id="hdrUser" class="row">
+
+  <!-- Auth HUD (when logged in) -->
+  <div id="hdrUser" class="row hide">
     <span id="hdrEmail" class="chip">—</span>
-    <span id="hdrTier" class="chip">Tier 0</span>
+    <span id="hdrTier" class="chip">Tier L0</span>
     <span id="hdrBal" class="chip">💎 0</span>
     <img id="hdrAvatar" class="avatar" src="" alt="">
     <button class="btn small" id="newOrderBtn">New Order</button>
   </div>
+
+  <!-- When logged out -->
   <div id="hdrAnon" class="row">
     <button class="btn small" onclick="showPage('login')">Login</button>
     <button class="btn small secondary" onclick="showPage('register')">Register</button>
@@ -81,17 +100,18 @@
 </div>
 
 <!-- Sidebar Drawer -->
-<div class="drawer" id="drawer" aria-hidden="true">
-  <div class="scrim" id="closeMenu" tabindex="0"></div>
-  <aside class="side" role="navigation" aria-label="Sidebar">
-    <div class="brand" style="padding:12px 16px">Sarkar Telecom</div>
+<div class="drawer" id="drawer">
+  <div class="scrim" id="closeMenu"></div>
+  <aside class="side">
+    <div class="brand" style="padding:14px 16px">Sarkar Telecom</div>
     <nav class="nav">
       <a href="#/dashboard" data-page="dashboard" class="active">🏠 Dashboard</a>
       <a href="#/create" data-page="create">➕ Create Order</a>
-      <a href="#/orders" data-page="orders">📑 Order History</a>
+      <a href="#/orders" data-page="orders">🧾 Order History</a>
       <a href="#/profile" data-page="profile">👤 Profile</a>
-      <a href="#/admin-orders" data-page="adminOrders" id="linkAdminOrders" class="hide">🛠️ Admin: Orders</a>
-      <a href="#/admin-users" data-page="adminUsers" id="linkAdminUsers" class="hide">👥 Admin: Users</a>
+      <a href="#/admin-orders" data-page="adminOrders" id="linkAdminOrders" class="adminOnly">🛠️ Admin: Orders</a>
+      <a href="#/admin-users" data-page="adminUsers" id="linkAdminUsers" class="adminOnly">👥 Admin: Users</a>
+      <a href="#/settings" data-page="settings" id="linkSettings" class="adminOnly">⚙️ Admin: Settings</a>
       <a href="#/login" data-page="login" id="linkLoginAnon">🔐 Login</a>
       <a href="#/logout" data-page="logout" id="linkLogout" class="hide">🚪 Logout</a>
     </nav>
@@ -102,7 +122,16 @@
 <main style="padding:16px;max-width:1100px;margin:0 auto;">
   <!-- Dashboard -->
   <section id="page-dashboard" class="page">
-    <div class="grid three">
+    <div class="grid two">
+      <div class="panel">
+        <h3 class="title">Welcome</h3>
+        <div class="muted">Manage diamond gifting with live updates.</div>
+        <div class="row" style="margin-top:12px;gap:8px;">
+          <button class="btn" onclick="showPage('create')">Create Order</button>
+          <button class="btn secondary" onclick="showPage('orders')">View History</button>
+          <button class="btn ghost adminOnly" onclick="autoCancelSweep(true)">Auto-cancel overdue (All)</button>
+        </div>
+      </div>
       <div class="panel">
         <h3 class="title">Account</h3>
         <div class="grid">
@@ -110,33 +139,18 @@
           <div>Phone: <b id="accPhone">—</b></div>
           <div>Role: <b id="accRole">—</b></div>
           <div>Approved: <b id="accApproved">—</b></div>
-        </div>
-      </div>
-      <div class="panel">
-        <h3 class="title">Balance</h3>
-        <div class="grid">
-          <div>Total Balance: <b id="accBal">0</b></div>
-          <div>On Hold (WAITING): <b id="accHold">0</b></div>
-          <div>Available: <b id="accAvail">0</b></div>
-        </div>
-      </div>
-      <div class="panel">
-        <h3 class="title">Weekly & Tier</h3>
-        <div class="grid">
           <div>Weekly Diamonds: <b id="accWeek">0</b></div>
+          <div>Balance: <b id="accBal">0</b></div>
           <div>Tier: <b id="accTier">L0</b></div>
         </div>
       </div>
     </div>
-
     <div class="panel" style="margin-top:12px">
-      <h3 class="title">Quick</h3>
-      <div class="row" style="gap:8px">
-        <button class="btn" onclick="showPage('create')">Create Order</button>
-        <button class="btn secondary" onclick="showPage('orders')">View History</button>
-        <button class="btn ghost" onclick="autoCancelSweep()">Auto-cancel overdue</button>
-      </div>
-      <p class="muted" style="margin-top:8px">Orders auto-cancel in <b id="cfgAutoCancel">5</b> minutes if not completed.</p>
+      <h3 class="title">Tips</h3>
+      <ul>
+        <li>Orders auto-cancel in <b>5 minutes</b> if not completed.</li>
+        <li>Admins can manage status and balances in Admin pages.</li>
+      </ul>
     </div>
   </section>
 
@@ -150,7 +164,7 @@
       <input id="loginPass" type="password" placeholder="••••••••">
       <div class="row" style="margin-top:10px">
         <button class="btn" onclick="doLogin()">Login</button>
-        <button class="btn outline" onclick="sendReset()">Forgot password?</button>
+        <button class="btn ghost" onclick="sendReset()">Forgot password?</button>
         <button class="btn secondary" onclick="showPage('register')">Create account</button>
       </div>
       <div class="muted" id="loginMsg" style="margin-top:8px"></div>
@@ -190,22 +204,8 @@
       <h3 class="title">Create Order</h3>
       <label>Gift Recipient (Number / Profile ID)</label>
       <input id="clientId" placeholder="58848454">
-      <div class="muted" style="margin:6px 0">Your available balance: 💎 <span id="availableBal">0</span></div>
-
-      <label>Select Amount</label>
-      <div class="row amounts" style="flex-wrap:wrap;margin:8px 0">
-        <button class="btn small" onclick="pickAmount(10)">💎 10</button>
-        <button class="btn small" onclick="pickAmount(50)">💎 50</button>
-        <button class="btn small" onclick="pickAmount(100)">💎 100</button>
-        <button class="btn small" onclick="pickAmount(200)">💎 200</button>
-        <button class="btn small" onclick="pickAmount(500)">💎 500</button>
-        <button class="btn small" onclick="pickAmount(1000)">💎 1000</button>
-        <button class="btn small" onclick="pickAmount(2000)">💎 2000</button>
-        <button class="btn small" onclick="pickAmount(5000)">💎 5000</button>
-        <button class="btn small" onclick="pickAmount(10000)">💎 10000</button>
-        <button class="btn small" onclick="pickAmount(20000)">💎 20000</button>
-      </div>
-
+      <div class="muted" style="margin:6px 0">Available balance: 💎 <span id="availableBal">0</span></div>
+      <div class="amounts" style="margin:8px 0" id="amountBtns"></div>
       <label>Amount</label>
       <input id="amount" type="number" min="1" step="1" value="50">
       <div class="row" style="margin-top:10px">
@@ -239,7 +239,7 @@
         <label>Avatar</label><input id="pfAvatar" type="file" accept="image/*">
         <div class="row" style="margin-top:10px">
           <button class="btn" onclick="saveProfile()">Save</button>
-          <button class="btn outline" onclick="sendReset()">Reset password via email</button>
+          <button class="btn ghost" onclick="sendReset()">Reset password via email</button>
         </div>
         <div id="pfMsg" class="muted" style="margin-top:8px"></div>
       </div>
@@ -251,6 +251,7 @@
           <div>Approved: <b id="pfApproved">—</b></div>
           <div>Balance: <b id="pfBalance">—</b></div>
           <div>Weekly Diamonds: <b id="pfWeekly">—</b></div>
+          <div>Tier: <b id="pfTier">L0</b></div>
         </div>
       </div>
     </div>
@@ -261,7 +262,7 @@
     <div class="panel">
       <h3 class="title">Admin: Orders</h3>
       <div class="row">
-        <button class="btn ghost" onclick="autoCancelSweep()">Auto-cancel overdue</button>
+        <button class="btn ghost" onclick="autoCancelSweep(true)">Auto-cancel overdue</button>
       </div>
       <table id="adminOrdersTbl" style="margin-top:10px">
         <thead>
@@ -285,7 +286,19 @@
     </div>
   </section>
 
-  <!-- Logout (dummy to trigger) -->
+  <!-- Admin: Settings -->
+  <section id="page-settings" class="page hide">
+    <div class="panel">
+      <h3 class="title">Admin: Settings</h3>
+      <div class="row" style="flex-wrap:wrap;gap:8px">
+        <button class="btn" onclick="resetWeeklyTotals()">Reset Weekly Totals</button>
+        <button class="btn ghost" onclick="recomputeAllTiers()">Recompute All Tiers</button>
+      </div>
+      <p class="muted" style="margin-top:10px">No Cloud Functions needed — these run client-side with admin role.</p>
+    </div>
+  </section>
+
+  <!-- Logout dummy -->
   <section id="page-logout" class="page hide">
     <div class="panel"><h3 class="title">Logging out…</h3></div>
   </section>
@@ -295,12 +308,12 @@
 <div class="footer">
   <span>© 2025 Sarkar Telecom</span>
   <span class="spacer"></span>
-  <span class="pill">Week: <span id="ftWeek">0</span></span>
-  <span class="pill">Tier: <span id="ftTier">0</span></span>
-  <span class="pill">💎 <span id="ftBal">0</span></span>
+  <span class="chip">Week: <span id="ftWeek">0</span></span>
+  <span class="chip">Tier: <span id="ftTier">L0</span></span>
+  <span class="chip">💎 <span id="ftBal">0</span></span>
 </div>
 
-<!-- Firebase (compat CDN) -->
+<!-- Firebase compat SDKs (for single-file simplicity) -->
 <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
@@ -308,17 +321,10 @@
 
 <script>
 /*** ========= CONFIG ========= ***/
-let AUTO_CANCEL_MIN = 5; // minutes (settings/general থাকলে ওটা থেকে override হবে)
-const DEFAULT_TIERS = [
-  {min:0, level:0, pct:0},
-  {min:5000, level:1, pct:1.0},
-  {min:20000, level:2, pct:1.6},
-  {min:40000, level:3, pct:2.1},
-  {min:80000, level:4, pct:2.6},
-  {min:800000, level:5, pct:3.5},
-];
+const AUTO_CANCEL_MIN = 5; // minutes
+const GIFT_AMOUNTS = [10,50,100,200,500,1000,2000,5000,10000,20000];
 
-// ✅ Your Firebase config (as provided)
+// === Your Firebase Config (as provided) ===
 const firebaseConfig = {
   apiKey: "AIzaSyDJRm9-jRkxVrTLYBzK1gGrRmAEu29jVrU",
   authDomain: "diamond-recharge-f7f59.firebaseapp.com",
@@ -336,63 +342,71 @@ auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
 const db = firebase.firestore();
 const storage = firebase.storage();
 
-// UI helpers
+/* ========= Helpers ========= */
 const $ = s => document.querySelector(s);
 const $$ = s => Array.from(document.querySelectorAll(s));
 function fmt(n){return new Intl.NumberFormat().format(n||0)}
 function pageId(key){ return `page-${key}`; }
+function toast(el,msg){ el.textContent=msg; setTimeout(()=>el.textContent='',4000); }
+function tierInfo(total){
+  if(total>=800000) return {level:5, pct:3.5};
+  if(total>=80000)  return {level:4, pct:2.6};
+  if(total>=40000)  return {level:3, pct:2.1};
+  if(total>=20000)  return {level:2, pct:1.6};
+  if(total>=5000)   return {level:1, pct:1.0};
+  return {level:0, pct:0};
+}
+
+/* ========= Drawer (sidebar) ========= */
+const drawer = $('#drawer');
+$('#openMenu').onclick = ()=> drawer.classList.add('show');
+$('#closeMenu').onclick = ()=> drawer.classList.remove('show');
+$$('.nav a').forEach(a=> a.addEventListener('click', ()=> drawer.classList.remove('show')));
+document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') drawer.classList.remove('show'); });
+
+/* ========= Router ========= */
 function showPage(key){
   $$('.page').forEach(p=>p.classList.add('hide'));
   $('#'+pageId(key))?.classList.remove('hide');
-  // highlight nav
   $$('.nav a').forEach(a=>a.classList.toggle('active', a.dataset.page===key));
   if(key==='logout') doLogout();
-  if(key==='orders') loadMyOrders();
-  if(key==='adminOrders') loadAdminOrders();
-  if(key==='adminUsers') loadAdminUsers();
+  if(key==='orders') loadMyOrdersLive();
+  if(key==='adminOrders') loadAdminOrdersLive();
+  if(key==='adminUsers') loadAdminUsersLive();
 }
-function toast(el,msg){ el.textContent=msg; setTimeout(()=>el.textContent='',4000); }
+window.addEventListener('hashchange', ()=>{
+  const key = (location.hash.replace('#/','')||'dashboard');
+  showPage(key);
+});
+$('#newOrderBtn').onclick=()=>showPage('create');
 
-// Drawer toggle (robust)
-const drawer = $('#drawer');
-const openMenuBtn = $('#openMenu');
-const closeMenuEl = $('#closeMenu');
-function openDrawer(){ drawer.classList.add('show'); drawer.setAttribute('aria-hidden','false'); }
-function closeDrawer(){ drawer.classList.remove('show'); drawer.setAttribute('aria-hidden','true'); }
-openMenuBtn.addEventListener('click', openDrawer);
-closeMenuEl.addEventListener('click', closeDrawer);
-document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeDrawer(); });
-$$('.nav a').forEach(a=>a.addEventListener('click', closeDrawer));
-$('#newOrderBtn').onclick=()=>{ showPage('create'); };
-
-// State
-let me=null;     // auth user
-let myDoc=null;  // users/{uid}
+/* ========= State ========= */
+let me=null;       // firebase auth user
+let myDoc=null;    // users/{uid} snapshot data
 let myWaitingSum=0;
-let TIERS = DEFAULT_TIERS;
 
-// Settings (optional)
-async function loadSettings(){
-  try{
-    const snap = await db.collection('settings').doc('general').get();
-    if(snap.exists){
-      const s = snap.data();
-      if(s.autoCancelMin) AUTO_CANCEL_MIN = s.autoCancelMin;
-      if(Array.isArray(s.tiers) && s.tiers.length) TIERS = s.tiers;
-    }
-  }catch(e){ /* ignore */ }
-  $('#cfgAutoCancel').textContent = AUTO_CANCEL_MIN;
+let unsubUser=null, unsubMyWait=null, unsubMyOrders=null, unsubAdminOrders=null, unsubAdminUsers=null;
+
+/* ========= Amount buttons ========= */
+function renderAmountButtons(){
+  const wrap = $('#amountBtns'); wrap.innerHTML='';
+  GIFT_AMOUNTS.forEach(a=>{
+    const b=document.createElement('button');
+    b.className='btn small';
+    b.textContent='💎 '+fmt(a);
+    b.onclick=()=>{
+      $$('#amountBtns .btn').forEach(x=>x.classList.remove('sel'));
+      b.classList.add('sel');
+      $('#amount').value=a;
+    };
+    wrap.appendChild(b);
+  });
 }
+renderAmountButtons();
 
-// Tier helper
-function tierFrom(total){
-  let t = TIERS[0];
-  for(const x of TIERS){ if(total>=x.min) t=x; else break; }
-  return t;
-}
-
-// Auth watcher
+/* ========= Auth Watcher ========= */
 auth.onAuthStateChanged(async u=>{
+  cleanupSubscriptions();
   me=u||null;
   if(!me){
     myDoc=null; myWaitingSum=0;
@@ -400,92 +414,94 @@ auth.onAuthStateChanged(async u=>{
     $('#hdrUser').classList.add('hide');
     $('#linkLogout').classList.add('hide');
     $('#linkLoginAnon').classList.remove('hide');
-    $('#linkAdminOrders').classList.add('hide');
-    $('#linkAdminUsers').classList.add('hide');
+    $$('.adminOnly').forEach(x=>x.style.display='none');
     showPage('login');
+    clearTables();
     return;
   }
-  await loadSettings();
 
-  // ensure user doc exists or load it
-  const ref=db.collection('users').doc(me.uid);
-  const got = await ref.get();
-  if(!got.exists){
-    await ref.set({
+  // ensure user doc exists
+  const uref = db.collection('users').doc(me.uid);
+  const first = await uref.get();
+  if(!first.exists){
+    await uref.set({
       email: me.email, name: me.displayName||'', phone:'', role:'user',
-      approved:false, balance:0, weeklyDiamonds:0, tier:0, avatar:''
+      approved:false, balance:0, weeklyDiamonds:0, tier:0, avatar:'',
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
     },{merge:true});
   }
-  // live snapshot
-  ref.onSnapshot(s=>{
+
+  // live user doc
+  unsubUser = uref.onSnapshot(s=>{
     myDoc = {...s.data(), id:s.id};
     refreshHeaderFooter();
-    if(!myDoc.approved){
-      $('#loginMsg').textContent='Your account is pending admin approval.';
-      showPage('profile');
-    }else{
-      const hash = location.hash.replace('#/','') || 'dashboard';
-      showPage(hash);
-    }
-    computeWaitingHold(); // recalc hold whenever user doc changes
-    // admin links
+    // admin visibility
     const isAdmin = myDoc.role==='admin';
-    $('#linkAdminOrders').classList.toggle('hide', !isAdmin);
-    $('#linkAdminUsers').classList.toggle('hide', !isAdmin);
+    $$('.adminOnly').forEach(x=>x.style.display = isAdmin?'block':'none');
     $('#linkLogout').classList.remove('hide');
     $('#linkLoginAnon').classList.add('hide');
+
+    // route
+    const target = (location.hash.replace('#/','')||'dashboard');
+    showPage(target);
   });
+
+  // live waiting sum (hold)
+  unsubMyWait = db.collection('orders')
+    .where('uid','==',me.uid)
+    .where('status','==','WAITING')
+    .onSnapshot(snap=>{
+      myWaitingSum = snap.docs.reduce((a,d)=>a+(d.data().amount||0),0);
+      refreshHeaderFooter();
+    });
 });
 
-// waiting sum
-async function computeWaitingHold(){
-  if(!me) return;
-  const qs = await db.collection('orders')
-    .where('uid','==',me.uid).where('status','==','WAITING').get();
-  myWaitingSum = qs.docs.reduce((a,d)=>a+(d.data().amount||0),0);
-  refreshHeaderFooter();
+function cleanupSubscriptions(){
+  unsubUser && unsubUser(); unsubUser=null;
+  unsubMyWait && unsubMyWait(); unsubMyWait=null;
+  unsubMyOrders && unsubMyOrders(); unsubMyOrders=null;
+  unsubAdminOrders && unsubAdminOrders(); unsubAdminOrders=null;
+  unsubAdminUsers && unsubAdminUsers(); unsubAdminUsers=null;
+}
+function clearTables(){
+  $('#ordersTable tbody').innerHTML='';
+  $('#adminOrdersTbl tbody').innerHTML='';
+  $('#adminUsersTbl tbody').innerHTML='';
 }
 
+/* ========= UI Fill ========= */
 function refreshHeaderFooter(){
   if(!me || !myDoc) return;
   $('#hdrAnon').classList.add('hide');
   $('#hdrUser').classList.remove('hide');
 
-  const avail = (myDoc.balance||0) - (myWaitingSum||0);
-  const tinfo = tierFrom(myDoc.weeklyDiamonds||0);
-
   $('#hdrEmail').textContent = me.email||'';
-  $('#hdrTier').textContent = `Tier L${tinfo.level} (${tinfo.pct}%)`;
-  $('#hdrBal').textContent = '💎 '+fmt(avail);
-  $('#availableBal').textContent = fmt(avail);
-
+  $('#hdrBal').textContent = '💎 '+fmt( (myDoc.balance||0) - (myWaitingSum||0) );
+  $('#availableBal').textContent = fmt( (myDoc.balance||0) - (myWaitingSum||0) );
   $('#accEmail').textContent=me.email||'';
   $('#accPhone').textContent=myDoc.phone||'';
   $('#accRole').textContent=myDoc.role||'user';
   $('#accApproved').textContent=String(!!myDoc.approved);
-
-  $('#accBal').textContent=fmt(myDoc.balance||0);
-  $('#accHold').textContent=fmt(myWaitingSum||0);
-  $('#accAvail').textContent=fmt(avail);
-
   $('#accWeek').textContent=fmt(myDoc.weeklyDiamonds||0);
-  $('#accTier').textContent='L'+(tinfo.level||0);
+  $('#accBal').textContent=fmt(myDoc.balance||0);
+  $('#accTier').textContent='L'+(myDoc.tier||0);
 
   $('#pfEmail').textContent=me.email||'';
   $('#pfRole').textContent=myDoc.role||'user';
   $('#pfApproved').textContent=String(!!myDoc.approved);
   $('#pfBalance').textContent=fmt(myDoc.balance||0);
   $('#pfWeekly').textContent=fmt(myDoc.weeklyDiamonds||0);
+  $('#pfTier').textContent='L'+(myDoc.tier||0);
   $('#pfName').value = myDoc.name||'';
   $('#pfPhone').value = myDoc.phone||'';
   $('#hdrAvatar').src = myDoc.avatar || 'https://i.imgur.com/2QfG8z7.png';
 
   $('#ftWeek').textContent = fmt(myDoc.weeklyDiamonds||0);
-  $('#ftTier').textContent = (tinfo.level||0);
-  $('#ftBal').textContent = fmt(avail);
+  $('#ftTier').textContent = 'L'+(myDoc.tier||0);
+  $('#ftBal').textContent = fmt( (myDoc.balance||0) - (myWaitingSum||0) );
 }
 
-// Auth actions
+/* ========= Auth actions ========= */
 async function doLogin(){
   const email = $('#loginEmail').value.trim();
   const pass = $('#loginPass').value;
@@ -510,7 +526,8 @@ async function doRegister(){
   try{
     const cred = await auth.createUserWithEmailAndPassword(email, pass);
     await db.collection('users').doc(cred.user.uid).set({
-      email,name,phone,role:'user',approved:false,balance:0,weeklyDiamonds:0,tier:0,avatar:''
+      email,name,phone,role:'user',approved:false,balance:0,weeklyDiamonds:0,tier:0,avatar:'',
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
     },{merge:true});
     alert('Account created. Wait for admin approval.');
     showPage('profile');
@@ -520,7 +537,7 @@ async function doRegister(){
 }
 async function doLogout(){ await auth.signOut(); }
 
-// Profile
+/* ========= Profile ========= */
 async function saveProfile(){
   const name=$('#pfName').value.trim();
   const phone=$('#pfPhone').value.trim();
@@ -537,10 +554,15 @@ async function saveProfile(){
   }catch(e){ toast($('#pfMsg'),'Error: '+e.message); }
 }
 
-// Amount picker
-function pickAmount(n){ $('#amount').value = n; }
+/* ========= Create order ========= */
+function setupAmountSync(){
+  $('#amount').addEventListener('input', ()=>{
+    // deselect buttons when manual change
+    $$('#amountBtns .btn').forEach(x=>x.classList.remove('sel'));
+  });
+}
+setupAmountSync();
 
-// Create order
 async function createOrder(){
   if(!myDoc?.approved) { alert('Your account is not approved yet.'); return; }
   const clientId = $('#clientId').value.trim();
@@ -548,7 +570,7 @@ async function createOrder(){
   const avail = (myDoc.balance||0) - (myWaitingSum||0);
   if(!clientId) return alert('Enter client/profile ID');
   if(amount<=0) return alert('Enter a valid amount');
-  if(amount>avail) return alert('Insufficient available balance');
+  if(amount>avail) return alert('Insufficient balance');
 
   try{
     const autoCancelAt = new Date(Date.now()+AUTO_CANCEL_MIN*60*1000);
@@ -560,16 +582,16 @@ async function createOrder(){
       settled:false
     });
     $('#createMsg').textContent='Order placed ✓';
-    computeWaitingHold(); // hold refresh
+    $('#clientId').value=''; $('#amount').value='50';
+    $$('#amountBtns .btn').forEach(x=>x.classList.remove('sel'));
     showPage('orders');
   }catch(e){
     toast($('#createMsg'),'Error: '+e.message);
   }
 }
 
-// My orders (live)
-let unsubMyOrders=null;
-function loadMyOrders(){
+/* ========= Live: my orders ========= */
+function loadMyOrdersLive(){
   unsubMyOrders && unsubMyOrders();
   const tbody = $('#ordersTable tbody');
   tbody.innerHTML = '';
@@ -583,9 +605,9 @@ function loadMyOrders(){
         const d=doc.data(); const id=doc.id;
         const ts=d.timestamp?.toDate?.()||new Date();
         const badge = d.status==='WAITING'?'b-wait': d.status==='COMPLETED'?'b-ok':'b-bad';
-        const action = d.status==='WAITING'
-          ? `<button class="btn small outline" onclick="cancelOwnOrder('${id}')">Cancel</button>`
-          : `<button class="btn small outline" onclick="showPage('create')">Re-order</button>`;
+        const btn = d.status==='WAITING'
+          ? `<button class="btn small ghost" onclick="cancelOwnOrder('${id}')">Cancel</button>`
+          : `<button class="btn small ghost" onclick="showPage('create')">Re-order</button>`;
         const tr=document.createElement('tr');
         tr.innerHTML = `
           <td>${id.slice(-6)}</td>
@@ -593,18 +615,20 @@ function loadMyOrders(){
           <td>💎 ${fmt(d.amount)}</td>
           <td>${ts.toLocaleString()}</td>
           <td><span class="badge ${badge}">${d.status}</span></td>
-          <td>${action}</td>`;
+          <td>${btn}</td>`;
         tbody.appendChild(tr);
       });
     });
-  autoCancelSweep(false); // own overdue
+  // also sweep own overdue (non-admin scope)
+  autoCancelSweep(false);
 }
 async function cancelOwnOrder(id){
-  try{ await db.collection('orders').doc(id).update({status:'CANCELLED'}); }
-  catch(e){ alert('Cancel failed: '+e.message); }
+  try{
+    await db.collection('orders').doc(id).update({status:'CANCELLED'});
+  }catch(e){ alert('Cancel failed: '+e.message); }
 }
 
-// Auto-cancel overdue (admin = all, user = own)
+/* ========= Auto-cancel overdue ========= */
 async function autoCancelSweep(adminScope){
   const isAdmin = myDoc?.role==='admin';
   const q = db.collection('orders')
@@ -614,21 +638,22 @@ async function autoCancelSweep(adminScope){
   const batch = db.batch();
   snap.forEach(doc=>{
     const d=doc.data();
-    if(isAdmin || d.uid===me.uid){
+    if(isAdmin || adminScope || d.uid===me?.uid){
       batch.update(doc.ref,{status:'CANCELLED'});
     }
   });
   if(!snap.empty) await batch.commit();
 }
+// periodic sweep (client-side)
+setInterval(()=>{ if(me) autoCancelSweep(false); }, 15000);
 
-// Admin: Orders (all admins can see)
-let unsubAdminOrders=null;
-function loadAdminOrders(){
+/* ========= Admin: Orders (live) ========= */
+function loadAdminOrdersLive(){
   if(myDoc?.role!=='admin'){ showPage('dashboard'); return; }
   unsubAdminOrders && unsubAdminOrders();
   const tbody = $('#adminOrdersTbl tbody');
   tbody.innerHTML='';
-  unsubAdminOrders = db.collection('orders').orderBy('timestamp','desc').limit(500)
+  unsubAdminOrders = db.collection('orders').orderBy('timestamp','desc').limit(300)
     .onSnapshot(snap=>{
       tbody.innerHTML='';
       snap.forEach(doc=>{
@@ -643,9 +668,9 @@ function loadAdminOrders(){
           <td>${d.userEmail}</td>
           <td><span class="badge ${badge}">${d.status}</span></td>
           <td>${ts.toLocaleString()}</td>
-          <td>
+          <td class="row">
             <button class="btn small" onclick="adminComplete('${id}')">Complete</button>
-            <button class="btn small outline" onclick="adminCancel('${id}')">Cancel</button>
+            <button class="btn small ghost" onclick="adminCancel('${id}')">Cancel</button>
           </td>`;
         tbody.appendChild(tr);
       });
@@ -656,29 +681,28 @@ async function adminCancel(id){
   catch(e){ alert('Cancel failed: '+e.message); }
 }
 async function adminComplete(id){
-  // status = COMPLETED, and if not settled, decrease user's balance, increase weeklyDiamonds & tier
   const ref = db.collection('orders').doc(id);
-  await db.runTransaction(async tr=>{
-    const o = await tr.get(ref);
-    if(!o.exists) throw new Error('Order not found');
-    const d=o.data();
-    if(d.status!=='WAITING') return; // already handled
-    tr.update(ref,{status:'COMPLETED', settled:true});
-    const uref = db.collection('users').doc(d.uid);
-    const u = await tr.get(uref);
-    if(u.exists){
-      const ud = u.data();
-      const newBal = (ud.balance||0) - (d.amount||0);
-      const newWeekly = (ud.weeklyDiamonds||0) + (d.amount||0);
-      const tinfo = tierFrom(newWeekly);
-      tr.update(uref,{balance:newBal, weeklyDiamonds:newWeekly, tier:tinfo.level});
-    }
-  });
+  try{
+    await db.runTransaction(async tr=>{
+      const o = await tr.get(ref);
+      if(!o.exists) throw new Error('Order not found');
+      const d=o.data();
+      if(d.status!=='WAITING') return;
+      tr.update(ref,{status:'COMPLETED', settled:true});
+      // deduct balance + add weekly + tier
+      const uref = db.collection('users').doc(d.uid);
+      const u = await tr.get(uref);
+      const user = u.data()||{};
+      const newBal = (user.balance||0) - (d.amount||0);
+      const newWeekly = (user.weeklyDiamonds||0) + (d.amount||0);
+      const t = tierInfo(newWeekly);
+      tr.update(uref,{balance:newBal, weeklyDiamonds:newWeekly, tier:t.level});
+    });
+  }catch(e){ alert('Complete failed: '+e.message); }
 }
 
-// Admin: Users
-let unsubAdminUsers=null;
-function loadAdminUsers(){
+/* ========= Admin: Users (live) ========= */
+function loadAdminUsersLive(){
   if(myDoc?.role!=='admin'){ showPage('dashboard'); return; }
   unsubAdminUsers && unsubAdminUsers();
   const tbody = $('#adminUsersTbl tbody');
@@ -704,11 +728,13 @@ function loadAdminUsers(){
             <option value="false" ${!d.approved?'selected':''}>false</option>
           </select>
         </td>
-        <td><input type="number" value="${d.balance||0}" data-id="${id}" data-key="balance" onblur="editUser(this)"></td>
+        <td>💎 ${fmt(d.balance||0)}</td>
         <td>${fmt(d.weeklyDiamonds||0)}</td>
         <td>L${d.tier||0}</td>
         <td class="row">
-          <button class="btn small outline" onclick="impersonate('${id}')">Impersonate</button>
+          <input type="number" placeholder="Amount" style="width:110px" data-id="${id}" id="delta-${id}">
+          <button class="btn small" onclick="addBal('${id}')">Add</button>
+          <button class="btn small ghost" onclick="subBal('${id}')">Sub</button>
         </td>
       `;
       tbody.appendChild(tr);
@@ -719,26 +745,58 @@ async function editUser(el){
   const id=el.dataset.id, key=el.dataset.key;
   let val = el.value;
   if(key==='approved') val = (val==='true');
-  if(key==='balance') val = Number(val||0);
+  try{ await db.collection('users').doc(id).update({[key]:val}); }
+  catch(e){ alert('Update failed: '+e.message); }
+}
+async function addBal(uid){
+  const amt = Number( (document.getElementById('delta-'+uid)?.value)||0 );
+  if(amt<=0) return alert('Enter amount');
   try{
-    const patch = {[key]:val};
-    if(key==='balance' || key==='approved'){ /* keep */ }
-    await db.collection('users').doc(id).update(patch);
-  }catch(e){ alert('Update failed: '+e.message); }
+    await db.runTransaction(async tr=>{
+      const u = await tr.get(db.collection('users').doc(uid));
+      if(!u.exists) throw new Error('User not found');
+      const cur = u.data().balance||0;
+      tr.update(u.ref,{balance: cur+amt});
+    });
+  }catch(e){ alert('Balance add failed: '+e.message); }
 }
-function impersonate(uid){
-  alert('Open Firestore → users/'+uid+' to view details.\n(Full impersonation needs Cloud Functions; skipped.)');
+async function subBal(uid){
+  const amt = Number( (document.getElementById('delta-'+uid)?.value)||0 );
+  if(amt<=0) return alert('Enter amount');
+  try{
+    await db.runTransaction(async tr=>{
+      const u = await tr.get(db.collection('users').doc(uid));
+      if(!u.exists) throw new Error('User not found');
+      const cur = u.data().balance||0;
+      if(cur<amt) throw new Error('Insufficient balance');
+      tr.update(u.ref,{balance: cur-amt});
+    });
+  }catch(e){ alert('Balance sub failed: '+e.message); }
 }
 
-// Router (hash)
-window.addEventListener('hashchange',()=>{
-  const key = (location.hash.replace('#/','')||'dashboard');
-  showPage(key);
-});
-
-// Initial landing
-loadSettings();
-showPage('dashboard');
+/* ========= Admin: Settings actions ========= */
+async function resetWeeklyTotals(){
+  if(!confirm('Reset weekly totals for all users?')) return;
+  try{
+    const snap = await db.collection('users').get();
+    const batch = db.batch();
+    snap.forEach(doc=> batch.update(doc.ref,{weeklyDiamonds:0,tier:0}));
+    await batch.commit();
+    alert('Weekly totals reset.');
+  }catch(e){ alert('Failed: '+e.message); }
+}
+async function recomputeAllTiers(){
+  try{
+    const snap = await db.collection('users').get();
+    const batch = db.batch();
+    snap.forEach(doc=>{
+      const d=doc.data(); const t=tierInfo(d.weeklyDiamonds||0);
+      batch.update(doc.ref,{tier:t.level});
+    });
+    await batch.commit();
+    alert('Tiers recomputed.');
+  }catch(e){ alert('Failed: '+e.message); }
+}
 </script>
 </body>
 </html>
