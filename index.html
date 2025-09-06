@@ -1,288 +1,326 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Diamond Recharge</title>
   <style>
     body {
       margin: 0;
       font-family: Arial, sans-serif;
       background: #121212;
-      color: #f1f1f1;
+      color: #fff;
     }
-    header, footer {
-      background: #1f1f1f;
+    header {
+      background: #1e1e1e;
       padding: 10px;
-      text-align: center;
-      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 18px;
+    }
+    .menu-btn {
+      font-size: 22px;
+      cursor: pointer;
     }
     .sidebar {
-      width: 220px;
-      background: #1c1c1c;
       position: fixed;
-      top: 0; left: -220px;
+      left: -250px;
+      top: 0;
+      width: 250px;
       height: 100%;
+      background: #1e1e1e;
       transition: left 0.3s;
       padding-top: 50px;
-      z-index: 1000;
     }
-    .sidebar.active { left: 0; }
+    .sidebar.active {
+      left: 0;
+    }
     .sidebar a {
       display: block;
       padding: 12px;
-      text-decoration: none;
-      color: #f1f1f1;
-    }
-    .toggle-btn {
-      font-size: 20px;
-      cursor: pointer;
-      background: none;
-      border: none;
       color: #fff;
-      position: absolute;
-      top: 10px;
-      left: 10px;
+      text-decoration: none;
     }
-    .page {
-      display: none;
+    .sidebar a:hover {
+      background: #333;
+    }
+    main {
       padding: 20px;
     }
-    .page.active { display: block; }
+    .hidden { display: none; }
     .btn {
-      background: #6200ea;
-      color: #fff;
+      background: #007bff;
       border: none;
-      padding: 10px 15px;
-      margin: 5px;
-      cursor: pointer;
-      border-radius: 6px;
-    }
-    .btn:hover { background: #3700b3; }
-    .order-btn {
-      display: inline-block;
-      background: #333;
+      color: white;
       padding: 10px 15px;
       margin: 5px;
       border-radius: 5px;
       cursor: pointer;
     }
+    .btn:hover { background: #0056b3; }
+    .amount-btns button {
+      background: #444;
+      margin: 5px;
+    }
     .status {
-      padding: 3px 8px;
-      border-radius: 4px;
+      padding: 4px 8px;
+      border-radius: 5px;
+      color: #fff;
       font-size: 12px;
     }
-    .waiting { background: orange; }
-    .completed { background: green; }
-    .cancelled { background: red; }
+    .WAITING { background: orange; }
+    .COMPLETED { background: green; }
+    .CANCELLED { background: red; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    th, td {
+      padding: 8px;
+      border: 1px solid #333;
+      text-align: center;
+    }
   </style>
 </head>
 <body>
   <header>
-    <button class="toggle-btn" id="sidebarToggle">☰</button>
-    <h2 id="siteTitle">💎 Diamond Recharge</h2>
-    <div id="headerUser"></div>
+    <span class="menu-btn" onclick="toggleSidebar()">☰</span>
+    <h1>Diamond Recharge</h1>
+    <span id="userInfo"></span>
   </header>
 
   <div class="sidebar" id="sidebar">
-    <a href="#" onclick="showPage('loginPage')">Login</a>
-    <a href="#" onclick="showPage('dashboardPage')">Dashboard</a>
-    <a href="#" onclick="showPage('orderPage')">Order</a>
-    <a href="#" onclick="showPage('historyPage')">Order History</a>
-    <a href="#" onclick="showPage('profilePage')">Profile</a>
+    <a href="#" onclick="showPage('dashboard')">Dashboard</a>
+    <a href="#" onclick="showPage('order')">Order</a>
+    <a href="#" onclick="showPage('history')">Order History</a>
+    <a href="#" onclick="showPage('profile')">Profile</a>
+    <a href="#" onclick="showPage('admin')">Admin</a>
     <a href="#" onclick="logout()">Logout</a>
   </div>
 
   <main>
     <!-- Login -->
-    <section id="loginPage" class="page active">
+    <div id="loginPage">
       <h2>Login</h2>
-      <input id="loginEmail" type="email" placeholder="Email"><br>
-      <input id="loginPassword" type="password" placeholder="Password"><br>
+      <input id="loginEmail" placeholder="Email"><br>
+      <input id="loginPass" type="password" placeholder="Password"><br>
       <button class="btn" onclick="login()">Login</button>
-      <div id="loginMsg"></div>
-    </section>
+    </div>
 
     <!-- Dashboard -->
-    <section id="dashboardPage" class="page">
+    <div id="dashboard" class="hidden">
       <h2>Dashboard</h2>
-      <p>Welcome <span id="dashName"></span>!</p>
-      <p>Balance: <span id="dashBalance">0</span> 💎</p>
-      <p>Weekly Orders: <span id="dashWeekly">0</span></p>
-      <p>Reward Tier: <span id="dashTier">-</span></p>
-    </section>
+      <p>Balance: <span id="balance">0</span> 💎</p>
+      <p>Weekly Orders: <span id="weekly">0</span></p>
+      <p>Reward Tier: <span id="tier">-</span></p>
+    </div>
 
-    <!-- Order -->
-    <section id="orderPage" class="page">
+    <!-- Order Page -->
+    <div id="order" class="hidden">
       <h2>Place Order</h2>
-      <div id="orderButtons"></div>
-      <button class="btn" onclick="submitOrder()">Submit Order</button>
-      <div id="orderMsg"></div>
-    </section>
+      <input id="recipient" placeholder="Gift Recipient ID"><br>
+      <div class="amount-btns">
+        <button onclick="setAmount(10)">10</button>
+        <button onclick="setAmount(50)">50</button>
+        <button onclick="setAmount(100)">100</button>
+        <button onclick="setAmount(200)">200</button>
+        <button onclick="setAmount(500)">500</button>
+        <button onclick="setAmount(1000)">1000</button>
+        <button onclick="setAmount(2000)">2000</button>
+        <button onclick="setAmount(5000)">5000</button>
+        <button onclick="setAmount(10000)">10000</button>
+        <button onclick="setAmount(20000)">20000</button>
+      </div>
+      <input id="amount" placeholder="Amount" readonly><br>
+      <button class="btn" onclick="placeOrder()">Submit</button>
+    </div>
 
-    <!-- History -->
-    <section id="historyPage" class="page">
-      <h2>Order History</h2>
-      <table border="1" width="100%" id="historyTable">
-        <tr><th>ID</th><th>Amount</th><th>Status</th><th>Time</th></tr>
+    <!-- Order History -->
+    <div id="history" class="hidden">
+      <h2>My Orders</h2>
+      <table>
+        <thead>
+          <tr><th>ID</th><th>Recipient</th><th>Amount</th><th>Status</th><th>Time</th></tr>
+        </thead>
+        <tbody id="orderList"></tbody>
       </table>
-    </section>
+    </div>
 
     <!-- Profile -->
-    <section id="profilePage" class="page">
-      <h2>Profile</h2>
+    <div id="profile" class="hidden">
+      <h2>My Profile</h2>
       <p>Email: <span id="profileEmail"></span></p>
       <p>Name: <input id="profileName"></p>
       <p>Phone: <input id="profilePhone"></p>
       <button class="btn" onclick="updateProfile()">Update</button>
-      <div id="profileMsg"></div>
-    </section>
+    </div>
+
+    <!-- Admin -->
+    <div id="admin" class="hidden">
+      <h2>All Orders</h2>
+      <table>
+        <thead>
+          <tr><th>ID</th><th>User</th><th>Recipient</th><th>Amount</th><th>Status</th><th>Change</th></tr>
+        </thead>
+        <tbody id="adminOrders"></tbody>
+      </table>
+    </div>
   </main>
 
-  <footer>
-    <p>Balance: <span id="footBalance">0</span> | Weekly: <span id="footWeekly">0</span></p>
-    <p>© 2025 Diamond Recharge</p>
-  </footer>
+  <!-- Firebase -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
+    import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, addDoc, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore.js";
 
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-  import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-  import { getFirestore, doc, getDoc, setDoc, updateDoc, addDoc, collection, query, where, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    const firebaseConfig = {
+      apiKey: "AIzaSyDJRm9-jRkxVrTLYBzK1gGrRmAEu29jVrU",
+      authDomain: "diamond-recharge-f7f59.firebaseapp.com",
+      projectId: "diamond-recharge-f7f59",
+      storageBucket: "diamond-recharge-f7f59.firebasestorage.app",
+      messagingSenderId: "657717928489",
+      appId: "1:657717928489:web:70431ebc9afb7002d4b238",
+      measurementId: "G-TDK78BQ8SQ"
+    };
 
-  // Firebase Config
-  const firebaseConfig = {
-    apiKey: "AIzaSyDJRm9-jRkxVrTLYBzK1gGrRmAEu29jVrU",
-    authDomain: "diamond-recharge-f7f59.firebaseapp.com",
-    projectId: "diamond-recharge-f7f59",
-    storageBucket: "diamond-recharge-f7f59.firebasestorage.app",
-    messagingSenderId: "657717928489",
-    appId: "1:657717928489:web:70431ebc9afb7002d4b238",
-    measurementId: "G-TDK78BQ8SQ"
-  };
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
 
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
+    let currentUser = null;
 
-  let currentUser = null;
-  let orderAmount = 0;
-
-  // Sidebar toggle
-  document.getElementById("sidebarToggle").addEventListener("click", ()=>{
-    document.getElementById("sidebar").classList.toggle("active");
-  });
-
-  // Show page
-  window.showPage = function(id){
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
-    document.getElementById("sidebar").classList.remove("active");
-  }
-
-  // Login
-  window.login = async function(){
-    let email = document.getElementById("loginEmail").value;
-    let pass = document.getElementById("loginPassword").value;
-    try {
-      await signInWithEmailAndPassword(auth, email, pass);
-      document.getElementById("loginMsg").innerText = "Login success!";
-    } catch(e){
-      document.getElementById("loginMsg").innerText = "Login failed: " + e.message;
+    function toggleSidebar() {
+      document.getElementById("sidebar").classList.toggle("active");
     }
-  }
 
-  // Logout
-  window.logout = async function(){
-    await signOut(auth);
-    showPage("loginPage");
-  }
-
-  // Profile Update
-  window.updateProfile = async function(){
-    if(!currentUser) return;
-    let name = document.getElementById("profileName").value;
-    let phone = document.getElementById("profilePhone").value;
-    await updateDoc(doc(db,"users",currentUser.uid), {name, phone});
-    document.getElementById("profileMsg").innerText="Updated!";
-  }
-
-  // Submit Order
-  window.submitOrder = async function(){
-    if(!currentUser) return;
-    if(orderAmount<=0){ alert("Select amount"); return; }
-    let userDoc = await getDoc(doc(db,"users",currentUser.uid));
-    if(!userDoc.exists() || !userDoc.data().approved){
-      document.getElementById("orderMsg").innerText="You are not approved!";
-      return;
+    function showPage(id) {
+      document.querySelectorAll("main > div").forEach(div => div.classList.add("hidden"));
+      document.getElementById(id).classList.remove("hidden");
     }
-    let bal = userDoc.data().balance || 0;
-    if(bal < orderAmount){
-      document.getElementById("orderMsg").innerText="Insufficient balance!";
-      return;
-    }
-    await addDoc(collection(db,"orders"), {
-      userEmail: currentUser.email,
-      amount: orderAmount,
-      status: "WAITING",
-      timestamp: serverTimestamp()
-    });
-    await updateDoc(doc(db,"users",currentUser.uid), {
-      balance: bal - orderAmount,
-      weeklyDiamonds: (userDoc.data().weeklyDiamonds||0)+orderAmount
-    });
-    document.getElementById("orderMsg").innerText="Order placed!";
-    loadOrders();
-  }
 
-  // Load Orders
-  async function loadOrders(){
-    if(!currentUser) return;
-    let q = query(collection(db,"orders"), where("userEmail","==",currentUser.email));
-    let snap = await getDocs(q);
-    let table = document.getElementById("historyTable");
-    table.innerHTML = "<tr><th>ID</th><th>Amount</th><th>Status</th><th>Time</th></tr>";
-    snap.forEach(docu=>{
-      let d = docu.data();
-      let statusClass = d.status=="WAITING"?"waiting":d.status=="COMPLETED"?"completed":"cancelled";
-      table.innerHTML += `<tr><td>${docu.id}</td><td>${d.amount}</td><td><span class="status ${statusClass}">${d.status}</span></td><td>${d.timestamp?.toDate()}</td></tr>`;
-    });
-  }
-
-  // Auth State
-  onAuthStateChanged(auth, async(user)=>{
-    if(user){
-      currentUser=user;
-      let udoc = await getDoc(doc(db,"users",user.uid));
-      if(udoc.exists()){
-        let data=udoc.data();
-        document.getElementById("dashName").innerText=data.name||user.email;
-        document.getElementById("dashBalance").innerText=data.balance||0;
-        document.getElementById("dashWeekly").innerText=data.weeklyDiamonds||0;
-        document.getElementById("dashTier").innerText=data.rewardTier||"-";
-        document.getElementById("profileEmail").innerText=user.email;
-        document.getElementById("profileName").value=data.name||"";
-        document.getElementById("profilePhone").value=data.phone||"";
-        document.getElementById("footBalance").innerText=data.balance||0;
-        document.getElementById("footWeekly").innerText=data.weeklyDiamonds||0;
+    window.login = async function() {
+      const email = document.getElementById("loginEmail").value;
+      const pass = document.getElementById("loginPass").value;
+      try {
+        await signInWithEmailAndPassword(auth, email, pass);
+      } catch (e) {
+        alert("Login failed: " + e.message);
       }
-      loadOrders();
-      showPage("dashboardPage");
-    } else {
-      currentUser=null;
-      showPage("loginPage");
     }
-  });
 
-  // Create order buttons
-  let orderList=[10,50,100,200,500,1000,2000,5000,10000,20000];
-  let orderDiv=document.getElementById("orderButtons");
-  orderList.forEach(a=>{
-    let btn=document.createElement("div");
-    btn.className="order-btn";
-    btn.innerText=a;
-    btn.onclick=()=>{ orderAmount=a; document.querySelectorAll(".order-btn").forEach(b=>b.style.background="#333"); btn.style.background="#6200ea"; };
-    orderDiv.appendChild(btn);
-  });
-</script>
+    window.logout = async function() {
+      await signOut(auth);
+      location.reload();
+    }
+
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        currentUser = user;
+        document.getElementById("loginPage").classList.add("hidden");
+        showPage("dashboard");
+        document.getElementById("userInfo").innerText = user.email;
+        loadProfile();
+        loadOrders();
+      } else {
+        document.getElementById("loginPage").classList.remove("hidden");
+        document.getElementById("dashboard").classList.add("hidden");
+      }
+    });
+
+    async function loadProfile() {
+      const ref = doc(db, "users", currentUser.uid);
+      const snap = await getDoc(ref);
+      if (snap.exists()) {
+        const u = snap.data();
+        document.getElementById("balance").innerText = u.balance || 0;
+        document.getElementById("weekly").innerText = u.weeklyDiamonds || 0;
+        document.getElementById("tier").innerText = u.tier || "-";
+        document.getElementById("profileEmail").innerText = currentUser.email;
+        document.getElementById("profileName").value = u.name || "";
+        document.getElementById("profilePhone").value = u.phone || "";
+      }
+    }
+
+    window.updateProfile = async function() {
+      const ref = doc(db, "users", currentUser.uid);
+      await updateDoc(ref, {
+        name: document.getElementById("profileName").value,
+        phone: document.getElementById("profilePhone").value
+      });
+      alert("Profile updated!");
+    }
+
+    let selectedAmount = 0;
+    window.setAmount = function(val) {
+      selectedAmount = val;
+      document.getElementById("amount").value = val;
+    }
+
+    window.placeOrder = async function() {
+      if (!selectedAmount) return alert("Select amount!");
+      const recipient = document.getElementById("recipient").value;
+      const ref = collection(db, "orders");
+      await addDoc(ref, {
+        user: currentUser.uid,
+        email: currentUser.email,
+        recipient,
+        amount: selectedAmount,
+        status: "WAITING",
+        timestamp: new Date().toISOString()
+      });
+      alert("Order placed!");
+      loadOrders();
+      showPage("history");
+    }
+
+    async function loadOrders() {
+      // User Orders
+      const q = query(collection(db, "orders"), where("email", "==", currentUser.email));
+      const qs = await getDocs(q);
+      let rows = "";
+      qs.forEach(d => {
+        const o = d.data();
+        rows += `<tr>
+          <td>${d.id}</td>
+          <td>${o.recipient}</td>
+          <td>${o.amount}</td>
+          <td><span class="status ${o.status}">${o.status}</span></td>
+          <td>${o.timestamp}</td>
+        </tr>`;
+      });
+      document.getElementById("orderList").innerHTML = rows;
+
+      // Admin Orders
+      const all = await getDocs(collection(db, "orders"));
+      let adminRows = "";
+      all.forEach(d => {
+        const o = d.data();
+        adminRows += `<tr>
+          <td>${d.id}</td>
+          <td>${o.email}</td>
+          <td>${o.recipient}</td>
+          <td>${o.amount}</td>
+          <td><span class="status ${o.status}">${o.status}</span></td>
+          <td>
+            <button onclick="updateStatus('${d.id}','COMPLETED')">✔</button>
+            <button onclick="updateStatus('${d.id}','CANCELLED')">✖</button>
+          </td>
+        </tr>`;
+      });
+      document.getElementById("adminOrders").innerHTML = adminRows;
+    }
+
+    window.updateStatus = async function(id, status) {
+      const ref = doc(db, "orders", id);
+      await updateDoc(ref, { status });
+      alert("Status updated!");
+      loadOrders();
+    }
+  </script>
 </body>
 </html>
