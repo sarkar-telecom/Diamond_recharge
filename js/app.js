@@ -1,274 +1,247 @@
-console.log("App loaded");
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-const db = firebase.firestore();
+// app.js
+import {
+  initializeApp
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+  getAuth,
+  onAuthStateChanged,
+  GoogleAuthProvider,
+  signInWithPopup,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signOut
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {
+  getFirestore,
+  doc,
+  setDoc,
+  getDoc,
+  updateDoc,
+  addDoc,
+  collection,
+  query,
+  where,
+  orderBy,
+  onSnapshot
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-const packages = [10,50,100,200,500,1000,2000,5000,10000,20000];
+// Firebase config (already set in firebase-config.js)
+import {
+  firebaseConfig
+} from "./firebase-config.js";
 
-// UI elements
-const menuToggle = document.getElementById('menuToggle');
-const sidebar = document.getElementById('sidebar');
-const logoutBtn = document.getElementById('logoutBtn');
-const authToggle = document.getElementById && document.getElementById('authToggle');
+// Init Firebase
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
 
-if(menuToggle){
-  menuToggle.addEventListener('click', ()=> sidebar.classList.toggle('open'));
+// ================= AUTH =================
+const provider = new GoogleAuthProvider();
+
+async function registerWithEmail(email, password, name, phone) {
+  try {
+    const userCred = await createUserWithEmailAndPassword(auth, email, password);
+    await setDoc(doc(db, "users", userCred.user.uid), {
+      uid: userCred.user.uid,
+      name,
+      phone,
+      email,
+      balance: 0,
+      role: "user",
+      avatar: ""
+    });
+  } catch (err) {
+    alert(err.message);
+  }
 }
 
-// Helper: get current path
-const path = location.pathname.split('/').pop();
+async function loginWithEmail(email, password) {
+  try {
+    await signInWithEmailAndPassword(auth, email, password);
+  } catch (err) {
+    alert(err.message);
+  }
+}
 
-// Render packages (on order page)
-function renderPackages(){
-  const container = document.getElementById('packages');
-  if(!container) return;
-  container.innerHTML = '';
-  packages.forEach(a=>{
-    const b = document.createElement('button');
-    b.className='package';
-    b.textContent = a+' diamonds';
-    b.onclick = ()=> {
-      document.getElementById('customAmount').value = a;
-    };
-    container.appendChild(b);
+async function loginWithGoogle() {
+  try {
+    const result = await signInWithPopup(auth, provider);
+    const userRef = doc(db, "users", result.user.uid);
+    const snap = await getDoc(userRef);
+    if (!snap.exists()) {
+      await setDoc(userRef, {
+        uid: result.user.uid,
+        name: result.user.displayName,
+        email: result.user.email,
+        balance: 0,
+        role: "user",
+        avatar: result.user.photoURL
+      });
+    }
+  } catch (err) {
+    alert(err.message);
+  }
+}
+
+function logout() {
+  signOut(auth);
+}
+
+// ================= USER DASHBOARD =================
+async function loadDashboard(user) {
+  const userRef = doc(db, "users", user.uid);
+  const snap = await getDoc(userRef);
+  if (snap.exists()) {
+    const u = snap.data();
+    document.getElementById("userName").innerText = u.name;
+    document.getElementById("userRole").innerText = u.role;
+    document.getElementById("userEmail").innerText = u.email;
+    document.getElementById("userPhone").innerText = u.phone;
+    document.getElementById("userBalance").innerText = u.balance;
+    if (u.avatar) document.getElementById("userAvatar").src = u.avatar;
+  }
+}
+
+// ================= ORDERS =================
+async function placeOrder(amount, recipient) {
+  const user = auth.currentUser;
+  if (!user) return alert("Please login first");
+
+  const userRef = doc(db, "users", user.uid);
+  const snap = await getDoc(userRef);
+  if (!snap.exists()) return alert("User not found");
+
+  const u = snap.data();
+  if (u.balance < amount) {
+    return alert("Insufficient balance!");
+  }
+
+  const order = {
+    userId: user.uid,
+    recipient,
+    amount,
+    status: "Waiting",
+    time: new Date().toISOString()
+  };
+
+  await addDoc(collection(db, "orders"), order);
+  alert("Order placed successfully!");
+}
+
+function loadOrderHistory() {
+  const user = auth.currentUser;
+  if (!user) return;
+
+  const q = query(
+    collection(db, "orders"),
+    where("userId", "==", user.uid),
+    orderBy("time", "desc")
+  );
+
+  onSnapshot(q, snapshot => {
+    let html = "";
+    snapshot.forEach(docu => {
+      const o = docu.data();
+      html += `
+        <tr>
+          <td>${docu.id}</td>
+          <td>${o.recipient}</td>
+          <td>${o.amount}</td>
+          <td>${new Date(o.time).toLocaleString()}</td>
+          <td>${o.status}</td>
+        </tr>`;
+    });
+    const table = document.getElementById("orderHistoryTable");
+    if (table) table.innerHTML = html;
   });
 }
-renderPackages();
 
-// Auth UI
-const emailInput = document.getElementById('email');
-const passInput = document.getElementById('password');
-const btnLogin = document.getElementById('btnLogin');
-const btnRegister = document.getElementById('btnRegister');
-const googleBtn = document.getElementById('googleBtn');
-
-if(btnLogin) btnLogin.onclick = async ()=> {
-  try{
-    await auth.signInWithEmailAndPassword(emailInput.value, passInput.value);
-  }catch(e){ alert(e.message) }
-};
-if(btnRegister) btnRegister.onclick = async ()=> {
-  try{
-    const res = await auth.createUserWithEmailAndPassword(emailInput.value, passInput.value);
-    // create user doc
-    await db.collection('users').doc(res.user.uid).set({
-      name: res.user.displayName || emailInput.value.split('@')[0],
-      email: res.user.email,
-      phone: '',
-      balance: 0,
-      role: 'user',
-      avatar: res.user.photoURL || ''
+// ================= ADMIN PANEL =================
+function loadAllOrders() {
+  const q = query(collection(db, "orders"), orderBy("time", "desc"));
+  onSnapshot(q, snapshot => {
+    let html = "";
+    snapshot.forEach(docu => {
+      const o = docu.data();
+      html += `
+        <tr>
+          <td>${docu.id}</td>
+          <td>${o.recipient}</td>
+          <td>${o.amount}</td>
+          <td>${new Date(o.time).toLocaleString()}</td>
+          <td>
+            <select onchange="updateOrderStatus('${docu.id}', this.value)">
+              <option value="Waiting" ${o.status === "Waiting" ? "selected" : ""}>Waiting</option>
+              <option value="Complete" ${o.status === "Complete" ? "selected" : ""}>Complete</option>
+              <option value="Cancel" ${o.status === "Cancel" ? "selected" : ""}>Cancel</option>
+            </select>
+          </td>
+        </tr>`;
     });
-  }catch(e){ alert(e.message) }
-};
-if(googleBtn) googleBtn.onclick = async ()=> {
-  const provider = new firebase.auth.GoogleAuthProvider();
-  try{
-    const res = await auth.signInWithPopup(provider);
-    // ensure user doc exists
-    const uref = db.collection('users').doc(res.user.uid);
-    const doc = await uref.get();
-    if(!doc.exists){
-      await uref.set({
-        name: res.user.displayName || res.user.email.split('@')[0],
-        email: res.user.email,
-        phone: '',
-        balance: 0,
-        role: 'user',
-        avatar: res.user.photoURL || ''
-      });
+    const table = document.getElementById("adminOrdersTable");
+    if (table) table.innerHTML = html;
+  });
+}
+
+async function updateOrderStatus(orderId, newStatus) {
+  const orderRef = doc(db, "orders", orderId);
+  const snap = await getDoc(orderRef);
+  if (!snap.exists()) return;
+
+  const order = snap.data();
+  const userRef = doc(db, "users", order.userId);
+
+  if (newStatus === "Complete") {
+    const userSnap = await getDoc(userRef);
+    if (userSnap.exists()) {
+      const bal = userSnap.data().balance - order.amount;
+      await updateDoc(userRef, { balance: bal });
     }
-  }catch(e){ alert(e.message) }
-};
+  } else if (newStatus === "Cancel") {
+    const userSnap = await getDoc(userRef);
+    if (userSnap.exists()) {
+      const bal = userSnap.data().balance + order.amount;
+      await updateDoc(userRef, { balance: bal });
+    }
+  }
 
-// Logout
-if(logoutBtn) logoutBtn.onclick = ()=> auth.signOut();
+  await updateDoc(orderRef, { status: newStatus });
+}
 
-// Observe auth state
-auth.onAuthStateChanged(async user=>{
-  const profileMini = document.getElementById('profileMini');
-  const profileCard = document.getElementById('profileCard');
-  const displayName = document.getElementById('displayName');
-  const roleEl = document.getElementById('role');
-  const emailInfo = document.getElementById('emailInfo');
-  const phoneInfo = document.getElementById('phoneInfo');
-  const balanceInfo = document.getElementById('balanceInfo');
-  const avatar = document.getElementById('avatar');
-  const adminLink = document.getElementById('adminLink');
+// ================= SIDEBAR + NAV =================
+function toggleSidebar() {
+  document.querySelector(".sidebar").classList.toggle("active");
+}
 
-  if(user){
-    // show logout
-    if(logoutBtn) logoutBtn.style.display = 'block';
-    if(document.getElementById('authToggle')) document.getElementById('authToggle').textContent = 'Logged in';
-
-    // fetch user doc
-    const udoc = await db.collection('users').doc(user.uid).get();
-    if(udoc.exists){
-      const data = udoc.data();
-      if(profileMini) profileMini.innerHTML = `<img src="${data.avatar||''}" style="width:44px;height:44px;border-radius:8px;margin-right:8px" /> <div><strong>${data.name}</strong><br/><small>${data.email}</small></div>`;
-      if(displayName) displayName.textContent = data.name;
-      if(roleEl) roleEl.textContent = 'Role: '+data.role;
-      if(emailInfo) emailInfo.textContent = 'Email: '+data.email;
-      if(phoneInfo) phoneInfo.textContent = 'Phone: '+(data.phone||'not set');
-      if(balanceInfo) balanceInfo.textContent = 'Balance: '+(data.balance||0)+' ৳';
-      if(avatar) avatar.src = data.avatar||'https://via.placeholder.com/72';
-      if(data.role === 'admin'){
-        if(adminLink) adminLink.style.display = 'block';
-      }else{
-        if(adminLink) adminLink.style.display = 'none';
-      }
-
-      // weekly completed orders count
-      const oneWeekAgo = new Date(Date.now() - 7*24*3600*1000);
-      const ordersSnapshot = await db.collection('orders')
-        .where('userId','==',user.uid).where('status','==','Complete')
-        .where('time','>=', firebase.firestore.Timestamp.fromDate(oneWeekAgo)).get();
-      const weekly = ordersSnapshot.size;
-      const weeklyEl = document.getElementById('weeklyCompleted');
-      if(weeklyEl) weeklyEl.textContent = 'Weekly Completed: '+weekly;
+// ================= AUTH LISTENER =================
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    // load dashboard if available
+    if (document.getElementById("userName")) {
+      loadDashboard(user);
+    }
+    if (document.getElementById("orderHistoryTable")) {
+      loadOrderHistory();
+    }
+    if (document.getElementById("adminOrdersTable")) {
+      loadAllOrders();
     }
 
-    // show user-specific pages
-    if(path === 'order.html'){
-      // place order
-      const btnPlace = document.getElementById('btnPlaceOrder');
-      if(btnPlace) btnPlace.onclick = async ()=>{
-        const recipient = document.getElementById('recipient').value.trim();
-        let amount = parseInt(document.getElementById('customAmount').value || '0',10);
-        if(!recipient || !amount || amount<=0){ alert('Enter recipient and amount'); return; }
-        // check balance
-        const uref = db.collection('users').doc(user.uid);
-        const udoc2 = await uref.get();
-        const ubal = (udoc2.exists && udoc2.data().balance) ? udoc2.data().balance : 0;
-        if(ubal < amount){ alert('Insufficient balance. Contact admin.'); return; }
-        // create order with Waiting status. Deduction will happen when admin marks Complete.
-        const ord = {
-          userId: user.uid,
-          recipientNumber: recipient,
-          diamondAmount: amount,
-          time: firebase.firestore.Timestamp.now(),
-          status: 'Waiting'
-        };
-        const oref = await db.collection('orders').add(ord);
-        document.getElementById('orderMsg').textContent = 'Order placed. Order ID: '+oref.id;
-        document.getElementById('recipient').value='';
-        document.getElementById('customAmount').value='';
-      };
-    }
-
-    if(path === 'history.html'){
-      const list = document.getElementById('ordersList');
-      if(list){
-        list.innerHTML = '';
-        const snapshot = await db.collection('orders').where('userId','==',user.uid).orderBy('time','desc').get();
-        snapshot.forEach(doc=>{
-          const d = doc.data();
-          const el = document.createElement('div');
-          el.className = 'order-item';
-          el.innerHTML = `<strong>Order ID:</strong> ${doc.id}<br/>
-          <strong>Recipient:</strong> ${d.recipientNumber}<br/>
-          <strong>Amount:</strong> ${d.diamondAmount}<br/>
-          <strong>Time:</strong> ${d.time.toDate().toLocaleString()}<br/>
-          <strong>Status:</strong> ${d.status}`;
-          list.appendChild(el);
-        });
-      }
-    }
-
-    if(path === 'admin.html' && udoc.exists && udoc.data().role === 'admin'){
-      // show all orders and users
-      const allOrdersDiv = document.getElementById('allOrders');
-      const allUsersDiv = document.getElementById('allUsers');
-      // orders
-      const ordersSnap = await db.collection('orders').orderBy('time','desc').get();
-      allOrdersDiv.innerHTML = '';
-      ordersSnap.forEach(async doc=>{
-        const d = doc.data();
-        const u = await db.collection('users').doc(d.userId).get();
-        const username = u.exists ? u.data().name : d.userId;
-        const row = document.createElement('div');
-        row.className='order-item';
-        row.innerHTML = `<strong>${doc.id}</strong> — ${username} — ${d.recipientNumber} — ${d.diamondAmount} — ${d.status} <br/>
-          <button data-id="${doc.id}" class="markComplete">Mark Complete</button>
-          <button data-id="${doc.id}" class="markCancel">Cancel</button>`;
-        allOrdersDiv.appendChild(row);
-      });
-      allOrdersDiv.querySelectorAll('.markComplete').forEach(b=>{
-        b.onclick = async (e)=>{
-          const id = e.target.dataset.id;
-          const ordRef = db.collection('orders').doc(id);
-          const ordDoc = await ordRef.get();
-          if(!ordDoc.exists) return;
-          const ordData = ordDoc.data();
-          if(ordData.status === 'Complete'){ alert('Already complete'); return; }
-          // deduct balance from user
-          const uRef = db.collection('users').doc(ordData.userId);
-          await db.runTransaction(async tx=>{
-            const userDoc = await tx.get(uRef);
-            if(!userDoc.exists) throw 'User not found';
-            const bal = userDoc.data().balance || 0;
-            if(bal < ordData.diamondAmount) throw 'Insufficient balance to complete';
-            tx.update(uRef, { balance: bal - ordData.diamondAmount });
-            tx.update(ordRef, { status: 'Complete' });
-          }).then(()=> alert('Marked Complete and deducted balance'))
-            .catch(e=> alert('Error: '+e));
-        };
-      });
-      allOrdersDiv.querySelectorAll('.markCancel').forEach(b=>{
-        b.onclick = async (e)=>{
-          const id = e.target.dataset.id;
-          const ordRef = db.collection('orders').doc(id);
-          const ordDoc = await ordRef.get();
-          if(!ordDoc.exists) return;
-          const ordData = ordDoc.data();
-          if(ordData.status === 'Cancel'){ alert('Already cancelled'); return; }
-          // refund balance to user
-          const uRef = db.collection('users').doc(ordData.userId);
-          await db.runTransaction(async tx=>{
-            const userDoc = await tx.get(uRef);
-            if(!userDoc.exists) throw 'User not found';
-            const bal = userDoc.data().balance || 0;
-            tx.update(uRef, { balance: bal + ordData.diamondAmount });
-            tx.update(ordRef, { status: 'Cancel' });
-          }).then(()=> alert('Order cancelled and refunded'))
-            .catch(e=> alert('Error: '+e));
-        };
-      });
-
-      // users
-      const usersSnap = await db.collection('users').orderBy('name').get();
-      allUsersDiv.innerHTML = '';
-      usersSnap.forEach(doc=>{
-        const d = doc.data();
-        const el = document.createElement('div');
-        el.className = 'order-item';
-        el.innerHTML = `<strong>${d.name}</strong> — ${d.email} — Balance: ${d.balance || 0} <br/>
-          <input placeholder="add amount" class="addAmt" data-uid="${doc.id}" />
-          <button class="addBtn" data-uid="${doc.id}">Add Balance</button>`;
-        allUsersDiv.appendChild(el);
-      });
-      allUsersDiv.querySelectorAll('.addBtn').forEach(b=>{
-        b.onclick = async (e)=>{
-          const uid = e.target.dataset.uid;
-          const input = document.querySelector('.addAmt[data-uid="'+uid+'"]');
-          const v = parseFloat(input.value||0);
-          if(!v) return alert('Enter amount');
-          const uRef = db.collection('users').doc(uid);
-          await db.runTransaction(async tx=>{
-            const docu = await tx.get(uRef);
-            const bal = docu.exists ? docu.data().balance || 0 : 0;
-            tx.update(uRef, { balance: bal + v });
-          });
-          alert('Balance added');
-          input.value='';
-        };
-      });
-    }
-
+    document.getElementById("loginToggle").innerText = "Logout";
+    document.getElementById("loginToggle").onclick = logout;
   } else {
-    // not logged in
-    if(logoutBtn) logoutBtn.style.display = 'none';
-    if(document.getElementById('authToggle')) document.getElementById('authToggle').textContent = 'Not logged';
-    if(profileMini) profileMini.innerHTML = '<strong>Guest</strong>';
+    document.getElementById("loginToggle").innerText = "Login";
+    document.getElementById("loginToggle").onclick = () => {
+      window.location.href = "index.html";
+    };
   }
 });
+
+// ================= GLOBAL ACCESS =================
+window.registerWithEmail = registerWithEmail;
+window.loginWithEmail = loginWithEmail;
+window.loginWithGoogle = loginWithGoogle;
+window.logout = logout;
+window.placeOrder = placeOrder;
+window.toggleSidebar = toggleSidebar;
+window.updateOrderStatus = updateOrderStatus;
