@@ -1,56 +1,40 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>📜 My Orders</title>
-  <style>
-    body{font-family:Arial,Helvetica,sans-serif;background:#0f1115;color:#e7eaf0;margin:0;padding:20px;}
-    h2{text-align:center;color:#06b6d4;margin-bottom:20px;}
-    table{width:100%;border-collapse:collapse;background:#171a21;border-radius:10px;overflow:hidden;}
-    th,td{padding:10px;border-bottom:1px solid #333;text-align:center;}
-    th{background:#1f2937;}
-    tr:hover{background:#222;}
-    .status-pending{color:orange;font-weight:bold;}
-    .status-completed{color:lime;font-weight:bold;}
-    .status-rejected{color:red;font-weight:bold;}
-    .logout-btn{margin:10px 0;display:inline-block;padding:8px 14px;background:#06b6d4;color:#000;font-weight:bold;border-radius:6px;cursor:pointer;text-decoration:none;}
-  </style>
+  <title>Order History</title>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h2>📜 My Orders</h2>
-  <div style="text-align:center;">
-    <a class="logout-btn" href="order.html">➕ New Order</a>
-    <a class="logout-btn" onclick="logout()">🚪 Logout</a>
-  </div>
-  <table id="ordersTable">
+  <h2>📋 My Order History</h2>
+  <table border="1" width="100%">
     <thead>
       <tr>
-        <th>💎 Diamond</th>
-        <th>💰 Price</th>
-        <th>📱 Method</th>
-        <th>📞 Number</th>
-        <th>🆔 TRX ID</th>
-        <th>📅 Date</th>
+        <th>Profile ID</th>
+        <th>Amount</th>
+        <th>Method</th>
+        <th>Account</th>
+        <th>TxID</th>
         <th>Status</th>
       </tr>
     </thead>
-    <tbody id="ordersBody">
-      <tr><td colspan="7">⏳ Loading...</td></tr>
-    </tbody>
+    <tbody id="orderTable"></tbody>
   </table>
 
-  <!-- Firebase -->
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
-    import { getFirestore, collection, query, where, orderBy, getDocs } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+    import { getFirestore, collection, query, where, getDocs, orderBy } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyAyhjOsIXNAkBglpRllt0OZIOJYpdB_9-8",
       authDomain: "diamond-recharge-f7f59.firebaseapp.com",
       projectId: "diamond-recharge-f7f59",
-      storageBucket: "diamond-recharge-f7f59.firebasestorage.app",
+      storageBucket: "diamond-recharge-f7f59.appspot.com",
       messagingSenderId: "657717928489",
       appId: "1:657717928489:web:70431ebc9afb7002d4b238",
       measurementId: "G-TDK78BQ8SQ"
@@ -60,46 +44,29 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    const ordersBody=document.getElementById("ordersBody");
-
-    // Load orders
     onAuthStateChanged(auth, async(user)=>{
       if(user){
-        const q=query(
-          collection(db,"orders"),
-          where("uid","==",user.uid),
-          orderBy("createdAt","desc")
-        );
-        const snap=await getDocs(q);
-        ordersBody.innerHTML="";
-        if(snap.empty){
-          ordersBody.innerHTML="<tr><td colspan='7'>❌ No orders found</td></tr>";
-        } else {
-          snap.forEach(doc=>{
-            const o=doc.data();
-            const date=o.createdAt?.toDate?o.createdAt.toDate().toLocaleString():"";
-            const row=document.createElement("tr");
-            row.innerHTML=`
-              <td>${o.amount} 💎</td>
-              <td>${o.price} ৳</td>
-              <td>${o.method}</td>
-              <td>${o.number}</td>
-              <td>${o.trxid}</td>
-              <td>${date}</td>
-              <td class="status-${o.status}">${o.status}</td>
-            `;
-            ordersBody.appendChild(row);
-          });
-        }
+        const q = query(collection(db,"orders"), where("uid","==",user.uid), orderBy("createdAt","desc"));
+        const snap = await getDocs(q);
+        const table = document.getElementById("orderTable");
+        table.innerHTML = "";
+        snap.forEach(doc=>{
+          const data = doc.data();
+          const row = `<tr>
+            <td>${data.profileId}</td>
+            <td>${data.amount}</td>
+            <td>${data.method}</td>
+            <td>${data.account}</td>
+            <td>${data.txid}</td>
+            <td>${data.status}</td>
+          </tr>`;
+          table.innerHTML += row;
+        });
       } else {
-        window.location.href="login.html?redirect=order-history.html";
+        alert("Please login first");
+        window.location.href = "login.html";
       }
     });
-
-    // Logout
-    window.logout=()=>{
-      signOut(auth).then(()=>window.location.href="login.html");
-    };
   </script>
 </body>
 </html>
