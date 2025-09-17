@@ -1,60 +1,30 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🛠 Admin Panel - Orders</title>
+  <title>Admin Dashboard</title>
   <style>
-    body{font-family:Arial,Helvetica,sans-serif;background:#0f1115;color:#e7eaf0;margin:0;padding:20px;}
-    h2{text-align:center;color:#06b6d4;margin-bottom:20px;}
-    table{width:100%;border-collapse:collapse;background:#171a21;border-radius:10px;overflow:hidden;}
-    th,td{padding:10px;border-bottom:1px solid #333;text-align:center;}
-    th{background:#1f2937;}
-    tr:hover{background:#222;}
-    button{padding:6px 10px;border:none;border-radius:6px;cursor:pointer;}
-    .approve{background:lime;color:#000;font-weight:bold;}
-    .reject{background:red;color:#fff;font-weight:bold;}
-    .status-pending{color:orange;font-weight:bold;}
-    .status-completed{color:lime;font-weight:bold;}
-    .status-rejected{color:red;font-weight:bold;}
-    .logout-btn{margin:10px 0;display:inline-block;padding:8px 14px;background:#06b6d4;color:#000;font-weight:bold;border-radius:6px;cursor:pointer;text-decoration:none;}
+    body { font-family: Arial, Helvetica, sans-serif; background: #0f1115; color: #e7eaf0; padding: 20px; }
+    h2 { color: #06b6d4; text-align: center; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    table, th, td { border: 1px solid #444; }
+    th, td { padding: 10px; text-align: center; }
+    th { background: #1f2937; }
+    tr:nth-child(even) { background: #171a21; }
+    tr:nth-child(odd) { background: #0f1115; }
+    #denied { color: red; text-align: center; font-size: 18px; margin-top: 50px; }
   </style>
-</head>
-<body>
-  <h2>🛠 Admin Panel</h2>
-  <div style="text-align:center;">
-    <a class="logout-btn" onclick="logout()">🚪 Logout</a>
-  </div>
-  <table>
-    <thead>
-      <tr>
-        <th>User UID</th>
-        <th>💎 Diamond</th>
-        <th>💰 Price</th>
-        <th>📱 Method</th>
-        <th>📞 Number</th>
-        <th>🆔 TRX ID</th>
-        <th>📅 Date</th>
-        <th>Status</th>
-        <th>Action</th>
-      </tr>
-    </thead>
-    <tbody id="ordersBody">
-      <tr><td colspan="9">⏳ Loading...</td></tr>
-    </tbody>
-  </table>
-
-  <!-- Firebase -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
-    import { getFirestore, collection, query, orderBy, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+    import { getFirestore, collection, getDocs, orderBy, query } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyAyhjOsIXNAkBglpRllt0OZIOJYpdB_9-8",
       authDomain: "diamond-recharge-f7f59.firebaseapp.com",
       projectId: "diamond-recharge-f7f59",
-      storageBucket: "diamond-recharge-f7f59.firebasestorage.app",
+      storageBucket: "diamond-recharge-f7f59.appspot.com",
       messagingSenderId: "657717928489",
       appId: "1:657717928489:web:70431ebc9afb7002d4b238",
       measurementId: "G-TDK78BQ8SQ"
@@ -64,63 +34,66 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    const ordersBody=document.getElementById("ordersBody");
+    // ✅ Admin Email
+    const adminEmails = ["samrat.khulnas@gmail.com"];
 
-    // Load orders
-    onAuthStateChanged(auth, async(user)=>{
+    onAuthStateChanged(auth, async (user) => {
       if(user){
-        // এখানে চাইলে admin check করতে পারেন (যেমন নির্দিষ্ট email = admin)
-        if(user.email!=="admin@gmail.com"){ 
-          alert("❌ Access Denied! Admin only.");
-          window.location.href="login.html";
-          return;
-        }
+        if(adminEmails.includes(user.email)){
+          document.getElementById("adminContent").style.display = "block";
 
-        const q=query(collection(db,"orders"),orderBy("createdAt","desc"));
-        const snap=await getDocs(q);
-        ordersBody.innerHTML="";
-        if(snap.empty){
-          ordersBody.innerHTML="<tr><td colspan='9'>❌ No orders found</td></tr>";
-        } else {
-          snap.forEach(d=>{
-            const o=d.data();
-            const id=d.id;
-            const date=o.createdAt?.toDate?o.createdAt.toDate().toLocaleString():"";
-            const row=document.createElement("tr");
-            row.innerHTML=`
-              <td>${o.uid}</td>
-              <td>${o.amount} 💎</td>
-              <td>${o.price} ৳</td>
-              <td>${o.method}</td>
-              <td>${o.number}</td>
-              <td>${o.trxid}</td>
-              <td>${date}</td>
-              <td class="status-${o.status}">${o.status}</td>
-              <td>
-                <button class="approve" onclick="updateStatus('${id}','completed')">Approve</button>
-                <button class="reject" onclick="updateStatus('${id}','rejected')">Reject</button>
-              </td>
+          // Load all orders
+          const q = query(collection(db,"orders"), orderBy("createdAt","desc"));
+          const snap = await getDocs(q);
+          const table = document.getElementById("orderTable");
+          table.innerHTML = "";
+          snap.forEach(doc=>{
+            const d = doc.data();
+            table.innerHTML += `
+              <tr>
+                <td>${d.uid}</td>
+                <td>${d.profileId}</td>
+                <td>${d.amount}</td>
+                <td>${d.method}</td>
+                <td>${d.account}</td>
+                <td>${d.txid}</td>
+                <td>${d.status}</td>
+              </tr>
             `;
-            ordersBody.appendChild(row);
           });
+
+        } else {
+          document.getElementById("denied").style.display = "block";
         }
       } else {
-        window.location.href="login.html?redirect=admin.html";
+        alert("Please login first");
+        window.location.href = "login.html";
       }
     });
-
-    // Update status
-    window.updateStatus=async(id,status)=>{
-      const ref=doc(db,"orders",id);
-      await updateDoc(ref,{status:status});
-      alert("✅ Order "+status);
-      location.reload();
-    };
-
-    // Logout
-    window.logout=()=>{
-      signOut(auth).then(()=>window.location.href="login.html");
-    };
   </script>
+</head>
+<body>
+  <h2>⚙️ Admin Dashboard</h2>
+
+  <div id="adminContent" style="display:none;">
+    <table>
+      <thead>
+        <tr>
+          <th>User ID</th>
+          <th>Profile ID</th>
+          <th>Amount</th>
+          <th>Method</th>
+          <th>Account</th>
+          <th>TxID</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="orderTable"></tbody>
+    </table>
+  </div>
+
+  <div id="denied" style="display:none;">
+    ❌ Access Denied. You are not admin.
+  </div>
 </body>
 </html>
