@@ -1,64 +1,26 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Order History - Diamond Recharge</title>
+<title>My Orders</title>
 <style>
-body { font-family: Arial,sans-serif; background:#0f1115; color:#e7eaf0; padding:20px; }
-h2 { color:#06b6d4; text-align:center; }
-.controls { margin-bottom:10px; }
-.controls select { padding:5px; border-radius:4px; border:1px solid #333; background:#171a21; color:#e7eaf0; }
-table { width:100%; border-collapse:collapse; margin-top:20px; }
-th,td { padding:10px; border:1px solid #333; text-align:center; }
-th { background:#171a21; }
-td { background:#1f2937; }
-.status-pending{color:#facc15;font-weight:bold;}
-.status-completed{color:#4ade80;font-weight:bold;}
-.status-cancelled{color:#f87171;font-weight:bold;}
-button{margin:5px;padding:10px 20px;border:none;border-radius:6px;background:#06b6d4;color:#001;cursor:pointer;}
-button:hover{background:#0ea5e9;}
+body { font-family: Arial, Helvetica, sans-serif; background:#0f1115; color:#e7eaf0; padding:10px; }
+h2 { text-align:center; color:#06b6d4; margin-bottom:20px; }
+table { width:100%; border-collapse: collapse; margin-bottom:20px; }
+th, td { padding:8px; text-align:center; border:1px solid #333; }
+th { background:#1f2937; color:#06b6d4; }
+td { background:#171a21; }
+.status-pending { color:#facc15; font-weight:bold; }
+.status-completed { color:#22c55e; font-weight:bold; }
+.status-failed { color:#ef4444; font-weight:bold; }
+.msg { text-align:center; margin-top:20px; font-size:16px; color:#06b6d4; }
 </style>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+import { getFirestore, collection, query, where, orderBy, getDocs } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
-<!-- Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js"></script>
-</head>
-<body>
-
-<h2>আমার অর্ডার হিস্টোরি</h2>
-
-<div class="controls">
-  <select id="filterStatus">
-    <option value="">All Status</option>
-    <option value="pending">Pending</option>
-    <option value="completed">Completed</option>
-    <option value="cancelled">Cancelled</option>
-  </select>
-</div>
-
-<div style="overflow-x:auto;">
-<table>
-  <thead>
-    <tr>
-      <th>Diamonds</th>
-      <th>Price (৳)</th>
-      <th>Profile ID</th>
-      <th>Payment Method</th>
-      <th>Payment Number</th>
-      <th>TRX ID</th>
-      <th>Status</th>
-      <th>Timestamp</th>
-    </tr>
-  </thead>
-  <tbody id="orderTable"></tbody>
-</table>
-</div>
-
-<button onclick="logout()">Logout</button>
-
-<script>
 const firebaseConfig = {
   apiKey: "AIzaSyAyhjOsIXNAkBglpRllt0OZIOJYpdB_9-8",
   authDomain: "diamond-recharge-f7f59.firebaseapp.com",
@@ -69,62 +31,69 @@ const firebaseConfig = {
   measurementId: "G-TDK78BQ8SQ"
 };
 
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-const db = firebase.firestore();
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
 
-const tableBody = document.getElementById('orderTable');
-const filterSelect = document.getElementById('filterStatus');
+window.addEventListener("load",()=>{
+  const tableBody = document.getElementById("ordersBody");
+  const msg = document.getElementById("msg");
 
-auth.onAuthStateChanged(user => {
-  if(user){
-    loadOrders(user.uid, filterSelect.value);
-    filterSelect.onchange = () => loadOrders(user.uid, filterSelect.value);
-  } else {
-    window.location.href = 'index.html';
-  }
-});
-
-function logout(){
-  auth.signOut().then(()=>window.location.href='index.html');
-}
-
-async function loadOrders(uid, statusFilter=''){
-  tableBody.innerHTML = 'Loading...';
-  try{
-    let q = db.collection('orders').where('userId','==',uid).orderBy('createdAt','desc');
-    const snapshot = await q.get();
-    tableBody.innerHTML = '';
-    if(snapshot.empty){
-      tableBody.innerHTML = '<tr><td colspan="8">No orders yet</td></tr>';
-      return;
+  onAuthStateChanged(auth, async(user)=>{
+    if(user){
+      try{
+        const q = query(
+          collection(db,"orders"),
+          where("userId","==",user.uid),
+          orderBy("createdAt","desc")
+        );
+        const snapshot = await getDocs(q);
+        if(snapshot.empty){
+          msg.textContent = "No orders yet.";
+        } else {
+          snapshot.forEach(doc=>{
+            const data = doc.data();
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+              <td>${data.profileId || "-"}</td>
+              <td>${data.amount || "-"}</td>
+              <td>${data.method || "-"}</td>
+              <td>${data.account || "-"}</td>
+              <td>${data.txid || "-"}</td>
+              <td class="status-${data.status.toLowerCase()}">${data.status || "-"}</td>
+              <td>${data.createdAt?.toDate ? data.createdAt.toDate().toLocaleString() : "-"}</td>
+            `;
+            tableBody.appendChild(tr);
+          });
+        }
+      }catch(e){
+        msg.textContent = "Error: "+e.message;
+      }
+    }else{
+      alert("Please login first");
+      window.location.href="login.html";
     }
-    snapshot.forEach(docSnap=>{
-      const d = docSnap.data();
-      if(statusFilter && d.status !== statusFilter) return;
-      let timestamp = '';
-      if(d.createdAt?.toDate) timestamp = d.createdAt.toDate().toLocaleString();
-      else if(d.createdAt) timestamp = new Date(d.createdAt).toLocaleString();
-      const statusClass = (d.status || '').toLowerCase();
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td>${d.diamonds || ''} 💎</td>
-        <td>${d.amount || ''} ৳</td>
-        <td>${d.profileId || ''}</td>
-        <td>${d.method || ''}</td>
-        <td>${d.account || ''}</td>
-        <td>${d.txid || ''}</td>
-        <td class="status-${statusClass}">${d.status || ''}</td>
-        <td>${timestamp}</td>
-      `;
-      tableBody.appendChild(tr);
-    });
-  } catch(err){
-    console.error(err);
-    tableBody.innerHTML = '<tr><td colspan="8">Error loading orders</td></tr>';
-  }
-}
+  });
+});
 </script>
-
+</head>
+<body>
+<h2>💎 My Order History</h2>
+<table>
+<thead>
+<tr>
+  <th>Profile ID</th>
+  <th>Amount</th>
+  <th>Method</th>
+  <th>Account</th>
+  <th>TXID</th>
+  <th>Status</th>
+  <th>Created At</th>
+</tr>
+</thead>
+<tbody id="ordersBody">
+</tbody>
+</table>
+<p id="msg" class="msg"></p>
 </body>
 </html>
