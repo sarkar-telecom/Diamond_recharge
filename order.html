@@ -1,47 +1,171 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="bn">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Order Diamonds</title>
-<link rel="stylesheet" href="css/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>💎 Diamond Recharge Order</title>
+  <style>
+    body{font-family:Arial,Helvetica,sans-serif;background:#0f1115;color:#e7eaf0;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;}
+    .card{background:#171a21;padding:24px;border-radius:16px;width:360px;text-align:center;box-shadow:0 4px 14px rgba(0,0,0,0.6);}
+    h2{color:#06b6d4;margin-bottom:20px;}
+    button,select,input{margin:6px 0;padding:10px;border-radius:6px;border:none;width:100%;}
+    .amount-btn{background:#1f2937;color:#fff;cursor:pointer;}
+    .amount-btn:hover{background:#374151;}
+    .pay-box{margin-top:10px;text-align:left;}
+    .copy-box{display:flex;align-items:center;margin-top:6px;}
+    .copy-box input{flex:1;background:#0f1115;color:#e7eaf0;border:1px solid #333;}
+    .copy-box button{width:80px;background:#06b6d4;color:#000;font-weight:bold;cursor:pointer;}
+    .submit-btn{background:#06b6d4;color:#000;font-weight:bold;cursor:pointer;margin-top:10px;}
+  </style>
 </head>
 <body>
-<nav class="topbar">
-  <button id="menuToggle" class="menu-btn">☰</button>
-  <div class="brand">Diamond Topup</div>
-  <div id="authToggle" class="auth-toggle"></div>
-</nav>
+  <div class="card">
+    <h2>💎 Order Now</h2>
 
-<aside id="sidebar" class="sidebar">
-  <div class="profile-mini" id="profileMini"></div>
-  <a href="dashboard.html">Dashboard</a>
-  <a href="order.html">Order Diamonds</a>
-  <a href="history.html">Order History</a>
-  <a href="admin.html" id="adminLink" style="display:none">Admin Panel</a>
-  <hr/>
-  <button id="logoutBtn" style="display:none">Logout</button>
-</aside>
+    <!-- Step 1: Diamond amount -->
+    <label>Diamond Package</label>
+    <div id="amountBox"></div>
+    <p id="priceText">💰 মূল্য: 0 টাকা</p>
 
-<main class="container">
-  <section class="card">
-    <h2>Order Diamonds</h2>
-    <div id="packages" class="packages"></div>
+    <!-- Step 2: Payment method -->
+    <label>Payment Method</label>
+    <select id="method">
+      <option value="">-- Select Method --</option>
+      <option value="bkash">bKash</option>
+      <option value="nagad">Nagad</option>
+      <option value="rocket">Rocket</option>
+      <option value="upay">Upay</option>
+    </select>
 
-    <div class="form-row">
-      <input id="recipient" placeholder="Recipient Number (e.g. 018XXXXXXXX)" />
-      <input id="customAmount" placeholder="Custom amount (optional)" type="number" />
-      <button id="btnPlaceOrder" class="btn">Confirm Order</button>
+    <!-- Step 3: Show numbers dynamically -->
+    <div class="pay-box" id="payBox" style="display:none;">
+      <label>Number List</label>
+      <select id="numberList"></select>
+      <div class="copy-box">
+        <input type="text" id="payNumber" readonly>
+        <button onclick="copyNumber()">Copy</button>
+      </div>
     </div>
 
-    <div id="orderMsg"></div>
-  </section>
-</main>
+    <!-- Step 4: TRX ID -->
+    <input type="text" id="trxid" placeholder="Enter TRX ID">
 
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-<script src="js/firebase-config.js"></script>
-<script src="js/app.js"></script>
+    <button class="submit-btn" onclick="submitOrder()">✅ Submit Order</button>
+    <p id="msg"></p>
+  </div>
+
+  <!-- Firebase -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAyhjOsIXNAkBglpRllt0OZIOJYpdB_9-8",
+      authDomain: "diamond-recharge-f7f59.firebaseapp.com",
+      projectId: "diamond-recharge-f7f59",
+      storageBucket: "diamond-recharge-f7f59.firebasestorage.app",
+      messagingSenderId: "657717928489",
+      appId: "1:657717928489:web:70431ebc9afb7002d4b238",
+      measurementId: "G-TDK78BQ8SQ"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // Diamond package list
+    const packages = {
+      10:25, 50:115, 100:230, 200:460, 500:1130,
+      1000:2250, 2000:4500, 5000:11200, 10000:22200, 20000:44000
+    };
+
+    const amountBox=document.getElementById("amountBox");
+    const priceText=document.getElementById("priceText");
+    const method=document.getElementById("method");
+    const numberList=document.getElementById("numberList");
+    const payBox=document.getElementById("payBox");
+    const payNumber=document.getElementById("payNumber");
+    const trxid=document.getElementById("trxid");
+    const msg=document.getElementById("msg");
+
+    let selectedAmount=0, selectedPrice=0;
+
+    // Load amount buttons
+    for(let d in packages){
+      const btn=document.createElement("button");
+      btn.textContent=`${d} 💎`;
+      btn.className="amount-btn";
+      btn.onclick=()=>{selectedAmount=d;selectedPrice=packages[d];priceText.textContent=`💰 মূল্য: ${selectedPrice} টাকা`;};
+      amountBox.appendChild(btn);
+    }
+
+    // Payment numbers
+    const paymentNumbers={
+      bkash:["01715118684","01781332352","01790216921","01405475992"],
+      nagad:["01715118684","01790216921","01919961919"],
+      rocket:["017151186847"],
+      upay:["01715118684"]
+    };
+
+    // Show numbers on method change
+    method.addEventListener("change",()=>{
+      numberList.innerHTML="";
+      if(method.value && paymentNumbers[method.value]){
+        paymentNumbers[method.value].forEach(num=>{
+          let opt=document.createElement("option");
+          opt.value=num;opt.textContent=num;
+          numberList.appendChild(opt);
+        });
+        payBox.style.display="block";
+        payNumber.value=paymentNumbers[method.value][0];
+      } else {
+        payBox.style.display="none";
+      }
+    });
+
+    // Update number on dropdown change
+    numberList.addEventListener("change",()=>{
+      payNumber.value=numberList.value;
+    });
+
+    // Copy number
+    window.copyNumber=()=>{
+      payNumber.select();
+      document.execCommand("copy");
+      alert("✅ Copied: "+payNumber.value);
+    };
+
+    // Submit order
+    window.submitOrder=async()=>{
+      if(!selectedAmount || !selectedPrice){msg.textContent="⚠️ Please select amount";return;}
+      if(!method.value){msg.textContent="⚠️ Select payment method";return;}
+      if(!trxid.value.trim()){msg.textContent="⚠️ Enter TRX ID";return;}
+
+      onAuthStateChanged(auth, async(user)=>{
+        if(user){
+          try{
+            await addDoc(collection(db,"orders"),{
+              uid:user.uid,
+              amount:selectedAmount,
+              price:selectedPrice,
+              method:method.value,
+              number:payNumber.value,
+              trxid:trxid.value.trim(),
+              status:"pending",
+              createdAt:serverTimestamp()
+            });
+            msg.textContent="✅ Order submitted!";
+            setTimeout(()=>window.location.href="order-history.html",1500);
+          }catch(e){
+            msg.textContent="❌ "+e.message;
+          }
+        } else {
+          msg.textContent="⚠️ Please login first";
+          setTimeout(()=>window.location.href="login.html?redirect=order.html",1000);
+        }
+      });
+    };
+  </script>
 </body>
 </html>
