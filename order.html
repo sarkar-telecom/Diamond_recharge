@@ -3,55 +3,64 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>💎 Diamond Recharge Order</title>
+  <title>🛒 New Order</title>
   <style>
-    body{font-family:Arial,Helvetica,sans-serif;background:#0f1115;color:#e7eaf0;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;}
-    .card{background:#171a21;padding:24px;border-radius:16px;width:360px;text-align:center;box-shadow:0 4px 14px rgba(0,0,0,0.6);}
-    h2{color:#06b6d4;margin-bottom:20px;}
-    button,select,input{margin:6px 0;padding:10px;border-radius:6px;border:none;width:100%;}
-    .amount-btn{background:#1f2937;color:#fff;cursor:pointer;}
-    .amount-btn:hover{background:#374151;}
-    .pay-box{margin-top:10px;text-align:left;}
-    .copy-box{display:flex;align-items:center;margin-top:6px;}
-    .copy-box input{flex:1;background:#0f1115;color:#e7eaf0;border:1px solid #333;}
-    .copy-box button{width:80px;background:#06b6d4;color:#000;font-weight:bold;cursor:pointer;}
-    .submit-btn{background:#06b6d4;color:#000;font-weight:bold;cursor:pointer;margin-top:10px;}
+    body{font-family:Arial,Helvetica,sans-serif;background:#0f1115;color:#e7eaf0;display:flex;justify-content:center;align-items:center;min-height:100vh;margin:0;padding:20px;}
+    .card{background:#171a21;padding:24px;border-radius:16px;width:100%;max-width:420px;box-shadow:0 4px 14px rgba(0,0,0,0.6);}
+    h2{text-align:center;color:#06b6d4;margin-bottom:20px;}
+    input,select{width:100%;padding:10px;margin:8px 0;border-radius:6px;border:1px solid #333;background:#0f1115;color:#e7eaf0;}
+    .amount-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin:15px 0;}
+    .amount-grid button{background:#1f2937;color:#e7eaf0;padding:12px;border:none;border-radius:8px;cursor:pointer;font-weight:bold;transition:0.2s;}
+    .amount-grid button:hover{background:#06b6d4;color:#000;}
+    .amount-grid button.active{background:#06b6d4;color:#000;}
+    .pay-number{background:#1f2937;padding:10px;border-radius:6px;margin:10px 0;text-align:center;user-select:all;}
+    .submit-btn{background:#06b6d4;color:#000;font-weight:bold;border:none;padding:12px;width:100%;border-radius:8px;cursor:pointer;margin-top:15px;}
+    .submit-btn:hover{background:#0ea5e9;}
+    .msg{text-align:center;margin-top:10px;font-size:14px;min-height:20px;}
   </style>
 </head>
 <body>
   <div class="card">
-    <h2>💎 Order Now</h2>
+    <h2>🛒 New Order</h2>
 
-    <!-- Step 1: Diamond amount -->
-    <label>Diamond Package</label>
-    <div id="amountBox"></div>
-    <p id="priceText">💰 মূল্য: 0 টাকা</p>
+    <!-- Profile ID -->
+    <input type="text" id="profileId" placeholder="Enter Profile ID / Number">
 
-    <!-- Step 2: Payment method -->
-    <label>Payment Method</label>
-    <select id="method">
-      <option value="">-- Select Method --</option>
+    <!-- Amount Buttons -->
+    <div class="amount-grid">
+      <button onclick="selectAmount(10,25)">10 💎 (25৳)</button>
+      <button onclick="selectAmount(50,115)">50 💎 (115৳)</button>
+      <button onclick="selectAmount(100,230)">100 💎 (230৳)</button>
+      <button onclick="selectAmount(200,460)">200 💎 (460৳)</button>
+      <button onclick="selectAmount(500,1130)">500 💎 (1130৳)</button>
+      <button onclick="selectAmount(1000,2250)">1000 💎 (2250৳)</button>
+      <button onclick="selectAmount(2000,4500)">2000 💎 (4500৳)</button>
+      <button onclick="selectAmount(5000,11200)">5000 💎 (11200৳)</button>
+      <button onclick="selectAmount(10000,22200)">10000 💎 (22200৳)</button>
+      <button onclick="selectAmount(20000,44000)">20000 💎 (44000৳)</button>
+    </div>
+    <p id="selectedAmount">⚠️ Please select an amount</p>
+
+    <!-- Payment Method -->
+    <select id="paymentMethod" onchange="updateNumbers()">
+      <option value="">-- Select Payment Method --</option>
       <option value="bkash">bKash</option>
       <option value="nagad">Nagad</option>
       <option value="rocket">Rocket</option>
       <option value="upay">Upay</option>
     </select>
 
-    <!-- Step 3: Show numbers dynamically -->
-    <div class="pay-box" id="payBox" style="display:none;">
-      <label>Number List</label>
-      <select id="numberList"></select>
-      <div class="copy-box">
-        <input type="text" id="payNumber" readonly>
-        <button onclick="copyNumber()">Copy</button>
-      </div>
-    </div>
+    <!-- Number Dropdown -->
+    <select id="paymentNumber"></select>
 
-    <!-- Step 4: TRX ID -->
-    <input type="text" id="trxid" placeholder="Enter TRX ID">
+    <!-- Copy Box -->
+    <div class="pay-number" id="copyBox">📱 Select method & number</div>
+
+    <!-- TRX ID -->
+    <input type="text" id="trxid" placeholder="Enter Transaction ID">
 
     <button class="submit-btn" onclick="submitOrder()">✅ Submit Order</button>
-    <p id="msg"></p>
+    <p id="msg" class="msg"></p>
   </div>
 
   <!-- Firebase -->
@@ -74,95 +83,77 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    // Diamond package list
-    const packages = {
-      10:25, 50:115, 100:230, 200:460, 500:1130,
-      1000:2250, 2000:4500, 5000:11200, 10000:22200, 20000:44000
-    };
-
-    const amountBox=document.getElementById("amountBox");
-    const priceText=document.getElementById("priceText");
-    const method=document.getElementById("method");
-    const numberList=document.getElementById("numberList");
-    const payBox=document.getElementById("payBox");
-    const payNumber=document.getElementById("payNumber");
-    const trxid=document.getElementById("trxid");
-    const msg=document.getElementById("msg");
-
-    let selectedAmount=0, selectedPrice=0;
-
-    // Load amount buttons
-    for(let d in packages){
-      const btn=document.createElement("button");
-      btn.textContent=`${d} 💎`;
-      btn.className="amount-btn";
-      btn.onclick=()=>{selectedAmount=d;selectedPrice=packages[d];priceText.textContent=`💰 মূল্য: ${selectedPrice} টাকা`;};
-      amountBox.appendChild(btn);
-    }
+    let selectedDiamonds=null;
+    let selectedPrice=null;
 
     // Payment numbers
-    const paymentNumbers={
-      bkash:["01715118684","01781332352","01790216921","01405475992"],
+    const numbers={
+      bkash:["01715118684","01781332352","01790216921","01405475992","01971744060","01911611637"],
       nagad:["01715118684","01790216921","01919961919"],
       rocket:["017151186847"],
       upay:["01715118684"]
     };
 
-    // Show numbers on method change
-    method.addEventListener("change",()=>{
-      numberList.innerHTML="";
-      if(method.value && paymentNumbers[method.value]){
-        paymentNumbers[method.value].forEach(num=>{
-          let opt=document.createElement("option");
-          opt.value=num;opt.textContent=num;
-          numberList.appendChild(opt);
-        });
-        payBox.style.display="block";
-        payNumber.value=paymentNumbers[method.value][0];
-      } else {
-        payBox.style.display="none";
-      }
-    });
-
-    // Update number on dropdown change
-    numberList.addEventListener("change",()=>{
-      payNumber.value=numberList.value;
-    });
-
-    // Copy number
-    window.copyNumber=()=>{
-      payNumber.select();
-      document.execCommand("copy");
-      alert("✅ Copied: "+payNumber.value);
+    // Select amount
+    window.selectAmount=(d,p)=>{
+      selectedDiamonds=d;selectedPrice=p;
+      document.querySelectorAll(".amount-grid button").forEach(b=>b.classList.remove("active"));
+      event.target.classList.add("active");
+      document.getElementById("selectedAmount").textContent=`✅ Selected: ${d} 💎 for ${p}৳`;
     };
 
+    // Update number dropdown
+    window.updateNumbers=()=>{
+      const method=document.getElementById("paymentMethod").value;
+      const numSelect=document.getElementById("paymentNumber");
+      const copyBox=document.getElementById("copyBox");
+      numSelect.innerHTML="";
+      copyBox.textContent="📱 Select method & number";
+      if(numbers[method]){
+        numbers[method].forEach(n=>{
+          const opt=document.createElement("option");
+          opt.value=n; opt.textContent=n;
+          numSelect.appendChild(opt);
+        });
+        copyBox.textContent=numbers[method][0];
+      }
+    };
+
+    // CopyBox update when number select changes
+    document.getElementById("paymentNumber").addEventListener("change",e=>{
+      document.getElementById("copyBox").textContent=e.target.value;
+    });
+
     // Submit order
-    window.submitOrder=async()=>{
-      if(!selectedAmount || !selectedPrice){msg.textContent="⚠️ Please select amount";return;}
-      if(!method.value){msg.textContent="⚠️ Select payment method";return;}
-      if(!trxid.value.trim()){msg.textContent="⚠️ Enter TRX ID";return;}
+    window.submitOrder=()=>{
+      const profileId=document.getElementById("profileId").value.trim();
+      const method=document.getElementById("paymentMethod").value;
+      const number=document.getElementById("paymentNumber").value;
+      const trxid=document.getElementById("trxid").value.trim();
+      const msg=document.getElementById("msg");
+
+      if(!profileId||!selectedDiamonds||!selectedPrice||!method||!number||!trxid){
+        msg.textContent="⚠️ Please fill all fields";return;
+      }
+      msg.textContent="⏳ Submitting order...";
 
       onAuthStateChanged(auth, async(user)=>{
         if(user){
-          try{
-            await addDoc(collection(db,"orders"),{
-              uid:user.uid,
-              amount:selectedAmount,
-              price:selectedPrice,
-              method:method.value,
-              number:payNumber.value,
-              trxid:trxid.value.trim(),
-              status:"pending",
-              createdAt:serverTimestamp()
-            });
-            msg.textContent="✅ Order submitted!";
-            setTimeout(()=>window.location.href="order-history.html",1500);
-          }catch(e){
-            msg.textContent="❌ "+e.message;
-          }
+          await addDoc(collection(db,"orders"),{
+            uid:user.uid,
+            profileId,
+            amount:selectedDiamonds,
+            price:selectedPrice,
+            method,
+            number,
+            trxid,
+            status:"pending",
+            createdAt:serverTimestamp()
+          });
+          msg.textContent="✅ Order submitted!";
+          setTimeout(()=>window.location.href="order-history.html",1000);
         } else {
-          msg.textContent="⚠️ Please login first";
-          setTimeout(()=>window.location.href="login.html?redirect=order.html",1000);
+          window.location.href="login.html?redirect=order.html";
         }
       });
     };
