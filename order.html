@@ -47,7 +47,9 @@ const paymentMethods = {
   "bKash":["01715118684","01781332352","01790216921","01405475992"],
   "Nagad":["01715118684","01790216921"],
   "Rocket":["017151186847"],
-  "Upay":["01715118684"]
+  "Upay":["01715118684"],
+  "Nagad Agent":["01919961919"],
+  "bKash Payment":["01971744060","01911611637"]
 };
 
 let selectedAmount = null;
@@ -76,10 +78,10 @@ window.addEventListener("load",()=>{
     showAccount(selectedPaymentMethod);
   });
 
-  // Profile ID input: only numbers/letters allowed, no spaces
+  // Profile ID input: only numbers + optional "+"
   const profileInput = document.getElementById("profileId");
-  profileInput.addEventListener("input",e=>{
-    profileInput.value = profileInput.value.replace(/[^a-zA-Z0-9]/g,'');
+  profileInput.addEventListener("input",()=>{
+    profileInput.value = profileInput.value.replace(/[^0-9\+]/g,'');
   });
 });
 
@@ -94,18 +96,26 @@ function showAccount(method){
   const accountBox = document.getElementById("accountBox");
   accountBox.innerHTML="";
   if(!method || !paymentMethods[method]) return;
-  selectedAccount = paymentMethods[method][0]; // default first
-  const select = document.createElement("select");
-  paymentMethods[method].forEach(acc=>{
-    const opt = document.createElement("option");
-    opt.value = acc;
-    opt.textContent = acc;
-    select.appendChild(opt);
-  });
-  select.addEventListener("change",()=> selectedAccount=select.value);
-  accountBox.appendChild(select);
+  selectedAccount = paymentMethods[method][0];
+  if(paymentMethods[method].length>1){
+    const select = document.createElement("select");
+    paymentMethods[method].forEach(acc=>{
+      const opt = document.createElement("option");
+      opt.value = acc;
+      opt.textContent = acc;
+      select.appendChild(opt);
+    });
+    select.addEventListener("change",()=> selectedAccount=select.value);
+    accountBox.appendChild(select);
+  } else {
+    // Only one account
+    const input = document.createElement("input");
+    input.type="text";
+    input.value=selectedAccount;
+    input.readOnly=true;
+    accountBox.appendChild(input);
+  }
 
-  // Copy button
   const copyBtn = document.createElement("button");
   copyBtn.textContent="Copy";
   copyBtn.onclick=()=>{ navigator.clipboard.writeText(selectedAccount); alert("Copied: "+selectedAccount); }
@@ -118,7 +128,7 @@ window.submitOrder = async()=>{
   const msg = document.getElementById("msg");
 
   if(!selectedAmount){ msg.textContent="⚠️ Select Diamond amount"; return;}
-  if(!profileId){ msg.textContent="⚠️ Enter Profile ID"; return;}
+  if(!profileId){ msg.textContent="⚠️ Enter Profile ID / Number"; return;}
   if(!selectedPaymentMethod){ msg.textContent="⚠️ Select Payment Method"; return;}
   if(!txid){ msg.textContent="⚠️ Enter Transaction ID"; return;}
 
@@ -151,22 +161,28 @@ window.submitOrder = async()=>{
 <body>
 <h2>💎 Order Diamonds</h2>
 
+<!-- Diamond amount grid -->
 <div id="diamondGrid" class="grid"></div>
 <div id="amountDisplay" class="amount-display"></div>
 
-<label>Profile ID / Number</label>
-<input type="text" id="profileId" placeholder="Enter Profile ID / Number">
+<!-- Profile ID / Phone -->
+<label>Profile ID / Phone Number (with country code)</label>
+<input type="text" id="profileId" placeholder="Enter Profile ID / Phone Number">
 
+<!-- Payment Method -->
 <label>Payment Method</label>
 <select id="paymentMethod">
   <option value="">Select Method</option>
 </select>
 
+<!-- Account number box & copy -->
 <div id="accountBox"></div>
 
+<!-- Transaction ID -->
 <label>Transaction ID</label>
 <input type="text" id="txid" placeholder="Enter Transaction ID">
 
+<!-- Submit button -->
 <button id="submitBtn" onclick="submitOrder()">Submit Order</button>
 <p class="msg" id="msg"></p>
 </body>
