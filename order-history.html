@@ -1,123 +1,125 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Order History</title>
-<style>
-body { font-family: Arial, Helvetica, sans-serif; background: #0f1115; color: #e7eaf0; padding: 10px; }
-h2 { color: #06b6d4; text-align: center; }
-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; }
-table, th, td { border: 1px solid #444; }
-th, td { padding: 6px; text-align: center; }
-th { background: #1f2937; }
-tr:nth-child(even) { background: #171a21; }
-tr:nth-child(odd) { background: #0f1115; }
-button.pageBtn { padding: 4px 6px; border-radius: 4px; border: none; cursor: pointer; font-size: 12px; background:#1f2937; color:#e7eaf0; margin:2px;}
-button.pageBtn:hover { background:#374151; }
-@media(max-width:600px){
-  table { font-size: 11px; }
-  th, td { padding: 4px; }
-  button.pageBtn { padding: 3px 5px; font-size: 11px; }
-}
-</style>
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
-import { getFirestore, collection, getDocs, orderBy, query, where } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyAyhjOsIXNAkBglpRllt0OZIOJYpdB_9-8",
-  authDomain: "diamond-recharge-f7f59.firebaseapp.com",
-  projectId: "diamond-recharge-f7f59",
-  storageBucket: "diamond-recharge-f7f59.appspot.com",
-  messagingSenderId: "657717928489",
-  appId: "1:657717928489:web:70431ebc9afb7002d4b238",
-  measurementId: "G-TDK78BQ8SQ"
-};
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-
-let userOrders = [];
-let currentPage = 1;
-const ordersPerPage = 20;
-const orderTable = document.getElementById("orderTable");
-
-function renderTable(){
-  const start = (currentPage-1)*ordersPerPage;
-  const end = start + ordersPerPage;
-  const pageOrders = userOrders.slice(start,end);
-
-  orderTable.innerHTML = "";
-  pageOrders.forEach((d,index)=>{
-    const serialStr = (start + index + 1).toString().padStart(3,"0");
-    const row = document.createElement("tr");
-    row.innerHTML = `
-      <td>${serialStr}</td>
-      <td>${d.profileId}</td>
-      <td>${d.amount}</td>
-      <td>${d.method}</td>
-      <td>${d.account}</td>
-      <td>${d.txid}</td>
-      <td>${d.status}</td>
-    `;
-    orderTable.appendChild(row);
-  });
-
-  renderPagination();
-}
-
-function renderPagination(){
-  const totalPages = Math.ceil(userOrders.length / ordersPerPage);
-  const container = document.getElementById("pagination");
-  container.innerHTML = "";
-  for(let i=1;i<=totalPages;i++){
-    const btn = document.createElement("button");
-    btn.textContent = i;
-    btn.className = "pageBtn";
-    if(i===currentPage) btn.style.background="#06b6d4";
-    btn.onclick = ()=>{ currentPage=i; renderTable(); };
-    container.appendChild(btn);
-  }
-}
-
-onAuthStateChanged(auth, async(user)=>{
-  if(user){
-    const q = query(collection(db,"orders"), where("email","==",user.email), orderBy("createdAt","desc"));
-    const snap = await getDocs(q);
-    userOrders = [];
-    snap.forEach(docSnap=>{
-      const d = docSnap.data();
-      userOrders.push(d);
-    });
-    renderTable();
-  } else {
-    alert("Please login first");
-    window.location.href="login.html";
-  }
-});
-</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Order History</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0d1117;
+      color: #e6edf3;
+      margin: 0;
+      padding: 20px;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #161b22;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    th, td {
+      padding: 10px;
+      border-bottom: 1px solid #30363d;
+      text-align: center;
+    }
+    th {
+      background: #21262d;
+    }
+    tr:hover {
+      background: #30363d;
+    }
+  </style>
 </head>
 <body>
-<h2>📜 Order History</h2>
-<div style="overflow-x:auto;">
-<table>
-<thead>
-<tr>
-<th>Serial</th>
-<th>Profile ID</th>
-<th>Amount</th>
-<th>Method</th>
-<th>Account</th>
-<th>TxID</th>
-<th>Status</th>
-</tr>
-</thead>
-<tbody id="orderTable"></tbody>
-</table>
-</div>
-<div id="pagination" style="margin-top:10px;"></div>
+  <h2>Order History</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Profile ID</th>
+        <th>Amount</th>
+        <th>Method</th>
+        <th>Account</th>
+        <th>TXID</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody id="ordersTableBody">
+      <tr><td colspan="7">Loading...</td></tr>
+    </tbody>
+  </table>
+
+  <!-- Firebase -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT.firebaseapp.com",
+      projectId: "YOUR_PROJECT",
+      storageBucket: "YOUR_PROJECT.appspot.com",
+      messagingSenderId: "SENDER_ID",
+      appId: "APP_ID"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const ordersTableBody = document.getElementById("ordersTableBody");
+
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        try {
+          // user document লোড করা
+          const userRef = doc(db, "users", user.uid);
+          const userSnap = await getDoc(userRef);
+
+          if (userSnap.exists()) {
+            let orders = userSnap.data().orders || [];
+
+            // সর্বশেষ ২০টা order দেখানো (reverse + slice)
+            orders = orders.reverse().slice(0, 20);
+
+            if (orders.length > 0) {
+              ordersTableBody.innerHTML = "";
+              orders.forEach((order, index) => {
+                const row = `
+                  <tr>
+                    <td>${index + 1}</td>
+                    <td>${order.profileId || "-"}</td>
+                    <td>${order.amount || "-"}</td>
+                    <td>${order.method || "-"}</td>
+                    <td>${order.account || "-"}</td>
+                    <td>${order.txid || "-"}</td>
+                    <td>${order.status || "-"}</td>
+                  </tr>
+                `;
+                ordersTableBody.innerHTML += row;
+              });
+            } else {
+              ordersTableBody.innerHTML = "<tr><td colspan='7'>No orders found</td></tr>";
+            }
+          } else {
+            ordersTableBody.innerHTML = "<tr><td colspan='7'>User data not found</td></tr>";
+          }
+        } catch (error) {
+          console.error(error);
+          ordersTableBody.innerHTML = "<tr><td colspan='7'>Error loading orders</td></tr>";
+        }
+      } else {
+        ordersTableBody.innerHTML = "<tr><td colspan='7'>Please login to view your orders</td></tr>";
+      }
+    });
+  </script>
 </body>
 </html>
