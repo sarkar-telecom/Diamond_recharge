@@ -1,212 +1,163 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Place Order</title>
-  <style>
-    body {
-      font-family: Arial, Helvetica, sans-serif;
-      background: #0f1115;
-      color: #e7eaf0;
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      padding: 20px;
-      min-height: 100vh;
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Order Diamonds</title>
+<style>
+body { font-family: Arial, Helvetica, sans-serif; background:#0f1115; color:#e7eaf0; padding:10px; }
+h2 { text-align:center; color:#06b6d4; margin-bottom:20px; }
+.grid { display:grid; grid-template-columns: repeat(auto-fit,minmax(80px,1fr)); gap:10px; margin-bottom:20px; }
+.grid button { padding:10px; border:none; border-radius:6px; cursor:pointer; background:#1f2937; color:#e7eaf0; font-weight:bold; }
+.grid button.selected { background:#06b6d4; color:#000; }
+input, select { width:100%; padding:8px; margin:6px 0; border-radius:6px; border:1px solid #333; background:#171a21; color:#e7eaf0; }
+button#submitBtn { width:100%; padding:10px; border:none; border-radius:6px; background:#06b6d4; color:#000; font-weight:bold; cursor:pointer; margin-top:10px; }
+button#submitBtn:hover { background:#0ea5e9; }
+.copy-box { display:flex; gap:5px; align-items:center; margin-bottom:10px; }
+.copy-box input { flex:1; }
+.copy-box button { padding:6px; border:none; border-radius:6px; cursor:pointer; background:#06b6d4; color:#000; }
+.msg { margin-top:10px; font-size:14px; min-height:20px; }
+</style>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAyhjOsIXNAkBglpRllt0OZIOJYpdB_9-8",
+  authDomain: "diamond-recharge-f7f59.firebaseapp.com",
+  projectId: "diamond-recharge-f7f59",
+  storageBucket: "diamond-recharge-f7f59.appspot.com",
+  messagingSenderId: "657717928489",
+  appId: "1:657717928489:web:70431ebc9afb7002d4b238",
+  measurementId: "G-TDK78BQ8SQ"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+const diamondAmounts = [
+  {d:10,p:25},{d:50,p:115},{d:100,p:230},{d:200,p:460},{d:500,p:1130},
+  {d:1000,p:2250},{d:2000,p:4500},{d:5000,p:11200},{d:10000,p:22200},{d:20000,p:44000}
+];
+
+const paymentMethods = {
+  "bKash":["01715118684","01781332352","01790216921","01405475992"],
+  "Nagad":["01715118684","01790216921"],
+  "Rocket":["017151186847"],
+  "Upay":["01715118684"]
+};
+
+let selectedAmount = null;
+let selectedPaymentMethod = null;
+
+window.addEventListener("load",()=>{
+  const grid = document.getElementById("diamondGrid");
+  diamondAmounts.forEach(a=>{
+    const btn = document.createElement("button");
+    btn.textContent=`${a.d} 💎 (${a.p}/-)`;
+    btn.onclick=()=>selectAmount(a,btn);
+    grid.appendChild(btn);
+  });
+
+  const methodSelect = document.getElementById("paymentMethod");
+  Object.keys(paymentMethods).forEach(m=>{
+    const opt = document.createElement("option");
+    opt.value=m;
+    opt.textContent=m;
+    methodSelect.appendChild(opt);
+  });
+
+  methodSelect.addEventListener("change",()=>{
+    selectedPaymentMethod = methodSelect.value;
+    showAccounts(selectedPaymentMethod);
+  });
+});
+
+function selectAmount(a,btn){
+  selectedAmount = a;
+  document.querySelectorAll("#diamondGrid button").forEach(b=>b.classList.remove("selected"));
+  btn.classList.add("selected");
+  document.getElementById("amountInput").value=a.p;
+}
+
+function showAccounts(method){
+  const accountBox = document.getElementById("accountBox");
+  accountBox.innerHTML="";
+  if(!method) return;
+  paymentMethods[method].forEach(acc=>{
+    const div = document.createElement("div");
+    div.className="copy-box";
+    div.innerHTML=`<input type="text" readonly value="${acc}"><button onclick="copyAccount('${acc}')">Copy</button>`;
+    accountBox.appendChild(div);
+  });
+}
+
+function copyAccount(acc){
+  navigator.clipboard.writeText(acc);
+  alert("Copied: "+acc);
+}
+
+window.submitOrder = async()=>{
+  const profileId = document.getElementById("profileId").value.trim();
+  const txid = document.getElementById("txid").value.trim();
+  const msg = document.getElementById("msg");
+
+  if(!selectedAmount){ msg.textContent="⚠️ Select Diamond amount"; return;}
+  if(!profileId){ msg.textContent="⚠️ Enter Profile ID / Number"; return;}
+  if(!selectedPaymentMethod){ msg.textContent="⚠️ Select Payment Method"; return;}
+  if(!txid){ msg.textContent="⚠️ Enter Transaction ID"; return;}
+
+  onAuthStateChanged(auth, async(user)=>{
+    if(user){
+      try{
+        await addDoc(collection(db,"orders"),{
+          email:user.email,
+          profileId,
+          amount:selectedAmount.p,
+          method:selectedPaymentMethod,
+          account:document.querySelector(`#accountBox input`).value,
+          txid,
+          status:"pending",
+          createdAt:serverTimestamp()
+        });
+        msg.textContent="✅ Order submitted!";
+        // redirect to order history
+        setTimeout(()=>{ window.location.href="order-history.html"; },1000);
+      }catch(e){
+        msg.textContent="❌ "+e.message;
+      }
+    }else{
+      alert("Please login first");
+      window.location.href="login.html";
     }
-
-    .card {
-      background: #171a21;
-      padding: 20px;
-      border-radius: 16px;
-      width: 100%;
-      max-width: 500px;
-      box-shadow: 0 4px 14px rgba(0,0,0,0.6);
-    }
-
-    h2 { color: #06b6d4; text-align: center; margin-bottom: 20px; }
-
-    label { display: block; margin-top: 15px; margin-bottom: 5px; font-weight: bold; }
-    input, select, button {
-      width: 100%;
-      padding: 10px;
-      margin-bottom: 10px;
-      border-radius: 6px;
-      border: 1px solid #333;
-      background: #0f1115;
-      color: #e7eaf0;
-      box-sizing: border-box;
-    }
-
-    #diamondOptions {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-      gap: 10px;
-      margin-bottom: 15px;
-    }
-
-    #diamondOptions button {
-      background: #06b6d4;
-      color: #001;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-
-    #diamondOptions button:hover { background: #0ea5e9; }
-
-    #copyBox { width: calc(100% - 60px); display: inline-block; }
-    #copyBtn { width: 50px; display: inline-block; margin-left: 5px; background: #06b6d4; color: #001; border: none; border-radius: 6px; cursor: pointer; }
-
-    #copyBtn:hover { background: #0ea5e9; }
-
-    button.submitBtn {
-      background: #06b6d4;
-      color: #001;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    button.submitBtn:hover { background: #0ea5e9; }
-
-    @media(max-width: 480px){
-      #diamondOptions { grid-template-columns: repeat(2, 1fr); }
-    }
-  </style>
+  });
+}
+</script>
 </head>
 <body>
-  <div class="card">
-    <h2>💎 Diamond Recharge Order</h2>
+<h2>💎 Order Diamonds</h2>
 
-    <form id="orderForm">
-      <label>Profile ID / Number</label>
-      <input type="text" id="profileId" placeholder="Enter your profile ID / number" required>
+<div id="diamondGrid" class="grid"></div>
 
-      <label>Select Diamonds</label>
-      <div id="diamondOptions"></div>
-      <input type="hidden" id="amount">
+<input type="hidden" id="amountInput">
 
-      <label>Payment Method</label>
-      <select id="paymentMethod" required>
-        <option value="">-- Select Method --</option>
-        <option value="bkash">bKash</option>
-        <option value="nagad">Nagad</option>
-        <option value="rocket">Rocket</option>
-        <option value="upay">Upay</option>
-      </select>
+<label>Profile ID / Name / Number</label>
+<input type="text" id="profileId" placeholder="Enter your Profile ID / Number">
 
-      <label>Account Number</label>
-      <select id="accountNumber" required>
-        <option value="">-- Select Account --</option>
-      </select>
+<label>Payment Method</label>
+<select id="paymentMethod">
+  <option value="">Select Method</option>
+</select>
 
-      <div style="display:flex; gap:5px;">
-        <input type="text" id="copyBox" readonly placeholder="Copy account number">
-        <button type="button" id="copyBtn" onclick="copyNumber()">Copy</button>
-      </div>
+<div id="accountBox"></div>
 
-      <label>Transaction ID (TxID)</label>
-      <input type="text" id="txid" placeholder="Enter your transaction ID" required>
+<label>Transaction ID</label>
+<input type="text" id="txid" placeholder="Enter Transaction ID">
 
-      <button type="submit" class="submitBtn">Submit Order</button>
-    </form>
-  </div>
+<button id="submitBtn" onclick="submitOrder()">Submit Order</button>
+<p class="msg" id="msg"></p>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
-    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyAyhjOsIXNAkBglpRllt0OZIOJYpdB_9-8",
-      authDomain: "diamond-recharge-f7f59.firebaseapp.com",
-      projectId: "diamond-recharge-f7f59",
-      storageBucket: "diamond-recharge-f7f59.appspot.com",
-      messagingSenderId: "657717928489",
-      appId: "1:657717928489:web:70431ebc9afb7002d4b238",
-      measurementId: "G-TDK78BQ8SQ"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-
-    const diamondOptions = [
-      { diamond: "10 💎", price: 25 },
-      { diamond: "50 💎", price: 115 },
-      { diamond: "100 💎", price: 230 },
-      { diamond: "200 💎", price: 460 },
-      { diamond: "500 💎", price: 1130 },
-      { diamond: "1000 💎", price: 2250 },
-      { diamond: "2000 💎", price: 4500 },
-      { diamond: "5000 💎", price: 11200 },
-      { diamond: "10000 💎", price: 22200 },
-      { diamond: "20000 💎", price: 44000 }
-    ];
-
-    const numbers = {
-      bkash: ["01715118684","01781332352","01790216921","01405475992"],
-      nagad: ["01715118684","01790216921","01919961919"],
-      rocket: ["017151186847"],
-      upay: ["01715118684"]
-    };
-
-    const diamondContainer = document.getElementById("diamondOptions");
-    diamondOptions.forEach(item => {
-      const btn = document.createElement("button");
-      btn.type = "button";
-      btn.textContent = `${item.diamond} (${item.price}/-)`;
-      btn.onclick = () => { document.getElementById("amount").value = item.price; };
-      diamondContainer.appendChild(btn);
-    });
-
-    document.getElementById("paymentMethod").addEventListener("change", (e) => {
-      const method = e.target.value;
-      const accountSelect = document.getElementById("accountNumber");
-      accountSelect.innerHTML = '<option value="">-- Select Account --</option>';
-      if(numbers[method]){
-        numbers[method].forEach(num=>{
-          const opt = document.createElement("option");
-          opt.value = num;
-          opt.textContent = num;
-          accountSelect.appendChild(opt);
-        });
-      }
-    });
-
-    document.getElementById("accountNumber").addEventListener("change", (e)=>{
-      document.getElementById("copyBox").value = e.target.value;
-    });
-
-    window.copyNumber = function(){
-      const copyText = document.getElementById("copyBox");
-      copyText.select();
-      document.execCommand("copy");
-      alert("Copied: " + copyText.value);
-    }
-
-    const orderForm = document.getElementById("orderForm");
-    orderForm.addEventListener("submit", async (e)=>{
-      e.preventDefault();
-      const user = auth.currentUser;
-      if(!user){ alert("Please login first"); return; }
-
-      await addDoc(collection(db,"orders"), {
-        uid: user.uid,
-        profileId: document.getElementById("profileId").value,
-        amount: document.getElementById("amount").value,
-        method: document.getElementById("paymentMethod").value,
-        account: document.getElementById("accountNumber").value,
-        txid: document.getElementById("txid").value,
-        status: "pending",
-        createdAt: serverTimestamp()
-      });
-
-      alert("✅ Order submitted!");
-      window.location.href = "order-history.html";
-    });
-  </script>
 </body>
 </html>
