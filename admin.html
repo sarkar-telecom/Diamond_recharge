@@ -1,77 +1,44 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin Panel - IMO Diamond</title>
+<title>Admin Dashboard</title>
 <style>
-body{font-family:Arial,sans-serif;background:#0f1115;color:#e7eaf0;margin:0;padding:20px;}
-.container{max-width:900px;margin:auto;}
-table{width:100%;border-collapse:collapse;margin-top:20px;}
-th,td{padding:10px;border:1px solid #333;text-align:center;}
-th{background:#171a21;}
-td{background:#1f2937;}
-button{margin:2px;padding:5px 10px;border:none;border-radius:6px;background:#06b6d4;color:#001;cursor:pointer;}
-button:hover{background:#0ea5e9;}
-input, select{width:100%;padding:8px;margin:5px 0;border-radius:6px;border:1px solid #333;background:#0f1115;color:#e7eaf0;}
-.status-Pending{color:#facc15;font-weight:bold;}
-.status-Completed{color:#4ade80;font-weight:bold;}
-.status-Rejected{color:#f87171;font-weight:bold;}
-.copy-box{background:#171a21;padding:5px;border-radius:6px;margin:5px 0;cursor:pointer;}
+  body { font-family: Arial, Helvetica, sans-serif; background: #0f1115; color: #e7eaf0; padding: 10px; }
+  h2 { color: #06b6d4; text-align: center; }
+  .controls { margin-bottom: 10px; display: flex; flex-wrap: wrap; gap: 10px; }
+  .controls input, .controls select { padding: 5px; border-radius: 4px; border: 1px solid #333; background: #171a21; color: #e7eaf0; }
+  table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; }
+  table, th, td { border: 1px solid #444; }
+  th, td { padding: 6px; text-align: center; }
+  th { background: #1f2937; }
+  tr:nth-child(even) { background: #171a21; }
+  tr:nth-child(odd) { background: #0f1115; }
+  button.updateBtn, button.deleteBtn, button.pageBtn { padding: 4px 6px; border-radius: 4px; border: none; cursor: pointer; font-size: 12px; }
+  button.updateBtn { background: #06b6d4; color: #000; }
+  button.updateBtn:hover { background: #0ea5e9; }
+  button.deleteBtn { background: #ef4444; color: #fff; }
+  button.deleteBtn:hover { background: #f87171; }
+  button.pageBtn { background: #1f2937; color: #e7eaf0; margin: 2px; }
+  button.pageBtn:hover { background: #374151; }
+  #denied { color: red; text-align: center; font-size: 16px; margin-top: 50px; }
+  @media(max-width:600px){
+    table { font-size: 11px; }
+    th, td { padding: 4px; }
+    button.updateBtn, button.deleteBtn, button.pageBtn { padding: 3px 5px; font-size: 11px; }
+  }
 </style>
-</head>
-<body>
-<div class="container">
-<h2>Admin Panel</h2>
-
-<h3>Update Payment Numbers</h3>
-<label>Payment Method:</label>
-<select id="adminPaymentMethod">
-  <option value="">Select Payment Method</option>
-  <option value="bKash">bKash</option>
-  <option value="Nagad">Nagad</option>
-  <option value="Rocket">Rocket</option>
-  <option value="Upay">Upay</option>
-</select>
-
-<label>Numbers (comma separated):</label>
-<input type="text" id="adminPaymentNumbers" placeholder="e.g. 01715118684,01781332352">
-<button onclick="updatePaymentNumbers()">Update</button>
-
-<h3>Orders Management</h3>
-<table id="ordersTable">
-<thead>
-<tr>
-  <th>User ID</th>
-  <th>Diamonds</th>
-  <th>Price</th>
-  <th>Profile ID</th>
-  <th>Payment Method</th>
-  <th>Payment Number</th>
-  <th>TRX ID</th>
-  <th>Status</th>
-  <th>Action</th>
-  <th>Timestamp</th>
-</tr>
-</thead>
-<tbody></tbody>
-</table>
-
-<button onclick="logout()">Logout</button>
-<p id="msg"></p>
-</div>
-
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
-import { getFirestore, collection, getDocs, doc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+import { getFirestore, collection, getDocs, orderBy, query, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
-// Firebase Config
 const firebaseConfig = {
   apiKey: "AIzaSyAyhjOsIXNAkBglpRllt0OZIOJYpdB_9-8",
   authDomain: "diamond-recharge-f7f59.firebaseapp.com",
   projectId: "diamond-recharge-f7f59",
-  storageBucket: "diamond-recharge-f7f59.firebasestorage.app",
+  storageBucket: "diamond-recharge-f7f59.appspot.com",
   messagingSenderId: "657717928489",
   appId: "1:657717928489:web:70431ebc9afb7002d4b238",
   measurementId: "G-TDK78BQ8SQ"
@@ -81,65 +48,151 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-let currentUserUid = null;
+const adminEmails = ["samrat.khulnas@gmail.com"];
+const orderTable = document.getElementById("orderTable");
 
-onAuthStateChanged(auth,user=>{
-  if(user) currentUserUid=user.uid;
-  else window.location.href="index.html";
-  loadOrders();
-});
-
-const tableBody = document.querySelector("#ordersTable tbody");
-const msgEl = document.getElementById("msg");
+let allOrders = [];
+let currentPage = 1;
+const ordersPerPage = 20;
 
 async function loadOrders(){
-  tableBody.innerHTML="Loading...";
-  const querySnapshot = await getDocs(collection(db,"orders"));
-  tableBody.innerHTML="";
-  if(querySnapshot.empty){
-    tableBody.innerHTML="<tr><td colspan='10'>No orders yet</td></tr>";
-    return;
-  }
-  querySnapshot.forEach(docSnap=>{
-    const data = docSnap.data();
-    const tr=document.createElement("tr");
-    tr.innerHTML=`
-      <td>${data.userId}</td>
-      <td>${data.diamonds} 💎</td>
-      <td>${data.price} ৳</td>
-      <td>${data.profileId}</td>
-      <td>${data.paymentMethod}</td>
-      <td>${data.paymentNumber}</td>
-      <td>${data.trxId}</td>
-      <td class="status-${data.status}">${data.status}</td>
-      <td>
-        <button onclick="updateStatus('${docSnap.id}','Completed')">✅</button>
-        <button onclick="updateStatus('${docSnap.id}','Rejected')">❌</button>
-      </td>
-      <td>${data.timestamp?.toDate().toLocaleString()||""}</td>
-    `;
-    tableBody.appendChild(tr);
+  allOrders = [];
+  const q = query(collection(db,"orders"), orderBy("createdAt","desc"));
+  const snap = await getDocs(q);
+  snap.forEach(docSnap => {
+    const d = docSnap.data();
+    d.id = docSnap.id;
+    allOrders.push(d);
   });
+  renderTable();
 }
 
-window.updateStatus=async(id,status)=>{
-  await updateDoc(doc(db,"orders",id),{status:status});
-  msgEl.textContent=`Order status updated to ${status}`;
+function renderTable(){
+  const searchEmail = document.getElementById("searchEmail").value.toLowerCase();
+  const filterStatus = document.getElementById("filterStatus").value;
+
+  let filteredOrders = allOrders.filter(o => 
+    (!searchEmail || (o.email && o.email.toLowerCase().includes(searchEmail))) &&
+    (!filterStatus || o.status === filterStatus)
+  );
+
+  const totalPages = Math.ceil(filteredOrders.length / ordersPerPage);
+  if(currentPage > totalPages) currentPage = totalPages || 1;
+  const start = (currentPage-1)*ordersPerPage;
+  const end = start + ordersPerPage;
+  const pageOrders = filteredOrders.slice(start, end);
+
+  orderTable.innerHTML = "";
+  pageOrders.forEach((d, index)=>{
+    const row = document.createElement("tr");
+    const serialStr = (start + index +1).toString().padStart(3,"0");
+    row.innerHTML = `
+      <td>${serialStr}</td>
+      <td>${d.email || "N/A"}</td>
+      <td>${d.profileId}</td>
+      <td>${d.amount}</td>
+      <td>${d.method}</td>
+      <td>${d.account}</td>
+      <td>${d.txid}</td>
+      <td>
+        <select id="status_${d.id}">
+          <option value="pending" ${d.status==="pending"?"selected":""}>Pending</option>
+          <option value="completed" ${d.status==="completed"?"selected":""}>Completed</option>
+          <option value="cancelled" ${d.status==="cancelled"?"selected":""}>Cancelled</option>
+        </select>
+        <button class="updateBtn" onclick="updateStatus('${d.id}')">Update</button>
+      </td>
+      <td>
+        <button class="deleteBtn" onclick="deleteOrder('${d.id}')">Delete</button>
+      </td>
+    `;
+    orderTable.appendChild(row);
+  });
+
+  renderPagination(totalPages);
+}
+
+function renderPagination(totalPages){
+  const container = document.getElementById("pagination");
+  container.innerHTML = "";
+  for(let i=1;i<=totalPages;i++){
+    const btn = document.createElement("button");
+    btn.textContent = i;
+    btn.className = "pageBtn";
+    if(i===currentPage) btn.style.background="#06b6d4";
+    btn.onclick = ()=>{ currentPage=i; renderTable(); };
+    container.appendChild(btn);
+  }
+}
+
+window.updateStatus = async(orderId)=>{
+  const newStatus = document.getElementById(`status_${orderId}`).value;
+  await updateDoc(doc(db,"orders",orderId), { status: newStatus });
+  alert("✅ Status updated!");
   loadOrders();
 }
 
-// Payment Numbers Update
-window.updatePaymentNumbers=()=>{
-  const method=document.getElementById("adminPaymentMethod").value;
-  const numbers=document.getElementById("adminPaymentNumbers").value.trim().split(",");
-  if(!method || numbers.length===0){ msgEl.textContent="⚠️ Fill all fields"; return; }
-  // Save to Firestore (we can have a document 'paymentNumbers')
-  updateDoc(doc(db,"admin","paymentNumbers"),{[method]:numbers}).then(()=>{
-    msgEl.textContent="✅ Payment numbers updated!";
-  }).catch(e=>msgEl.textContent="❌ "+e.message);
+window.deleteOrder = async(orderId)=>{
+  if(confirm("Are you sure you want to delete this order?")){
+    await deleteDoc(doc(db,"orders",orderId));
+    alert("🗑️ Order deleted!");
+    loadOrders();
+  }
 }
 
-window.logout=()=>{ signOut(auth).then(()=>window.location.href="index.html"); }
+onAuthStateChanged(auth, (user)=>{
+  if(user){
+    if(adminEmails.includes(user.email)){
+      document.getElementById("adminContent").style.display = "block";
+      loadOrders();
+    } else {
+      document.getElementById("denied").style.display = "block";
+    }
+  } else {
+    alert("Please login first");
+    window.location.href = "login.html";
+  }
+});
 </script>
+</head>
+<body>
+<h2>⚙️ Admin Dashboard</h2>
+
+<div id="adminContent" style="display:none;">
+  <div class="controls">
+    <input type="text" id="searchEmail" placeholder="Search by Email" oninput="renderTable()">
+    <select id="filterStatus" onchange="renderTable()">
+      <option value="">All Status</option>
+      <option value="pending">Pending</option>
+      <option value="completed">Completed</option>
+      <option value="cancelled">Cancelled</option>
+    </select>
+  </div>
+
+  <div style="overflow-x:auto;">
+    <table>
+      <thead>
+        <tr>
+          <th>Serial</th>
+          <th>User Email</th>
+          <th>Profile ID</th>
+          <th>Amount</th>
+          <th>Method</th>
+          <th>Account</th>
+          <th>TxID</th>
+          <th>Status</th>
+          <th>Delete</th>
+        </tr>
+      </thead>
+      <tbody id="orderTable"></tbody>
+    </table>
+  </div>
+
+  <div id="pagination" style="margin-top:10px;"></div>
+</div>
+
+<div id="denied" style="display:none;">
+  ❌ Access Denied. You are not admin.
+</div>
 </body>
 </html>
