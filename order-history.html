@@ -1,125 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Order History</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #0d1117;
-      color: #e6edf3;
-      margin: 0;
-      padding: 20px;
-    }
-    h2 {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      background: #161b22;
-      border-radius: 8px;
-      overflow: hidden;
-    }
-    th, td {
-      padding: 10px;
-      border-bottom: 1px solid #30363d;
-      text-align: center;
-    }
-    th {
-      background: #21262d;
-    }
-    tr:hover {
-      background: #30363d;
-    }
-  </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Order History — SARKAR TELECOM</title>
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <h2>Order History</h2>
-  <table>
-    <thead>
-      <tr>
-        <th>#</th>
-        <th>Profile ID</th>
-        <th>Amount</th>
-        <th>Method</th>
-        <th>Account</th>
-        <th>TXID</th>
-        <th>Status</th>
-      </tr>
-    </thead>
-    <tbody id="ordersTableBody">
-      <tr><td colspan="7">Loading...</td></tr>
-    </tbody>
-  </table>
+  <!-- Topbar -->
+  <nav class="topbar">
+    <button id="menuToggle" class="menu-btn">☰</button>
+    <div class="brand">SARKAR TELECOM</div>
+  </nav>
 
-  <!-- Firebase -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
-    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore.js";
+  <!-- Sidebar -->
+  <aside id="sidebar" class="sidebar">
+    <div class="profile-mini" id="profileMini"></div>
+    <a href="dashboard.html">Dashboard</a>
+    <a href="order.html">Order Diamonds</a>
+    <a href="order-history.html">Order History</a>
+    <a href="admin.html" id="adminLink" style="display:none">Admin Panel</a>
+    <hr/>
+    <button id="logoutBtn" style="display:none">Logout</button>
+  </aside>
 
-    const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "YOUR_PROJECT.firebaseapp.com",
-      projectId: "YOUR_PROJECT",
-      storageBucket: "YOUR_PROJECT.appspot.com",
-      messagingSenderId: "SENDER_ID",
-      appId: "APP_ID"
-    };
+  <!-- Main -->
+  <main class="container">
+    <section class="card">
+      <h2>My Orders 📃</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Profile ID</th>
+            <th>Amount</th>
+            <th>Method</th>
+            <th>Account</th>
+            <th>TXID</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="ordersTableBody">
+          <tr><td colspan="7">Loading...</td></tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
+  <!-- Firebase compat SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 
-    const ordersTableBody = document.getElementById("ordersTableBody");
-
-    onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        try {
-          // user document লোড করা
-          const userRef = doc(db, "users", user.uid);
-          const userSnap = await getDoc(userRef);
-
-          if (userSnap.exists()) {
-            let orders = userSnap.data().orders || [];
-
-            // সর্বশেষ ২০টা order দেখানো (reverse + slice)
-            orders = orders.reverse().slice(0, 20);
-
-            if (orders.length > 0) {
-              ordersTableBody.innerHTML = "";
-              orders.forEach((order, index) => {
-                const row = `
-                  <tr>
-                    <td>${index + 1}</td>
-                    <td>${order.profileId || "-"}</td>
-                    <td>${order.amount || "-"}</td>
-                    <td>${order.method || "-"}</td>
-                    <td>${order.account || "-"}</td>
-                    <td>${order.txid || "-"}</td>
-                    <td>${order.status || "-"}</td>
-                  </tr>
-                `;
-                ordersTableBody.innerHTML += row;
-              });
-            } else {
-              ordersTableBody.innerHTML = "<tr><td colspan='7'>No orders found</td></tr>";
-            }
-          } else {
-            ordersTableBody.innerHTML = "<tr><td colspan='7'>User data not found</td></tr>";
-          }
-        } catch (error) {
-          console.error(error);
-          ordersTableBody.innerHTML = "<tr><td colspan='7'>Error loading orders</td></tr>";
-        }
-      } else {
-        ordersTableBody.innerHTML = "<tr><td colspan='7'>Please login to view your orders</td></tr>";
-      }
-    });
-  </script>
+  <!-- Config + App -->
+  <script src="js/firebase-config.js"></script>
+  <script src="js/app.js"></script>
 </body>
 </html>
