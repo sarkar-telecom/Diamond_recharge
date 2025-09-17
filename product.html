@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IMO Diamond Recharge</title>
+<style>
+body{font-family:Arial,sans-serif;background:#0f1115;color:#e7eaf0;margin:0;padding:20px;}
+.container{max-width:600px;margin:auto;}
+button{margin:5px;padding:10px 20px;border:none;border-radius:6px;background:#06b6d4;color:#001;cursor:pointer;}
+button:hover{background:#0ea5e9;}
+input, select{width:100%;padding:10px;margin:8px 0;border-radius:6px;border:1px solid #333;background:#0f1115;color:#e7eaf0;}
+.copy-box{background:#171a21;padding:10px;border-radius:6px;margin:5px 0;cursor:pointer;}
+.msg{margin-top:10px;font-size:14px;min-height:20px;}
+</style>
+</head>
+<body>
+<div class="container">
+<h2>IMO Diamond Recharge</h2>
+
+<label>Choose Diamonds:</label>
+<div id="amountButtons"></div>
+
+<label>Price (৳):</label>
+<input type="text" id="price" readonly>
+
+<label>Payment Method:</label>
+<select id="paymentMethod">
+  <option value="">Select Payment Method</option>
+  <option value="bKash">bKash</option>
+  <option value="Nagad">Nagad</option>
+  <option value="Rocket">Rocket</option>
+  <option value="Upay">Upay</option>
+</select>
+
+<label>Payment Number:</label>
+<div id="paymentNumber" class="copy-box">Select method to see number</div>
+
+<label>IMO Profile ID:</label>
+<input type="text" id="profileId" placeholder="Enter your IMO ID">
+
+<label>TRX ID:</label>
+<input type="text" id="trxId" placeholder="Enter Transaction ID">
+
+<button onclick="submitOrder()">Submit Order</button>
+
+<p class="msg" id="msg"></p>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+// Firebase Config
+const firebaseConfig = {
+  apiKey: "AIzaSyAyhjOsIXNAkBglpRllt0OZIOJYpdB_9-8",
+  authDomain: "diamond-recharge-f7f59.firebaseapp.com",
+  projectId: "diamond-recharge-f7f59",
+  storageBucket: "diamond-recharge-f7f59.firebasestorage.app",
+  messagingSenderId: "657717928489",
+  appId: "1:657717928489:web:70431ebc9afb7002d4b238",
+  measurementId: "G-TDK78BQ8SQ"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+// Payment Numbers
+const paymentNumbers = {
+  bKash:["01715118684","01781332352","01790216921","01405475992"],
+  Nagad:["01715118684","01790216921"],
+  Rocket:["017151186847"],
+  Upay:["01715118684"]
+};
+
+// Product Amounts
+const productAmounts=[
+  {diamonds:10, price:25},
+  {diamonds:50, price:115},
+  {diamonds:100, price:230},
+  {diamonds:200, price:460},
+  {diamonds:500, price:1130},
+  {diamonds:1000, price:2250},
+  {diamonds:2000, price:4500},
+  {diamonds:5000, price:11200},
+  {diamonds:10000, price:22200},
+  {diamonds:20000, price:44000}
+];
+
+// Elements
+const amountButtonsDiv=document.getElementById("amountButtons");
+const priceInput=document.getElementById("price");
+const paymentMethodSelect=document.getElementById("paymentMethod");
+const paymentNumberDiv=document.getElementById("paymentNumber");
+const msgEl=document.getElementById("msg");
+
+let selectedDiamonds=0;
+let selectedPrice=0;
+let selectedPaymentNumber="";
+
+// Create Diamond Buttons
+productAmounts.forEach(item=>{
+  const btn=document.createElement("button");
+  btn.textContent=`${item.diamonds} 💎 (${item.price}৳)`;
+  btn.onclick=()=>{ 
+    selectedDiamonds=item.diamonds;
+    selectedPrice=item.price;
+    priceInput.value=item.price;
+  };
+  amountButtonsDiv.appendChild(btn);
+});
+
+// Payment Method Change
+paymentMethodSelect.addEventListener("change",e=>{
+  const method=e.target.value;
+  if(method && paymentNumbers[method]){
+    selectedPaymentNumber=paymentNumbers[method][0]; // default first number
+    paymentNumberDiv.textContent=paymentNumbers[method].join(", ");
+  } else {
+    selectedPaymentNumber="";
+    paymentNumberDiv.textContent="Select method to see number";
+  }
+});
+
+// Copy Payment Number
+paymentNumberDiv.addEventListener("click",()=>{
+  navigator.clipboard.writeText(selectedPaymentNumber).then(()=>{
+    alert("Payment number copied!");
+  });
+});
+
+// Auth check
+let currentUserUid=null;
+onAuthStateChanged(auth,user=>{
+  if(user) currentUserUid=user.uid;
+  else window.location.href="index.html";
+});
+
+// Submit Order
+window.submitOrder=()=>{
+  const profileId=document.getElementById("profileId").value.trim();
+  const trxId=document.getElementById("trxId").value.trim();
+  const method=paymentMethodSelect.value;
+  if(!selectedDiamonds || !profileId || !trxId || !method){ msgEl.textContent="⚠️ Fill all fields"; return; }
+  addDoc(collection(db,"orders"),{
+    userId: currentUserUid,
+    diamonds:selectedDiamonds,
+    price:selectedPrice,
+    profileId:profileId,
+    trxId:trxId,
+    paymentMethod:method,
+    paymentNumber:selectedPaymentNumber,
+    status:"Pending",
+    timestamp:serverTimestamp()
+  }).then(()=>{
+    msgEl.textContent="✅ Order submitted successfully!";
+    // Reset
+    selectedDiamonds=0; selectedPrice=0;
+    priceInput.value="";
+    paymentMethodSelect.value="";
+    paymentNumberDiv.textContent="Select method to see number";
+    document.getElementById("profileId").value="";
+    document.getElementById("trxId").value="";
+  }).catch(e=>msgEl.textContent="❌ "+e.message);
+};
+</script>
+</body>
+</html>
