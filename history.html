@@ -1,39 +1,94 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="bn">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Order History</title>
-<link rel="stylesheet" href="css/style.css">
+<style>
+body { font-family: Arial, Helvetica, sans-serif; background:#0f1115; color:#e7eaf0; padding:10px; }
+h2 { text-align:center; color:#06b6d4; margin-bottom:20px; }
+table { width:100%; border-collapse: collapse; }
+th, td { border:1px solid #333; padding:8px; text-align:center; font-size:14px; }
+th { background:#171a21; }
+td { background:#1f2937; }
+.table-container { overflow-x:auto; }
+.msg { text-align:center; margin-top:10px; color:#f87171; }
+</style>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+import { getFirestore, collection, query, where, orderBy, limit, getDocs } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAyhjOsIXNAkBglpRllt0OZIOJYpdB_9-8",
+  authDomain: "diamond-recharge-f7f59.firebaseapp.com",
+  projectId: "diamond-recharge-f7f59",
+  storageBucket: "diamond-recharge-f7f59.appspot.com",
+  messagingSenderId: "657717928489",
+  appId: "1:657717928489:web:70431ebc9afb7002d4b238",
+  measurementId: "G-TDK78BQ8SQ"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+window.addEventListener("load",()=>{
+  onAuthStateChanged(auth, async(user)=>{
+    const msg = document.getElementById("msg");
+    if(user){
+      const tableBody = document.getElementById("orderBody");
+      const ordersRef = collection(db,"orders");
+      const q = query(ordersRef, where("email","==",user.email), orderBy("createdAt","desc"), limit(20));
+      const snapshot = await getDocs(q);
+      if(snapshot.empty){
+        msg.textContent="কোনো অর্ডার পাওয়া যায়নি।";
+        return;
+      }
+      let count = 1;
+      snapshot.forEach(doc=>{
+        const data = doc.data();
+        const tr = document.createElement("tr");
+        tr.innerHTML=`
+          <td>${String(count).padStart(3,'0')}</td>
+          <td>${data.email}</td>
+          <td>${data.profileId}</td>
+          <td>${data.amount}</td>
+          <td>${data.method}</td>
+          <td>${data.account}</td>
+          <td>${data.txid}</td>
+          <td>${data.status}</td>
+        `;
+        tableBody.appendChild(tr);
+        count++;
+      });
+    } else {
+      alert("Please login first");
+      window.location.href="login.html";
+    }
+  });
+});
+</script>
 </head>
 <body>
-<nav class="topbar">
-  <button id="menuToggle" class="menu-btn">☰</button>
-  <div class="brand">Diamond Topup</div>
-  <div id="authToggle" class="auth-toggle"></div>
-</nav>
-
-<aside id="sidebar" class="sidebar">
-  <div class="profile-mini" id="profileMini"></div>
-  <a href="dashboard.html">Dashboard</a>
-  <a href="order.html">Order Diamonds</a>
-  <a href="history.html">Order History</a>
-  <a href="admin.html" id="adminLink" style="display:none">Admin Panel</a>
-  <hr/>
-  <button id="logoutBtn" style="display:none">Logout</button>
-</aside>
-
-<main class="container">
-  <section class="card">
-    <h2>My Orders</h2>
-    <div id="ordersList"></div>
-  </section>
-</main>
-
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-<script src="js/firebase-config.js"></script>
-<script src="js/app.js"></script>
+<h2>📜 Order History</h2>
+<div class="table-container">
+<table>
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Email</th>
+      <th>Profile ID</th>
+      <th>Amount</th>
+      <th>Method</th>
+      <th>Account</th>
+      <th>TXID</th>
+      <th>Status</th>
+    </tr>
+  </thead>
+  <tbody id="orderBody"></tbody>
+</table>
+</div>
+<p class="msg" id="msg"></p>
 </body>
 </html>
