@@ -1,34 +1,32 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Order History — SARKAR TELECOM</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <!-- Topbar -->
   <nav class="topbar">
     <button id="menuToggle" class="menu-btn">☰</button>
-    <div class="brand">SARKAR TELECOM</div>
+    <div class="brand"> SARKAR TELECOM </div>
+    <div id="authToggle" class="auth-toggle"></div>
   </nav>
 
-  <!-- Sidebar -->
   <aside id="sidebar" class="sidebar">
     <div class="profile-mini" id="profileMini"></div>
     <a href="dashboard.html">Dashboard</a>
     <a href="order.html">Order Diamonds</a>
-    <a href="order-history.html">Order History</a>
+    <a href="order-history.html" class="active">Order History</a>
     <a href="admin.html" id="adminLink" style="display:none">Admin Panel</a>
     <hr/>
     <button id="logoutBtn" style="display:none">Logout</button>
   </aside>
 
-  <!-- Main -->
   <main class="container">
     <section class="card">
       <h2>My Orders 📃</h2>
-      <table>
+      <table class="orders-table">
         <thead>
           <tr>
             <th>#</th>
@@ -41,18 +39,15 @@
           </tr>
         </thead>
         <tbody id="ordersTableBody">
-          <tr><td colspan="7">Loading...</td></tr>
+          <tr><td colspan="7">Please login to view your orders</td></tr>
         </tbody>
       </table>
     </section>
   </main>
 
-  <!-- Firebase compat SDK -->
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-
-  <!-- Config + App -->
   <script src="js/firebase-config.js"></script>
   <script src="js/app.js"></script>
 </body>
