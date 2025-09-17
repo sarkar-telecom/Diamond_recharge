@@ -108,7 +108,6 @@ function showAccount(method){
     select.addEventListener("change",()=> selectedAccount=select.value);
     accountBox.appendChild(select);
   } else {
-    // Only one account
     const input = document.createElement("input");
     input.type="text";
     input.value=selectedAccount;
@@ -136,14 +135,15 @@ window.submitOrder = async()=>{
     if(user){
       try{
         await addDoc(collection(db,"orders"),{
-          email:user.email,
+          email: user.email,
           profileId,
-          amount:selectedAmount.p,
-          method:selectedPaymentMethod,
-          account:selectedAccount,
+          amount: selectedAmount.p,
+          method: selectedPaymentMethod,
+          account: selectedAccount,
           txid,
-          status:"pending",
-          createdAt:serverTimestamp()
+          status: "pending",
+          createdAt: serverTimestamp(),
+          userId: user.uid   // ← এখানে যোগ করা হলো
         });
         msg.textContent="✅ Order submitted!";
         setTimeout(()=>{ window.location.href="order-history.html"; },1000);
