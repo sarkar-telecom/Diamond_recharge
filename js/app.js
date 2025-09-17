@@ -4,140 +4,108 @@
 const auth = firebase.auth();
 const db = firebase.firestore();
 
-// =========================
-// Sidebar Toggle
-// =========================
-const menuToggle = document.getElementById("menuToggle");
-if (menuToggle) {
-  menuToggle.addEventListener("click", () => {
-    document.getElementById("sidebar").classList.toggle("open");
-  });
-}
-
-// =========================
-// Auth State Listener
-// =========================
-auth.onAuthStateChanged(async (user) => {
-  if (user) {
-    console.log("✅ Logged in:", user.email);
-
-    try {
-      // Firestore থেকে user document আনুন
-      const userRef = db.collection("users").doc(user.uid);
-      const snap = await userRef.get();
-
-      if (snap.exists) {
-        const data = snap.data();
-
-        // Dashboard/Profile Page এ ইনফো বসানো
-        if (document.getElementById("displayName")) {
-          document.getElementById("displayName").textContent =
-            data.displayName || user.displayName || "No Name";
-        }
-        if (document.getElementById("role")) {
-          document.getElementById("role").textContent = data.role || "user";
-        }
-        if (document.getElementById("emailInfo")) {
-          document.getElementById("emailInfo").textContent = user.email || "-";
-        }
-        if (document.getElementById("phoneInfo")) {
-          document.getElementById("phoneInfo").textContent = data.phone || "-";
-        }
-        if (document.getElementById("balanceInfo")) {
-          document.getElementById("balanceInfo").textContent =
-            "Balance: " + (data.balance || 0);
-        }
-        if (document.getElementById("weeklyCompleted")) {
-          document.getElementById("weeklyCompleted").textContent =
-            "Weekly Completed: " + (data.weeklyCompleted || 0);
-        }
-        if (document.getElementById("avatar")) {
-          document.getElementById("avatar").src =
-            data.avatar || "https://via.placeholder.com/80";
-        }
-
-        // Admin link visible if role=admin
-        if (data.role === "admin" && document.getElementById("adminLink")) {
-          document.getElementById("adminLink").style.display = "block";
-        }
-
-        // Order History Page হলে
-        if (document.getElementById("ordersTableBody")) {
-          loadOrders(user.uid);
-        }
-      } else {
-        console.warn("⚠️ User document not found in Firestore");
-      }
-
-      // logout button দেখানো
-      if (document.getElementById("logoutBtn")) {
-        document.getElementById("logoutBtn").style.display = "block";
-      }
-    } catch (err) {
-      console.error("❌ Error fetching user data:", err);
-    }
-  } else {
-    console.log("❌ No user logged in");
-    // Auth required pages হলে redirect করুন
-    if (
-      location.pathname.includes("dashboard") ||
-      location.pathname.includes("order-history") ||
-      location.pathname.includes("admin")
-    ) {
-      window.location.href = "login.html";
-    }
+// Sidebar toggle
+document.addEventListener("DOMContentLoaded", () => {
+  const menuToggle = document.getElementById("menuToggle");
+  const sidebar = document.getElementById("sidebar");
+  if (menuToggle && sidebar) {
+    menuToggle.addEventListener("click", () => {
+      sidebar.classList.toggle("open");
+    });
   }
 });
 
-// =========================
+// Auth state listener
+auth.onAuthStateChanged(async (user) => {
+  const authToggle = document.getElementById("authToggle");
+  const logoutBtn = document.getElementById("logoutBtn");
+  const profileMini = document.getElementById("profileMini");
+  const adminLink = document.getElementById("adminLink");
+
+  if (user) {
+    if (authToggle) authToggle.innerHTML = `<span>${user.email}</span>`;
+    if (logoutBtn) logoutBtn.style.display = "block";
+
+    // Load user profile
+    try {
+      const userDoc = await db.collection("users").doc(user.uid).get();
+      if (userDoc.exists) {
+        const data = userDoc.data();
+        if (profileMini) {
+          profileMini.innerHTML = `
+            <img src="${data.avatar || 'img/default.png'}" class="avatar-mini"/>
+            <span>${data.displayName || user.email}</span>
+          `;
+        }
+        if (adminLink && data.role === "admin") {
+          adminLink.style.display = "block";
+        }
+      }
+    } catch (err) {
+      console.error("Error loading user profile:", err);
+    }
+
+    // যদি order-history page এ থাকি → order লোড করব
+    if (document.getElementById("ordersTableBody")) {
+      loadOrdersFromCollection(user.uid);
+    }
+
+  } else {
+    if (authToggle) authToggle.innerHTML = `<a href="login.html">Login</a>`;
+    if (logoutBtn) logoutBtn.style.display = "none";
+  }
+});
+
 // Logout
-// =========================
 const logoutBtn = document.getElementById("logoutBtn");
 if (logoutBtn) {
   logoutBtn.addEventListener("click", () => {
-    auth.signOut().then(() => {
-      window.location.href = "login.html";
-    });
+    auth.signOut();
+    window.location.href = "login.html";
   });
 }
 
 // =========================
-// Load Orders (for order-history.html)
+// Load Orders (user-specific)
 // =========================
-async function loadOrders(uid) {
+async function loadOrdersFromCollection(uid) {
   const ordersTableBody = document.getElementById("ordersTableBody");
   if (!ordersTableBody) return;
 
-  try {
-    const snap = await db.collection("users").doc(uid).get();
-    if (snap.exists) {
-      let orders = snap.data().orders || [];
-      orders = orders.reverse().slice(0, 20); // সর্বশেষ ২০টা অর্ডার
+  ordersTableBody.innerHTML = "<tr><td colspan='7'>Loading...</td></tr>";
 
-      if (orders.length > 0) {
-        ordersTableBody.innerHTML = "";
-        orders.forEach((order, index) => {
-          const row = `
-            <tr>
-              <td>${index + 1}</td>
-              <td>${order.profileId || "-"}</td>
-              <td>${order.amount || "-"}</td>
-              <td>${order.method || "-"}</td>
-              <td>${order.account || "-"}</td>
-              <td>${order.txid || "-"}</td>
-              <td>${order.status || "-"}</td>
-            </tr>
-          `;
-          ordersTableBody.innerHTML += row;
-        });
-      } else {
-        ordersTableBody.innerHTML =
-          "<tr><td colspan='7'>No orders found</td></tr>";
-      }
+  try {
+    const ordersSnapshot = await db
+      .collection("orders")
+      .where("userId", "==", uid)
+      .orderBy("createdAt", "desc")
+      .limit(20)
+      .get();
+
+    if (!ordersSnapshot.empty) {
+      ordersTableBody.innerHTML = "";
+      let index = 1;
+      ordersSnapshot.forEach(doc => {
+        const order = doc.data();
+        const row = `
+          <tr>
+            <td>${index}</td>
+            <td>${order.profileId || "-"}</td>
+            <td>${order.amount || "-"}</td>
+            <td>${order.method || "-"}</td>
+            <td>${order.account || "-"}</td>
+            <td>${order.txid || "-"}</td>
+            <td>${order.status || "-"}</td>
+          </tr>
+        `;
+        ordersTableBody.innerHTML += row;
+        index++;
+      });
+    } else {
+      ordersTableBody.innerHTML = "<tr><td colspan='7'>No orders found</td></tr>";
     }
   } catch (err) {
-    console.error("❌ Error loading orders:", err);
-    ordersTableBody.innerHTML =
-      "<tr><td colspan='7'>Error loading orders</td></tr>";
+    console.error("Error loading from orders collection:", err);
+    ordersTableBody.innerHTML = "<tr><td colspan='7'>Error loading orders</td></tr>";
   }
 }
