@@ -10,9 +10,9 @@ table{width:100%;border-collapse:collapse;margin-top:20px;}
 th,td{padding:10px;border:1px solid #333;text-align:center;}
 th{background:#171a21;}
 td{background:#1f2937;}
-.status-Pending{color:#facc15;font-weight:bold;}
-.status-Completed{color:#4ade80;font-weight:bold;}
-.status-Rejected{color:#f87171;font-weight:bold;}
+.status-pending{color:#facc15;font-weight:bold;}
+.status-completed{color:#4ade80;font-weight:bold;}
+.status-cancelled{color:#f87171;font-weight:bold;}
 button{margin:5px;padding:10px 20px;border:none;border-radius:6px;background:#06b6d4;color:#001;cursor:pointer;}
 button:hover{background:#0ea5e9;}
 </style>
@@ -37,7 +37,6 @@ button:hover{background:#0ea5e9;}
 </table>
 <button onclick="logout()">Logout</button>
 </div><script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script><script>
-// Firebase Config
 const firebaseConfig = {
   apiKey: "AIzaSyAyhjOsIXNAkBglpRllt0OZIOJYpdB_9-8",
   authDomain: "diamond-recharge-f7f59.firebaseapp.com",
@@ -54,43 +53,56 @@ const db = firebase.firestore();
 
 let currentUserUid = null;
 
-onAuthStateChanged(auth,user=>{
-  if(user) {
-    currentUserUid=user.uid;
-    loadOrders(user.email);
-  } else window.location.href="index.html";
+auth.onAuthStateChanged(async user => {
+  if(user){
+    currentUserUid = user.uid;
+    await loadUserOrders(currentUserUid);
+  } else {
+    window.location.href = 'index.html';
+  }
 });
 
-const tableBody = document.querySelector("#ordersTable tbody");
+const tableBody = document.querySelector('#ordersTable tbody');
 
-async function loadOrders(userEmail){
-  tableBody.innerHTML="Loading...";
-  const q = db.collection("orders").where("email","==",userEmail).orderBy("timestamp","desc");
-  const querySnapshot = await q.get();
-  tableBody.innerHTML="";
-  if(querySnapshot.empty){
-    tableBody.innerHTML="<tr><td colspan='8'>No orders yet</td></tr>";
-    return;
+async function loadUserOrders(uid){
+  tableBody.innerHTML = 'Loading...';
+  try {
+    const querySnapshot = await db.collection('orders')
+      .where('userId', '==', uid)
+      .orderBy('createdAt', 'desc')
+      .get();
+
+    tableBody.innerHTML = '';
+
+    if(querySnapshot.empty){
+      tableBody.innerHTML = '<tr><td colspan="8">No orders yet</td></tr>';
+      return;
+    }
+
+    querySnapshot.forEach(doc => {
+      const data = doc.data();
+      const statusClass = data.status.toLowerCase();
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${data.diamonds || ''} 💎</td>
+        <td>${data.amount || data.price || ''} ৳</td>
+        <td>${data.profileId || ''}</td>
+        <td>${data.method || ''}</td>
+        <td>${data.account || ''}</td>
+        <td>${data.txid || ''}</td>
+        <td class="status-${statusClass}">${data.status}</td>
+        <td>${data.createdAt ? new Date(data.createdAt).toLocaleString() : ''}</td>
+      `;
+      tableBody.appendChild(tr);
+    });
+  } catch(err){
+    console.error(err);
+    tableBody.innerHTML = '<tr><td colspan="8">Error loading orders</td></tr>';
   }
-  querySnapshot.forEach(doc=>{
-    const data=doc.data();
-    const tr=document.createElement("tr");
-    tr.innerHTML=`
-      <td>${data.diamonds} 💎</td>
-      <td>${data.price} ৳</td>
-      <td>${data.profileId}</td>
-      <td>${data.paymentMethod}</td>
-      <td>${data.paymentNumber}</td>
-      <td>${data.trxId}</td>
-      <td class="status-${data.status}">${data.status}</td>
-      <td>${data.timestamp?.toDate().toLocaleString()||""}</td>
-    `;
-    tableBody.appendChild(tr);
-  });
 }
 
 function logout(){
-  auth.signOut().then(()=>window.location.href="index.html");
+  auth.signOut().then(()=>window.location.href='index.html');
 }
 </script></body>
 </html>
