@@ -13,12 +13,15 @@
     th { background: #1f2937; }
     tr:nth-child(even) { background: #171a21; }
     tr:nth-child(odd) { background: #0f1115; }
+    select { padding: 5px; border-radius: 4px; background: #1f2937; color: #e7eaf0; border: 1px solid #333; }
+    button.updateBtn { padding: 5px 10px; border-radius: 5px; border: none; background: #06b6d4; color: #000; cursor: pointer; }
+    button.updateBtn:hover { background: #0ea5e9; }
     #denied { color: red; text-align: center; font-size: 18px; margin-top: 50px; }
   </style>
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
-    import { getFirestore, collection, getDocs, orderBy, query } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+    import { getFirestore, collection, getDocs, orderBy, query, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyAyhjOsIXNAkBglpRllt0OZIOJYpdB_9-8",
@@ -34,34 +37,51 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    // ✅ Admin Email
     const adminEmails = ["samrat.khulnas@gmail.com"];
+    const orderTable = document.getElementById("orderTable");
 
-    onAuthStateChanged(auth, async (user) => {
+    // Load Orders
+    async function loadOrders(){
+      orderTable.innerHTML = "";
+      const q = query(collection(db,"orders"), orderBy("createdAt","desc"));
+      const snap = await getDocs(q);
+      snap.forEach(docSnap => {
+        const d = docSnap.data();
+        const row = document.createElement("tr");
+
+        row.innerHTML = `
+          <td>${d.uid}</td>
+          <td>${d.profileId}</td>
+          <td>${d.amount}</td>
+          <td>${d.method}</td>
+          <td>${d.account}</td>
+          <td>${d.txid}</td>
+          <td>
+            <select id="status_${docSnap.id}">
+              <option value="pending" ${d.status==="pending"?"selected":""}>Pending</option>
+              <option value="completed" ${d.status==="completed"?"selected":""}>Completed</option>
+              <option value="cancelled" ${d.status==="cancelled"?"selected":""}>Cancelled</option>
+            </select>
+            <button class="updateBtn" onclick="updateStatus('${docSnap.id}')">Update</button>
+          </td>
+        `;
+        orderTable.appendChild(row);
+      });
+    }
+
+    // Update Status
+    window.updateStatus = async(orderId)=>{
+      const newStatus = document.getElementById(`status_${orderId}`).value;
+      await updateDoc(doc(db,"orders",orderId), { status: newStatus });
+      alert("✅ Status updated!");
+      loadOrders(); // Refresh table
+    }
+
+    onAuthStateChanged(auth, (user)=>{
       if(user){
         if(adminEmails.includes(user.email)){
           document.getElementById("adminContent").style.display = "block";
-
-          // Load all orders
-          const q = query(collection(db,"orders"), orderBy("createdAt","desc"));
-          const snap = await getDocs(q);
-          const table = document.getElementById("orderTable");
-          table.innerHTML = "";
-          snap.forEach(doc=>{
-            const d = doc.data();
-            table.innerHTML += `
-              <tr>
-                <td>${d.uid}</td>
-                <td>${d.profileId}</td>
-                <td>${d.amount}</td>
-                <td>${d.method}</td>
-                <td>${d.account}</td>
-                <td>${d.txid}</td>
-                <td>${d.status}</td>
-              </tr>
-            `;
-          });
-
+          loadOrders();
         } else {
           document.getElementById("denied").style.display = "block";
         }
