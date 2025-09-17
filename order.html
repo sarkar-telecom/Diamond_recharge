@@ -7,7 +7,7 @@
 <style>
 body { font-family: Arial, Helvetica, sans-serif; background:#0f1115; color:#e7eaf0; padding:10px; }
 h2 { text-align:center; color:#06b6d4; margin-bottom:20px; }
-.grid { display:grid; grid-template-columns: repeat(auto-fit,minmax(80px,1fr)); gap:10px; margin-bottom:20px; }
+.grid { display:grid; grid-template-columns: repeat(auto-fit,minmax(80px,1fr)); gap:10px; margin-bottom:10px; }
 .grid button { padding:10px; border:none; border-radius:6px; cursor:pointer; background:#1f2937; color:#e7eaf0; font-weight:bold; }
 .grid button.selected { background:#06b6d4; color:#000; }
 input, select { width:100%; padding:8px; margin:6px 0; border-radius:6px; border:1px solid #333; background:#171a21; color:#e7eaf0; }
@@ -17,6 +17,7 @@ button#submitBtn:hover { background:#0ea5e9; }
 .copy-box input { flex:1; }
 .copy-box button { padding:6px; border:none; border-radius:6px; cursor:pointer; background:#06b6d4; color:#000; }
 .msg { margin-top:10px; font-size:14px; min-height:20px; }
+.amount-display { margin-bottom:10px; font-weight:bold; text-align:center; }
 </style>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
@@ -51,12 +52,13 @@ const paymentMethods = {
 
 let selectedAmount = null;
 let selectedPaymentMethod = null;
+let selectedAccount = null;
 
 window.addEventListener("load",()=>{
   const grid = document.getElementById("diamondGrid");
   diamondAmounts.forEach(a=>{
     const btn = document.createElement("button");
-    btn.textContent=`${a.d} 💎 (${a.p}/-)`;
+    btn.textContent=`${a.d} 💎`;
     btn.onclick=()=>selectAmount(a,btn);
     grid.appendChild(btn);
   });
@@ -71,7 +73,13 @@ window.addEventListener("load",()=>{
 
   methodSelect.addEventListener("change",()=>{
     selectedPaymentMethod = methodSelect.value;
-    showAccounts(selectedPaymentMethod);
+    showAccount(selectedPaymentMethod);
+  });
+
+  // Profile ID input: only numbers/letters allowed, no spaces
+  const profileInput = document.getElementById("profileId");
+  profileInput.addEventListener("input",e=>{
+    profileInput.value = profileInput.value.replace(/[^a-zA-Z0-9]/g,'');
   });
 });
 
@@ -79,24 +87,29 @@ function selectAmount(a,btn){
   selectedAmount = a;
   document.querySelectorAll("#diamondGrid button").forEach(b=>b.classList.remove("selected"));
   btn.classList.add("selected");
-  document.getElementById("amountInput").value=a.p;
+  document.getElementById("amountDisplay").textContent = `Amount: ${a.p} /-`;
 }
 
-function showAccounts(method){
+function showAccount(method){
   const accountBox = document.getElementById("accountBox");
   accountBox.innerHTML="";
-  if(!method) return;
+  if(!method || !paymentMethods[method]) return;
+  selectedAccount = paymentMethods[method][0]; // default first
+  const select = document.createElement("select");
   paymentMethods[method].forEach(acc=>{
-    const div = document.createElement("div");
-    div.className="copy-box";
-    div.innerHTML=`<input type="text" readonly value="${acc}"><button onclick="copyAccount('${acc}')">Copy</button>`;
-    accountBox.appendChild(div);
+    const opt = document.createElement("option");
+    opt.value = acc;
+    opt.textContent = acc;
+    select.appendChild(opt);
   });
-}
+  select.addEventListener("change",()=> selectedAccount=select.value);
+  accountBox.appendChild(select);
 
-function copyAccount(acc){
-  navigator.clipboard.writeText(acc);
-  alert("Copied: "+acc);
+  // Copy button
+  const copyBtn = document.createElement("button");
+  copyBtn.textContent="Copy";
+  copyBtn.onclick=()=>{ navigator.clipboard.writeText(selectedAccount); alert("Copied: "+selectedAccount); }
+  accountBox.appendChild(copyBtn);
 }
 
 window.submitOrder = async()=>{
@@ -105,7 +118,7 @@ window.submitOrder = async()=>{
   const msg = document.getElementById("msg");
 
   if(!selectedAmount){ msg.textContent="⚠️ Select Diamond amount"; return;}
-  if(!profileId){ msg.textContent="⚠️ Enter Profile ID / Number"; return;}
+  if(!profileId){ msg.textContent="⚠️ Enter Profile ID"; return;}
   if(!selectedPaymentMethod){ msg.textContent="⚠️ Select Payment Method"; return;}
   if(!txid){ msg.textContent="⚠️ Enter Transaction ID"; return;}
 
@@ -117,13 +130,12 @@ window.submitOrder = async()=>{
           profileId,
           amount:selectedAmount.p,
           method:selectedPaymentMethod,
-          account:document.querySelector(`#accountBox input`).value,
+          account:selectedAccount,
           txid,
           status:"pending",
           createdAt:serverTimestamp()
         });
         msg.textContent="✅ Order submitted!";
-        // redirect to order history
         setTimeout(()=>{ window.location.href="order-history.html"; },1000);
       }catch(e){
         msg.textContent="❌ "+e.message;
@@ -140,11 +152,10 @@ window.submitOrder = async()=>{
 <h2>💎 Order Diamonds</h2>
 
 <div id="diamondGrid" class="grid"></div>
+<div id="amountDisplay" class="amount-display"></div>
 
-<input type="hidden" id="amountInput">
-
-<label>Profile ID / Name / Number</label>
-<input type="text" id="profileId" placeholder="Enter your Profile ID / Number">
+<label>Profile ID / Number</label>
+<input type="text" id="profileId" placeholder="Enter Profile ID / Number">
 
 <label>Payment Method</label>
 <select id="paymentMethod">
@@ -158,6 +169,5 @@ window.submitOrder = async()=>{
 
 <button id="submitBtn" onclick="submitOrder()">Submit Order</button>
 <p class="msg" id="msg"></p>
-
 </body>
 </html>
