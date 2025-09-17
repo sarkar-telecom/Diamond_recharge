@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>📝 Register</title>
+  <style>
+    body{font-family:Arial;background:#0f1115;color:#eee;display:flex;justify-content:center;align-items:center;height:100vh;margin:0;}
+    .card{background:#171a21;padding:25px;border-radius:12px;box-shadow:0 0 12px rgba(0,255,255,0.3);width:320px;text-align:center;}
+    h2{margin-bottom:15px;color:#06b6d4;}
+    input{width:90%;padding:10px;margin:8px 0;border:none;border-radius:8px;background:#222;color:#fff;}
+    button{width:95%;padding:10px;margin:10px 0;border:none;border-radius:8px;cursor:pointer;font-weight:bold;}
+    .register{background:#06b6d4;color:#000;}
+    .google{background:#fff;color:#000;}
+    .extra{text-align:right;font-size:13px;margin:5px;}
+    a{color:#06b6d4;text-decoration:none;}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>📝 Register</h2>
+    <input type="text" id="name" placeholder="Full Name" required><br>
+    <input type="email" id="email" placeholder="Email" required><br>
+    <input type="password" id="password" placeholder="Password" required><br>
+    <button class="register" onclick="register()">Register</button>
+    <button class="google" onclick="googleLogin()">🔗 Register with Google</button>
+    <div class="extra"><a href="login.html">Already have an account? Login</a></div>
+  </div>
+
+  <!-- Firebase -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword, updateProfile, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAyhjOsIXNAkBglpRllt0OZIOJYpdB_9-8",
+      authDomain: "diamond-recharge-f7f59.firebaseapp.com",
+      projectId: "diamond-recharge-f7f59",
+      storageBucket: "diamond-recharge-f7f59.firebasestorage.app",
+      messagingSenderId: "657717928489",
+      appId: "1:657717928489:web:70431ebc9afb7002d4b238",
+      measurementId: "G-TDK78BQ8SQ"
+    };
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
+
+    // Register
+    window.register=()=>{
+      const name=document.getElementById("name").value;
+      const email=document.getElementById("email").value;
+      const pass=document.getElementById("password").value;
+
+      createUserWithEmailAndPassword(auth,email,pass).then(res=>{
+        updateProfile(res.user,{displayName:name});
+        alert("✅ Registration successful!");
+        window.location.href="dashboard.html";
+      }).catch(e=>alert("❌ "+e.message));
+    };
+
+    // Google register/login
+    window.googleLogin=()=>{
+      signInWithPopup(auth,provider).then(()=>{
+        alert("✅ Google login successful!");
+        window.location.href="dashboard.html";
+      }).catch(e=>alert("❌ "+e.message));
+    };
+  </script>
+</body>
+</html>
