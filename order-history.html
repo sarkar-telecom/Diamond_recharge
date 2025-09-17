@@ -68,8 +68,8 @@ async function loadUserOrders(uid){
   tableBody.innerHTML = 'Loading...';
   try {
     const querySnapshot = await db.collection('orders')
-      .where('userId', '==', uid)
-      .orderBy('createdAt', 'desc')
+      .where('userId','==',uid)
+      .orderBy('createdAt','desc')
       .get();
 
     tableBody.innerHTML = '';
@@ -81,7 +81,16 @@ async function loadUserOrders(uid){
 
     querySnapshot.forEach(doc => {
       const data = doc.data();
-      const statusClass = data.status.toLowerCase();
+      let timestamp;
+      if(data.createdAt && data.createdAt.toDate){
+        timestamp = data.createdAt.toDate().toLocaleString();
+      } else if(typeof data.createdAt === 'string'){
+        timestamp = new Date(data.createdAt).toLocaleString();
+      } else {
+        timestamp = '';
+      }
+
+      const statusClass = (data.status || '').toLowerCase();
       const tr = document.createElement('tr');
       tr.innerHTML = `
         <td>${data.diamonds || ''} 💎</td>
@@ -90,8 +99,8 @@ async function loadUserOrders(uid){
         <td>${data.method || ''}</td>
         <td>${data.account || ''}</td>
         <td>${data.txid || ''}</td>
-        <td class="status-${statusClass}">${data.status}</td>
-        <td>${data.createdAt ? new Date(data.createdAt).toLocaleString() : ''}</td>
+        <td class="status-${statusClass}">${data.status || ''}</td>
+        <td>${timestamp}</td>
       `;
       tableBody.appendChild(tr);
     });
