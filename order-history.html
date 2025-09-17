@@ -1,70 +1,130 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>User Order History</title>
+<title>Order History - Diamond Recharge</title>
 <style>
-  body { font-family: Arial, Helvetica, sans-serif; background: #0f1115; color: #e7eaf0; padding: 10px; }
-  h2 { color: #06b6d4; text-align: center; }
-  .controls { margin-bottom: 10px; display: flex; flex-wrap: wrap; gap: 10px; }
-  .controls input, .controls select { padding: 5px; border-radius: 4px; border: 1px solid #333; background: #171a21; color: #e7eaf0; }
-  table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; }
-  table, th, td { border: 1px solid #444; }
-  th, td { padding: 6px; text-align: center; }
-  th { background: #1f2937; }
-  tr:nth-child(even) { background: #171a21; }
-  tr:nth-child(odd) { background: #0f1115; }
-  .status-pending{color:#facc15;font-weight:bold;}
-  .status-completed{color:#4ade80;font-weight:bold;}
-  .status-cancelled{color:#f87171;font-weight:bold;}
-  button{margin:5px;padding:10px 20px;border:none;border-radius:6px;background:#06b6d4;color:#001;cursor:pointer;}
-  button:hover{background:#0ea5e9;}
+body { font-family: Arial,sans-serif; background:#0f1115; color:#e7eaf0; padding:20px; }
+h2 { color:#06b6d4; text-align:center; }
+.controls { margin-bottom:10px; }
+.controls select { padding:5px; border-radius:4px; border:1px solid #333; background:#171a21; color:#e7eaf0; }
+table { width:100%; border-collapse:collapse; margin-top:20px; }
+th,td { padding:10px; border:1px solid #333; text-align:center; }
+th { background:#171a21; }
+td { background:#1f2937; }
+.status-pending{color:#facc15;font-weight:bold;}
+.status-completed{color:#4ade80;font-weight:bold;}
+.status-cancelled{color:#f87171;font-weight:bold;}
+button{margin:5px;padding:10px 20px;border:none;border-radius:6px;background:#06b6d4;color:#001;cursor:pointer;}
+button:hover{background:#0ea5e9;}
 </style>
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
-import { getFirestore, collection, query, where, orderBy, getDocs } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";const firebaseConfig = { apiKey: "AIzaSyAyhjOsIXNAkBglpRllt0OZIOJYpdB_9-8", authDomain: "diamond-recharge-f7f59.firebaseapp.com", projectId: "diamond-recharge-f7f59", storageBucket: "diamond-recharge-f7f59.appspot.com", messagingSenderId: "657717928489", appId: "1:657717928489:web:70431ebc9afb7002d4b238", measurementId: "G-TDK78BQ8SQ" };
 
-const app = initializeApp(firebaseConfig); const auth = getAuth(app); const db = getFirestore(app);
-
-const tableBody = document.getElementById("orderTable");
-
-async function loadUserOrders(uid, statusFilter = ''){ tableBody.innerHTML = 'Loading...'; try { let q = query(collection(db,"orders"), where("userId","==",uid), orderBy("createdAt","desc")); const snap = await getDocs(q); tableBody.innerHTML = ''; if(snap.empty){ tableBody.innerHTML = '<tr><td colspan="7">No orders yet</td></tr>'; return; } snap.forEach(docSnap => { const d = docSnap.data(); if(statusFilter && d.status !== statusFilter) return; const timestamp = d.createdAt?.toDate ? d.createdAt.toDate().toLocaleString() : d.createdAt || ''; const statusClass = (d.status || '').toLowerCase(); const tr = document.createElement("tr"); tr.innerHTML = <td>${d.diamonds || ''} 💎</td> <td>${d.amount || ''} ৳</td> <td>${d.profileId || ''}</td> <td>${d.method || ''}</td> <td>${d.account || ''}</td> <td>${d.txid || ''}</td> <td class="status-${statusClass}">${d.status || ''}</td> <td>${timestamp}</td>; tableBody.appendChild(tr); }); } catch(err){ console.error(err); tableBody.innerHTML = '<tr><td colspan="7">Error loading orders</td></tr>'; } }
-
-onAuthStateChanged(auth,user => { if(user){ document.getElementById('adminContent').style.display='block'; const statusSelect = document.getElementById('filterStatus'); statusSelect.onchange = () => loadUserOrders(user.uid, statusSelect.value); loadUserOrders(user.uid); } else { window.location.href='index.html'; } });
-
-function logout(){ auth.signOut().then(()=>window.location.href='index.html'); } </script>
-
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js"></script>
 </head>
 <body>
+
 <h2>আমার অর্ডার হিস্টোরি</h2>
-<div id="adminContent" style="display:none;">
-  <div class="controls">
-    <select id="filterStatus">
-      <option value="">All Status</option>
-      <option value="pending">Pending</option>
-      <option value="completed">Completed</option>
-      <option value="cancelled">Cancelled</option>
-    </select>
-  </div>
-  <div style="overflow-x:auto;">
-    <table>
-      <thead>
-        <tr>
-          <th>Diamonds</th>
-          <th>Price (৳)</th>
-          <th>Profile ID</th>
-          <th>Payment Method</th>
-          <th>Payment Number</th>
-          <th>TRX ID</th>
-          <th>Status</th>
-          <th>Timestamp</th>
-        </tr>
-      </thead>
-      <tbody id="orderTable"></tbody>
-    </table>
-  </div>
-  <button onclick="logout()">Logout</button>
+
+<div class="controls">
+  <select id="filterStatus">
+    <option value="">All Status</option>
+    <option value="pending">Pending</option>
+    <option value="completed">Completed</option>
+    <option value="cancelled">Cancelled</option>
+  </select>
 </div>
+
+<div style="overflow-x:auto;">
+<table>
+  <thead>
+    <tr>
+      <th>Diamonds</th>
+      <th>Price (৳)</th>
+      <th>Profile ID</th>
+      <th>Payment Method</th>
+      <th>Payment Number</th>
+      <th>TRX ID</th>
+      <th>Status</th>
+      <th>Timestamp</th>
+    </tr>
+  </thead>
+  <tbody id="orderTable"></tbody>
+</table>
+</div>
+
+<button onclick="logout()">Logout</button>
+
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyAyhjOsIXNAkBglpRllt0OZIOJYpdB_9-8",
+  authDomain: "diamond-recharge-f7f59.firebaseapp.com",
+  projectId: "diamond-recharge-f7f59",
+  storageBucket: "diamond-recharge-f7f59.appspot.com",
+  messagingSenderId: "657717928489",
+  appId: "1:657717928489:web:70431ebc9afb7002d4b238",
+  measurementId: "G-TDK78BQ8SQ"
+};
+
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+const tableBody = document.getElementById('orderTable');
+const filterSelect = document.getElementById('filterStatus');
+
+auth.onAuthStateChanged(user => {
+  if(user){
+    loadOrders(user.uid, filterSelect.value);
+    filterSelect.onchange = () => loadOrders(user.uid, filterSelect.value);
+  } else {
+    window.location.href = 'index.html';
+  }
+});
+
+function logout(){
+  auth.signOut().then(()=>window.location.href='index.html');
+}
+
+async function loadOrders(uid, statusFilter=''){
+  tableBody.innerHTML = 'Loading...';
+  try{
+    let q = db.collection('orders').where('userId','==',uid).orderBy('createdAt','desc');
+    const snapshot = await q.get();
+    tableBody.innerHTML = '';
+    if(snapshot.empty){
+      tableBody.innerHTML = '<tr><td colspan="8">No orders yet</td></tr>';
+      return;
+    }
+    snapshot.forEach(docSnap=>{
+      const d = docSnap.data();
+      if(statusFilter && d.status !== statusFilter) return;
+      let timestamp = '';
+      if(d.createdAt?.toDate) timestamp = d.createdAt.toDate().toLocaleString();
+      else if(d.createdAt) timestamp = new Date(d.createdAt).toLocaleString();
+      const statusClass = (d.status || '').toLowerCase();
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${d.diamonds || ''} 💎</td>
+        <td>${d.amount || ''} ৳</td>
+        <td>${d.profileId || ''}</td>
+        <td>${d.method || ''}</td>
+        <td>${d.account || ''}</td>
+        <td>${d.txid || ''}</td>
+        <td class="status-${statusClass}">${d.status || ''}</td>
+        <td>${timestamp}</td>
+      `;
+      tableBody.appendChild(tr);
+    });
+  } catch(err){
+    console.error(err);
+    tableBody.innerHTML = '<tr><td colspan="8">Error loading orders</td></tr>';
+  }
+}
+</script>
+
 </body>
 </html>
