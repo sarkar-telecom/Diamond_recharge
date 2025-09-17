@@ -4,52 +4,120 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Place Order</title>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
-  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #0f1115;
+      color: #e7eaf0;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 20px;
+      min-height: 100vh;
+    }
+
+    .card {
+      background: #171a21;
+      padding: 20px;
+      border-radius: 16px;
+      width: 100%;
+      max-width: 500px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.6);
+    }
+
+    h2 { color: #06b6d4; text-align: center; margin-bottom: 20px; }
+
+    label { display: block; margin-top: 15px; margin-bottom: 5px; font-weight: bold; }
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 6px;
+      border: 1px solid #333;
+      background: #0f1115;
+      color: #e7eaf0;
+      box-sizing: border-box;
+    }
+
+    #diamondOptions {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    #diamondOptions button {
+      background: #06b6d4;
+      color: #001;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    #diamondOptions button:hover { background: #0ea5e9; }
+
+    #copyBox { width: calc(100% - 60px); display: inline-block; }
+    #copyBtn { width: 50px; display: inline-block; margin-left: 5px; background: #06b6d4; color: #001; border: none; border-radius: 6px; cursor: pointer; }
+
+    #copyBtn:hover { background: #0ea5e9; }
+
+    button.submitBtn {
+      background: #06b6d4;
+      color: #001;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button.submitBtn:hover { background: #0ea5e9; }
+
+    @media(max-width: 480px){
+      #diamondOptions { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
 </head>
 <body>
-  <h2>💎 Diamond Recharge Order</h2>
+  <div class="card">
+    <h2>💎 Diamond Recharge Order</h2>
 
-  <form id="orderForm">
-    <!-- Profile ID -->
-    <label>Profile ID / Number:</label>
-    <input type="text" id="profileId" required><br><br>
+    <form id="orderForm">
+      <label>Profile ID / Number</label>
+      <input type="text" id="profileId" placeholder="Enter your profile ID / number" required>
 
-    <!-- Diamond Amount -->
-    <label>Select Diamonds:</label>
-    <div id="diamondOptions" class="grid"></div>
-    <input type="hidden" id="amount"><br><br>
+      <label>Select Diamonds</label>
+      <div id="diamondOptions"></div>
+      <input type="hidden" id="amount">
 
-    <!-- Payment Method -->
-    <label>Payment Method:</label>
-    <select id="paymentMethod" required>
-      <option value="">-- Select Method --</option>
-      <option value="bkash">bKash</option>
-      <option value="nagad">Nagad</option>
-      <option value="rocket">Rocket</option>
-      <option value="upay">Upay</option>
-    </select><br><br>
+      <label>Payment Method</label>
+      <select id="paymentMethod" required>
+        <option value="">-- Select Method --</option>
+        <option value="bkash">bKash</option>
+        <option value="nagad">Nagad</option>
+        <option value="rocket">Rocket</option>
+        <option value="upay">Upay</option>
+      </select>
 
-    <!-- Account Selection -->
-    <label>Account Number:</label>
-    <select id="accountNumber" required>
-      <option value="">-- Select Account --</option>
-    </select>
-    <input type="text" id="copyBox" readonly><button type="button" onclick="copyNumber()">Copy</button><br><br>
+      <label>Account Number</label>
+      <select id="accountNumber" required>
+        <option value="">-- Select Account --</option>
+      </select>
 
-    <!-- TxID -->
-    <label>Transaction ID:</label>
-    <input type="text" id="txid" required><br><br>
+      <div style="display:flex; gap:5px;">
+        <input type="text" id="copyBox" readonly placeholder="Copy account number">
+        <button type="button" id="copyBtn" onclick="copyNumber()">Copy</button>
+      </div>
 
-    <button type="submit">Submit Order</button>
-  </form>
+      <label>Transaction ID (TxID)</label>
+      <input type="text" id="txid" placeholder="Enter your transaction ID" required>
+
+      <button type="submit" class="submitBtn">Submit Order</button>
+    </form>
+  </div>
 
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
-    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyAyhjOsIXNAkBglpRllt0OZIOJYpdB_9-8",
@@ -78,25 +146,21 @@
       { diamond: "20000 💎", price: 44000 }
     ];
 
-    // show diamond buttons
-    const diamondContainer = document.getElementById("diamondOptions");
-    diamondOptions.forEach(item => {
-      const btn = document.createElement("button");
-      btn.type = "button";
-      btn.textContent = `${item.diamond} (${item.price}/-)`;
-      btn.onclick = () => {
-        document.getElementById("amount").value = item.price;
-      };
-      diamondContainer.appendChild(btn);
-    });
-
-    // payment numbers
     const numbers = {
       bkash: ["01715118684","01781332352","01790216921","01405475992"],
       nagad: ["01715118684","01790216921","01919961919"],
       rocket: ["017151186847"],
       upay: ["01715118684"]
     };
+
+    const diamondContainer = document.getElementById("diamondOptions");
+    diamondOptions.forEach(item => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.textContent = `${item.diamond} (${item.price}/-)`;
+      btn.onclick = () => { document.getElementById("amount").value = item.price; };
+      diamondContainer.appendChild(btn);
+    });
 
     document.getElementById("paymentMethod").addEventListener("change", (e) => {
       const method = e.target.value;
