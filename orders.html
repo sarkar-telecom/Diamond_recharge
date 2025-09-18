@@ -36,9 +36,32 @@ header {
   flex:1;
   text-align:center;
 }
-.profile { position:relative; cursor:pointer; }
-.profile img { width:40px; height:40px; border-radius:50%; }
-.dropdown { position:absolute; right:0; top:50px; background:#fff; color:#333; min-width:160px; border-radius:6px; display:none; flex-direction:column; box-shadow:0 4px 6px rgba(0,0,0,0.2); }
+.profile { 
+  position:relative; 
+  cursor:pointer; 
+  display:flex; 
+  align-items:center; 
+  padding-right:30px;
+}
+.profile img { 
+  width:45px; 
+  height:45px; 
+  border-radius:50%; 
+  object-fit:cover; 
+  margin-left:25px;
+}
+.dropdown { 
+  position:absolute; 
+  right:0; 
+  top:50px; 
+  background:#fff; 
+  color:#333; 
+  min-width:160px; 
+  border-radius:6px; 
+  display:none; 
+  flex-direction:column; 
+  box-shadow:0 4px 6px rgba(0,0,0,0.2); 
+}
 .dropdown a { padding:10px; text-decoration:none; color:#333; border-bottom:1px solid #eee; }
 .dropdown a:hover { background:#f0f0f0; }
 
@@ -105,6 +128,7 @@ button#submitBtn {
   margin-top:10px;
 }
 button#submitBtn:hover { background:#0ea5e9; }
+button#submitBtn:disabled { background:#555; cursor:not-allowed; }
 
 .copy-box { display:flex; gap:5px; align-items:center; margin-bottom:10px; }
 .copy-box input { flex:1; }
@@ -116,7 +140,7 @@ button#submitBtn:hover { background:#0ea5e9; }
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
-import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+import { getFirestore, collection, addDoc, serverTimestamp, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAyhjOsIXNAkBglpRllt0OZIOJYpdB_9-8",
@@ -138,10 +162,10 @@ const diamondAmounts = [
 ];
 
 const paymentMethods = {
-  "bKash":["01715118684","01781332352","01790216921","01405475992"],
-  "Nagad":["01715118684","01790216921"],
-  "Rocket":["017151186847"],
-  "Upay":["01715118684"],
+  "bKash Personal":["01715118684","01781332352","01790216921","01405475992"],
+  "Nagad Personal":["01715118684","01790216921"],
+  "Rocket Personal":["017151186847"],
+  "Upay Personal":["01715118684"],
   "Nagad Agent":["01919961919"],
   "bKash Payment":["01971744060","01911611637"]
 };
@@ -230,11 +254,14 @@ window.submitOrder=async()=>{
   const profileId=document.getElementById("profileId").value.trim();
   const txid=document.getElementById("txid").value.trim();
   const msg=document.getElementById("msg");
+  const submitBtn=document.getElementById("submitBtn");
 
   if(!selectedAmount){ msg.textContent="⚠️ Select Diamond amount"; return;}
   if(!profileId){ msg.textContent="⚠️ Enter Profile ID / Number"; return;}
   if(!selectedPaymentMethod){ msg.textContent="⚠️ Select Payment Method"; return;}
   if(!txid){ msg.textContent="⚠️ Enter Transaction ID"; return;}
+
+  submitBtn.disabled = true; // বাটন ডিসেবল
 
   onAuthStateChanged(auth, async(user)=>{
     if(user){
@@ -251,14 +278,46 @@ window.submitOrder=async()=>{
           userId:user.uid
         });
         msg.textContent="✅ Order submitted!";
+
+        // ফর্ম ফাঁকা করা
+        document.getElementById("profileId").value="";
+        document.getElementById("txid").value="";
+        document.getElementById("paymentMethod").value="";
+        document.getElementById("accountBox").innerHTML="";
+        document.getElementById("amountDisplay").textContent="";
+        document.querySelectorAll("#diamondGrid button").forEach(b=>b.classList.remove("selected"));
+        selectedAmount=null;
+        selectedPaymentMethod=null;
+        selectedAccount=null;
+
+        // ১ সেকেন্ড পরে রিডাইরেক্ট
         setTimeout(()=>window.location.href="order-history.html",1000);
-      }catch(e){ msg.textContent="❌ "+e.message; }
+
+      }catch(e){ 
+        msg.textContent="❌ "+e.message; 
+        submitBtn.disabled=false; // Error হলে আবার enable
+      }
     } else {
       alert("Please login first");
       window.location.href="login.html";
     }
   });
 }
+
+// Avatar লোড
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    try {
+      const userRef = doc(db, "users", user.uid);
+      const snap = await getDoc(userRef);
+      if (snap.exists() && snap.data().avatar) {
+        document.getElementById("profilePic").src = snap.data().avatar;
+      }
+    } catch (e) {
+      console.error("Avatar load error:", e);
+    }
+  }
+});
 </script>
 </head>
 <body>
