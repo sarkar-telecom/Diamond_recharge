@@ -6,16 +6,22 @@
 <title>My Orders</title>
 <style>
 body { font-family: Arial, Helvetica, sans-serif; background:#0f1115; color:#e7eaf0; padding:10px; }
-h2 { text-align:center; color:#06b6d4; margin-bottom:20px; }
-table { width:100%; border-collapse: collapse; margin-bottom:20px; display:none; }
+h2 { text-align:center; color:#06b6d4; margin-bottom:10px; }
+button#orderPageBtn { background:#06b6d4; color:#000; border:none; padding:8px 12px; border-radius:6px; cursor:pointer; margin-bottom:10px; }
+button#orderPageBtn:hover { background:#0ea5e9; }
+input#searchBox { width:100%; padding:8px; margin-bottom:10px; border-radius:6px; border:1px solid #333; background:#171a21; color:#e7eaf0; }
+table { width:100%; border-collapse: collapse; margin-bottom:10px; display:none; }
 th, td { padding:8px; text-align:center; border:1px solid #333; }
 th { background:#1f2937; color:#06b6d4; }
 td { background:#171a21; }
 .status-pending { color:#facc15; font-weight:bold; }
 .status-completed { color:#22c55e; font-weight:bold; }
 .status-failed { color:#ef4444; font-weight:bold; }
-.msg { text-align:center; margin-top:20px; font-size:16px; color:#06b6d4; }
-.loader { text-align:center; font-size:16px; color:#06b6d4; }
+.msg { text-align:center; margin-top:10px; font-size:16px; color:#06b6d4; }
+.pagination { text-align:center; margin-top:10px; }
+.pagination button { margin:2px; padding:6px 10px; border:none; border-radius:6px; cursor:pointer; background:#1f2937; color:#06b6d4; }
+.pagination button.active { background:#06b6d4; color:#000; }
+.pagination button:hover { background:#0ea5e9; color:#000; }
 </style>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
@@ -36,13 +42,76 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-window.addEventListener("load",()=>{
-  const table = document.getElementById("ordersTable");
-  const tableBody = document.getElementById("ordersBody");
-  const msg = document.getElementById("msg");
-  
-  msg.textContent = "⏳ Loading orders...";
+let allOrders = []; // সব অর্ডার রাখবে
+let currentPage = 1;
+const perPage = 20;
 
+function renderTable(orders){
+  const tableBody = document.getElementById("ordersBody");
+  tableBody.innerHTML = "";
+  orders.forEach(data=>{
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${data.profileId || "-"}</td>
+      <td>${data.amount || "-"}</td>
+      <td>${data.method || "-"}</td>
+      <td>${data.account || "-"}</td>
+      <td>${data.txid || "-"}</td>
+      <td class="status-${data.status.toLowerCase()}">${data.status || "-"}</td>
+      <td>${data.createdAt?.toDate ? data.createdAt.toDate().toLocaleString() : "-"}</td>
+    `;
+    tableBody.appendChild(tr);
+  });
+  document.getElementById("ordersTable").style.display = orders.length ? "table" : "none";
+}
+
+function renderPagination(total){
+  const pagDiv = document.getElementById("pagination");
+  pagDiv.innerHTML = "";
+  const totalPages = Math.ceil(total/perPage);
+  if(totalPages<=1) return;
+  for(let i=1;i<=totalPages;i++){
+    const btn = document.createElement("button");
+    btn.textContent = i;
+    btn.className = i===currentPage ? "active" : "";
+    btn.onclick = ()=>{
+      currentPage = i;
+      showPage();
+    };
+    pagDiv.appendChild(btn);
+  }
+}
+
+function showPage(){
+  const start = (currentPage-1)*perPage;
+  const end = start+perPage;
+  renderTable(allOrders.slice(start,end));
+  renderPagination(allOrders.length);
+}
+
+function filterOrders(){
+  const queryStr = document.getElementById("searchBox").value.toLowerCase();
+  const filtered = allOrders.filter(o=>{
+    return (
+      (o.profileId||"").toLowerCase().includes(queryStr) ||
+      (o.amount||"").toString().includes(queryStr) ||
+      (o.method||"").toLowerCase().includes(queryStr) ||
+      (o.account||"").toLowerCase().includes(queryStr) ||
+      (o.txid||"").toLowerCase().includes(queryStr) ||
+      (o.status||"").toLowerCase().includes(queryStr)
+    );
+  });
+  renderTable(filtered.slice(0,perPage));
+  currentPage=1;
+  renderPagination(filtered.length);
+}
+
+window.addEventListener("load",()=>{
+  const msg = document.getElementById("msg");
+  msg.textContent = "⏳ Loading orders...";
+  
+  document.getElementById("searchBox").addEventListener("input", filterOrders);
+  
   onAuthStateChanged(auth, async(user)=>{
     if(user){
       try{
@@ -55,22 +124,9 @@ window.addEventListener("load",()=>{
         if(snapshot.empty){
           msg.textContent = "No orders yet.";
         } else {
-          snapshot.forEach(doc=>{
-            const data = doc.data();
-            const tr = document.createElement("tr");
-            tr.innerHTML = `
-              <td>${data.profileId || "-"}</td>
-              <td>${data.amount || "-"}</td>
-              <td>${data.method || "-"}</td>
-              <td>${data.account || "-"}</td>
-              <td>${data.txid || "-"}</td>
-              <td class="status-${data.status.toLowerCase()}">${data.status || "-"}</td>
-              <td>${data.createdAt?.toDate ? data.createdAt.toDate().toLocaleString() : "-"}</td>
-            `;
-            tableBody.appendChild(tr);
-          });
+          allOrders = snapshot.docs.map(doc=>doc.data());
           msg.textContent = "";
-          table.style.display = "table"; // table দেখানো
+          showPage();
         }
       }catch(e){
         msg.textContent = "Error: "+e.message;
@@ -85,6 +141,11 @@ window.addEventListener("load",()=>{
 </head>
 <body>
 <h2>💎 My Order History</h2>
+
+<button id="orderPageBtn" onclick="window.location.href='order.html'">💠 Order Diamonds</button>
+
+<input type="text" id="searchBox" placeholder="Search by Profile ID, Amount, Method, Account, TXID, Status">
+
 <table id="ordersTable">
 <thead>
 <tr>
@@ -100,6 +161,8 @@ window.addEventListener("load",()=>{
 <tbody id="ordersBody">
 </tbody>
 </table>
+
+<div class="pagination" id="pagination"></div>
 <p id="msg" class="msg"></p>
 </body>
 </html>
