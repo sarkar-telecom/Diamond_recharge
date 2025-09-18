@@ -1,0 +1,168 @@
+<footer class="site-footer">
+  <div class="footer-container">
+
+    <!-- Left Buttons -->
+    <div class="footer-nav-grid">
+      <button onclick="location.href='index.html'">🏠 Home</button>
+      <button onclick="location.href='dashboard.html'">📊 Dashboard</button>
+      <button onclick="location.href='profile.html'">👤 Profile</button>
+      <button onclick="location.href='admin.html'">🛠 Admin</button>
+      <button onclick="location.href='order.html'">➕ Order</button>
+      <button onclick="location.href='order-history.html'">📜 History</button>
+    </div>
+
+    <!-- User Info Card -->
+    <div class="user-card" id="userBox">
+      🔄 Checking login...
+    </div>
+
+    <!-- Right Buttons -->
+    <div class="footer-nav-grid">
+      <button onclick="location.href='forgot.html'">❓ Forgot</button>
+      <button onclick="location.href='reset.html'">♻ Reset</button>
+      <button onclick="location.href='register.html'">📝 Register</button>
+      <button onclick="location.href='https://wa.me/8801715118684'">💬 Support</button>
+      <button onclick="location.href='login.html'">🔑 Login</button>
+      <button onclick="location.href='logout.html'" class="logout-btn">🚪 Logout</button>
+    </div>
+  </div>
+
+  <p class="footer-copy">© SARKAR TELECOM 2025-2026</p>
+</footer>
+
+<style>
+.site-footer {
+  background:#1b2735; /* Dashboard theme match */
+  padding:20px 10px;
+  margin-top:30px;
+  color:#e7eaf0;
+  text-align:center;
+  border-top:1px solid #2a3445;
+}
+.footer-container {
+  display:flex;
+  justify-content:space-between;
+  align-items:stretch;
+  flex-wrap:wrap;
+  gap:15px;
+}
+.footer-nav-grid {
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:10px;
+  flex:1;
+}
+.footer-nav-grid button {
+  background:#0f1824;
+  color:#e7eaf0;
+  border:1px solid #2a3445;
+  padding:14px;
+  border-radius:8px;
+  font-size:15px;
+  font-weight:bold;
+  cursor:pointer;
+  transition:0.2s;
+  height:60px;
+}
+.footer-nav-grid button:hover {
+  background:#06b6d4;
+  color:#001;
+}
+.user-card {
+  flex: 0 1 320px;
+  background:#0f1824;
+  border:1px solid #2b3347;
+  border-radius:12px;
+  padding:8px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  min-width:260px;
+  max-width:320px;
+  margin:auto;
+  box-shadow:0 4px 12px rgba(0,0,0,0.4);
+  box-sizing:border-box;
+}
+.user-card img {
+  width:70px;
+  height:70px;
+  border-radius:50%;
+  border:3px solid #06b6d4;
+  box-shadow:0 0 15px #06b6d4;
+  animation: glowPulse 2s infinite alternate;
+}
+.user-details h3 { margin:4px 0; font-size:16px; color:#06b6d4; }
+.user-details p { margin:3px 0; font-size:13px; font-weight:bold; }
+.role-text { color:#f97316; font-size:13px; }
+.balance-gradient {
+  background: linear-gradient(90deg, #06b6d4, #22c55e);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  font-weight:bold;
+}
+.phone-text { color:#facc15; }
+.email-text { color:#3b82f6; }
+.footer-copy {
+  margin-top:20px;
+  font-size:14px;
+  color:#9aa3b2;
+}
+@media(max-width:768px){
+  .footer-container { flex-direction:column; }
+  .footer-nav-grid { width:100%; grid-template-columns:repeat(3,1fr); }
+  .user-card { width:100%; max-width:100%; justify-content:center; }
+  .user-details { text-align:center; }
+}
+@keyframes glowPulse {
+  0% { box-shadow:0 0 10px #06b6d4; }
+  100% { box-shadow:0 0 20px #06b6d4; }
+}
+</style>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAyhjOsIXNAkBglpRllt0OZIOJYpdB_9-8",
+  authDomain: "diamond-recharge-f7f59.firebaseapp.com",
+  projectId: "diamond-recharge-f7f59",
+  storageBucket: "diamond-recharge-f7f59.appspot.com",
+  messagingSenderId: "657717928489",
+  appId: "1:657717928489:web:70431ebc9afb7002d4b238"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const userBox = document.getElementById("userBox");
+
+onAuthStateChanged(auth, (user) => {
+  if(user){
+    const name = user.displayName || "Guest User";
+    const email = user.email || "";
+    const photo = user.photoURL || "https://via.placeholder.com/80";
+    userBox.innerHTML = `
+      <img src="${photo}" alt="User">
+      <div class="user-details">
+        <h3>${name}</h3>
+        <p class="email-text">${email}</p>
+        <p class="role-text">Logged in</p>
+      </div>
+    `;
+  } else {
+    userBox.innerHTML = `
+      <div class="user-details">
+        <h3>Not Logged In</h3>
+        <p><a href="login.html">🔑 Login</a></p>
+      </div>
+    `;
+  }
+});
+
+document.querySelectorAll(".logout-btn").forEach(btn=>{
+  btn.addEventListener("click",(e)=>{
+    e.preventDefault();
+    signOut(auth).then(()=>window.location.reload());
+  });
+});
+</script>
