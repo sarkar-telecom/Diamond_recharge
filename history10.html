@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Order History - SARKAR TELECOM</title>
+<style>
+body {
+  margin:0;
+  font-family: Arial,sans-serif;
+  background:#0f1824;
+  color:#fff;
+}
+/* Header */
+header {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  background:#1b2735;
+  padding:10px 15px;
+  position:fixed;
+  width:100%;
+  top:0;
+  z-index:1000;
+}
+.menu-toggle { font-size:24px; cursor:pointer; background:none; border:none; color:#fff; }
+.site-title { font-weight:bold; font-size:18px; flex:1; text-align:center; }
+.profile { position:relative; cursor:pointer; display:flex; align-items:center; padding-right:30px; }
+.profile img { width:40px; height:40px; border-radius:50%; object-fit:cover; margin-left:25px; }
+.dropdown { position:absolute; right:0; top:50px; background:#fff; color:#333; min-width:160px; border-radius:6px; display:none; flex-direction:column; box-shadow:0 4px 6px rgba(0,0,0,0.2); }
+.dropdown a { padding:10px; text-decoration:none; color:#333; border-bottom:1px solid #eee; }
+.dropdown a:hover { background:#f0f0f0; }
+/* Sidebar */
+.sidebar { position:fixed; left:-250px; top:0; width:250px; height:100%; background:#1c2431; padding-top:60px; transition:left 0.3s ease; z-index:999; }
+.sidebar.active { left:0; }
+.sidebar a { display:block; padding:12px 20px; text-decoration:none; color:#fff; border-bottom:1px solid #2a3445; }
+.sidebar a:hover { background:#2f3c52; }
+/* Main content */
+main { margin-top:60px; padding:10px; }
+/* Search */
+#searchBox { width:100%; padding:4px; margin-bottom:5px; border-radius:6px; border:1px solid #333; background:#171a21; color:#fff; box-sizing:border-box; }
+/* Table */
+table { width:100%; border-collapse:collapse; table-layout:fixed; }
+th, td { padding:4px 6px; border:1px solid #333; text-align:center; font-size:11px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+th { background:#1f2937; }
+td { background:#171a21; }
+.status-pending { color:#facc15; font-weight:bold; }
+.status-completed { color:#22c55e; font-weight:bold; }
+.status-failed, .status-cancelled { color:#ef4444; font-weight:bold; }
+/* Pagination */
+.pagination { text-align:center; margin-top:5px; }
+.pagination button { margin:1px; padding:3px 5px; border:none; border-radius:6px; cursor:pointer; background:#1f2937; color:#fff; font-size:11px; }
+.pagination button.active { background:#fff; color:#000; }
+.pagination button:hover { background:#2f3c52; }
+/* Footer */
+footer {
+  background:#1b2735;
+  text-align:center;
+  padding:10px;
+  margin-top:20px;
+  font-size:12px;
+  color:#bbb;
+}
+/* Responsive: scroll table */
+@media screen and (max-width:600px){ table { display:block; overflow-x:auto; white-space:nowrap; } }
+</style>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+import { getFirestore, collection, query, where, orderBy, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAyhjOsIXNAkBglpRllt0OZIOJYpdB_9-8",
+  authDomain: "diamond-recharge-f7f59.firebaseapp.com",
+  projectId: "diamond-recharge-f7f59",
+  storageBucket: "diamond-recharge-f7f59.appspot.com",
+  messagingSenderId: "657717928489",
+  appId: "1:657717928489:web:70431ebc9afb7002d4b238",
+  measurementId: "G-TDK78BQ8SQ"
+};
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+// Sidebar toggle
+document.addEventListener("DOMContentLoaded", ()=>{
+  document.querySelector(".menu-toggle").addEventListener("click", ()=>{
+    document.getElementById("sidebar").classList.toggle("active");
+  });
+  const profileMenu = document.getElementById("profileMenu");
+  const dropdownMenu = document.getElementById("dropdownMenu");
+  profileMenu.addEventListener("click", ()=> { dropdownMenu.style.display = dropdownMenu.style.display==="flex"?"none":"flex"; });
+});
+
+// Logout
+function doLogout() { signOut(auth).then(()=>window.location.href="login.html"); }
+document.addEventListener("DOMContentLoaded", ()=>{
+  document.getElementById("logoutBtn").addEventListener("click", doLogout);
+  document.getElementById("logoutBtn2").addEventListener("click", doLogout);
+});
+
+// Orders
+let allOrders=[], currentPage=1, perPage=20;
+function formatTime(ts){ 
+  if(!ts?.toDate) return "-"; 
+  const d=ts.toDate(); 
+  let h=d.getHours(); 
+  const m=d.getMinutes().toString().padStart(2,'0'); 
+  const ampm=h>=12?'PM':'AM'; 
+  h=h%12||12; 
+  return `${h}:${m} ${ampm}`; 
+}
+function renderTable(orders){ 
+  const tbody=document.getElementById("ordersBody"); 
+  tbody.innerHTML=""; 
+  const total=allOrders.length; 
+  orders.forEach((d,i)=>{ 
+    const sl=total-((currentPage-1)*perPage+i); 
+    const tr=document.createElement("tr"); 
+    tr.innerHTML=`<td>${sl}</td>
+      <td>${d.profileId||"-"}</td>
+      <td>${d.amount||"-"}</td>
+      <td>${d.method||"-"}</td>
+      <td>${d.account||"-"}</td>
+      <td>${d.txid||"-"}</td>
+      <td class="status-${d.status?.toLowerCase()||"pending"}">${d.status||"-"}</td>
+      <td>${formatTime(d.createdAt)}</td>`;
+    tbody.appendChild(tr); 
+  }); 
+}
+function renderPagination(total){ 
+  const pag=document.getElementById("pagination"); 
+  pag.innerHTML=""; 
+  const pages=Math.ceil(total/perPage); 
+  if(pages<=1) return; 
+  for(let i=1;i<=pages;i++){ 
+    const btn=document.createElement("button"); 
+    btn.textContent=i; 
+    btn.className=i===currentPage?"active":""; 
+    btn.onclick=()=>{ currentPage=i; showPage(); }; 
+    pag.appendChild(btn); 
+  } 
+}
+function showPage(){ 
+  const s=(currentPage-1)*perPage; 
+  renderTable(allOrders.slice(s,s+perPage)); 
+  renderPagination(allOrders.length); 
+}
+function filterOrders(){ 
+  const q=document.getElementById("searchBox").value.toLowerCase(); 
+  const filtered=allOrders.filter(o=>((o.profileId||"").toLowerCase().includes(q)||(o.amount||"").toString().includes(q)||(o.method||"").toLowerCase().includes(q)||(o.account||"").toLowerCase().includes(q)||(o.txid||"").toLowerCase().includes(q)||(o.status||"").toLowerCase().includes(q))); 
+  renderTable(filtered.slice(0,perPage)); 
+  currentPage=1; 
+  renderPagination(filtered.length); 
+}
+document.addEventListener("DOMContentLoaded", ()=>{
+  document.getElementById("searchBox").addEventListener("input", filterOrders);
+});
+
+// Load Orders and Avatar from Firestore
+onAuthStateChanged(auth, async(user)=>{
+  if(user){
+    // Avatar
+    const userDoc = doc(db,"users",user.uid);
+    const snap = await getDoc(userDoc);
+    const img=document.getElementById("profilePic");
+    if(snap.exists() && snap.data().avatar){ img.src = snap.data().avatar; }
+    else{ img.src="https://via.placeholder.com/40"; }
+
+    // Orders
+    const ordersRef = collection(db,"orders");
+    const q = query(ordersRef, where("userId","==",user.uid), orderBy("createdAt","desc"));
+    const snapshot = await getDocs(q);
+    allOrders=[];
+    snapshot.forEach(d=>allOrders.push(d.data()));
+    showPage();
+  }else window.location.href="login.html";
+});
+</script>
+</head>
+<body>
+<header>
+  <button class="menu-toggle">☰</button>
+  <div class="site-title">SARKAR TELECOM</div>
+  <div class="profile" id="profileMenu">
+    <img id="profilePic" src="https://via.placeholder.com/40" alt="Profile">
+    <div class="dropdown" id="dropdownMenu">
+      <a href="profile.html">Profile</a>
+      <a href="order.html">💎 Order Page</a>
+      <a href="#" id="logoutBtn">Logout</a>
+    </div>
+  </div>
+</header>
+<div class="sidebar" id="sidebar">
+  <a href="dashboard.html">📊 Dashboard</a>
+  <a href="profile.html">👤 Profile</a>
+  <a href="user-managment.html">📋 User Request</a>
+  <a href="order-history.html">📜 History</a>
+  <a href="order.html">💎 Order Page</a>
+  <a href="#" id="logoutBtn2">🚪 Logout</a>
+</div>
+
+<main>
+  <input type="text" id="searchBox" placeholder="Search Profile ID / Amount / Method / Account / TXID / Status">
+  <table>
+    <thead>
+      <tr>
+        <th>SL</th>
+        <th>Profile ID</th>
+        <th>Amount</th>
+        <th>Method</th>
+        <th>Account</th>
+        <th>TXID</th>
+        <th>Status</th>
+        <th>Created At</th>
+      </tr>
+    </thead>
+    <tbody id="ordersBody"></tbody>
+  </table>
+  <div class="pagination" id="pagination"></div>
+</main>
+
+<footer>
+  &copy; 2025 SARKAR TELECOM. All Rights Reserved.
+</footer>
+</body>
+</html>
