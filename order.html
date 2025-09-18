@@ -5,35 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Order Diamonds - SARKAR TELECOM</title>
 <style>
-body {
-  margin:0;
-  font-family: Arial, Helvetica, sans-serif;
-  background:#0f1824;
-  color:#e7eaf0;
-  display:flex;
-  flex-direction:column;
-  min-height:100vh;
-}
+body { margin:0; font-family: Arial, Helvetica, sans-serif; background:#0f1824; color:#e7eaf0; display:flex; flex-direction:column; min-height:100vh; }
+
 /* Header */
-header {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  background:#1b2735;
-  padding:10px 15px;
-  position:fixed;
-  width:100%;
-  top:0;
-  z-index:1000;
-}
+header { display:flex; justify-content:space-between; align-items:center; background:#1b2735; padding:10px 15px; position:fixed; width:100%; top:0; z-index:1000; }
 .menu-toggle { font-size:24px; cursor:pointer; background:none; border:none; color:#fff; }
 .site-title { font-weight:bold; font-size:18px; flex:1; text-align:center; }
 .profile { position:relative; cursor:pointer; display:flex; align-items:center; padding-right:30px; }
 .profile img { width:40px; height:40px; border-radius:50%; object-fit:cover; margin-left:10px; }
-
-/* Dropdown */
 .dropdown { position:absolute; right:0; top:50px; background:#1c2431; color:#fff; min-width:160px; border-radius:6px; display:none; flex-direction:column; box-shadow:0 4px 6px rgba(0,0,0,0.2); }
-.dropdown a { padding:12px; text-decoration:none; color:#fff; border-bottom:1px solid #2a3445; font-size:14px; text-align:center; }
+.dropdown a { padding:10px; text-decoration:none; color:#fff; border-bottom:1px solid #2a3445; }
 .dropdown a:hover { background:#2f3c52; }
 
 /* Sidebar */
@@ -41,10 +22,12 @@ header {
 .sidebar.active { left:0; }
 .sidebar a { display:block; padding:12px 20px; text-decoration:none; color:#fff; border-bottom:1px solid #2a3445; }
 .sidebar a:hover { background:#2f3c52; }
-
-/* Logout Button Style */
 .logout-btn { display:block; width:90%; margin:15px auto; padding:12px; background:#d62828; color:#fff; border:none; border-radius:8px; font-size:15px; cursor:pointer; text-align:center; }
 .logout-btn:hover { background:#b91c1c; }
+.user-card { background:#0f1115; border:1px solid #2b3347; border-radius:12px; padding:10px; display:flex; align-items:center; gap:10px; margin:15px; flex-direction:column; text-align:center; }
+.user-card img { width:70px; height:70px; border-radius:50%; border:3px solid #06b6d4; }
+.user-card h3 { margin:4px 0; font-size:16px; color:#06b6d4; }
+.user-card p { margin:2px 0; font-size:13px; color:#fff; }
 
 /* Main */
 main { margin-top:70px; padding:15px; flex:1; }
@@ -60,7 +43,12 @@ button#submitBtn { width:100%; padding:10px; border:none; border-radius:6px; bac
 button#submitBtn:hover { background:#0ea5e9; }
 button#submitBtn:disabled { background:#555; cursor:not-allowed; }
 
-.msg { margin-top:10px; font-size:14px; min-height:20px; text-align:center; }
+.copy-box { display:flex; gap:5px; align-items:center; margin-bottom:10px; }
+.copy-box input { flex:1; }
+.copy-box button { padding:6px; border:none; border-radius:6px; cursor:pointer; background:#06b6d4; color:#000; }
+
+.msg { margin-top:10px; font-size:14px; min-height:20px; }
+.amount-display { margin-bottom:10px; font-weight:bold; text-align:center; }
 
 /* Footer */
 footer { background:#1b2735; padding:20px 10px; text-align:center; }
@@ -69,7 +57,6 @@ footer { background:#1b2735; padding:20px 10px; text-align:center; }
 .footer-nav a:hover { background:#0891b2; }
 .copyright { font-size:13px; color:#aaa; }
 </style>
-
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
@@ -109,15 +96,18 @@ const paymentMethods = {
 let selectedAmount=null, selectedPaymentMethod=null, selectedAccount=null, screenshotFile=null;
 
 document.addEventListener("DOMContentLoaded",()=>{
-  document.querySelector(".menu-toggle").addEventListener("click",()=>document.getElementById("sidebar").classList.toggle("active"));
-  document.getElementById("profileMenu").addEventListener("click",()=>{
-    const d=document.getElementById("dropdownMenu");
-    d.style.display=d.style.display==="flex"?"none":"flex";
+  // Sidebar toggle
+  document.querySelector(".menu-toggle").addEventListener("click",()=>{
+    document.getElementById("sidebar").classList.toggle("active");
   });
+  const profileMenu=document.getElementById("profileMenu");
+  const dropdownMenu=document.getElementById("dropdownMenu");
+  profileMenu.addEventListener("click",()=> dropdownMenu.style.display = dropdownMenu.style.display==="flex"?"none":"flex");
 
   document.getElementById("logoutBtn").addEventListener("click",doLogout);
   document.getElementById("logoutBtn2").addEventListener("click",doLogout);
 
+  // Diamond grid
   const grid=document.getElementById("diamondGrid");
   diamondAmounts.forEach(a=>{
     const btn=document.createElement("button");
@@ -126,17 +116,26 @@ document.addEventListener("DOMContentLoaded",()=>{
     grid.appendChild(btn);
   });
 
+  // Payment methods
   const methodSelect=document.getElementById("paymentMethod");
   Object.keys(paymentMethods).forEach(m=>{
     const opt=document.createElement("option");
-    opt.value=m; opt.textContent=m; methodSelect.appendChild(opt);
+    opt.value=m;
+    opt.textContent=m;
+    methodSelect.appendChild(opt);
   });
   methodSelect.addEventListener("change",()=>{
     selectedPaymentMethod=methodSelect.value;
     showAccount(selectedPaymentMethod);
   });
 
-  document.getElementById("screenshot").addEventListener("change",(e)=>screenshotFile=e.target.files[0]);
+  document.getElementById("profileId").addEventListener("input",(e)=>{
+    e.target.value=e.target.value.replace(/[^0-9\+]/g,'');
+  });
+
+  document.getElementById("screenshot").addEventListener("change",(e)=>{
+    screenshotFile=e.target.files[0];
+  });
 });
 
 function doLogout(){ signOut(auth).then(()=>window.location.href="login.html"); }
@@ -153,9 +152,27 @@ function showAccount(method){
   accountBox.innerHTML="";
   if(!method||!paymentMethods[method]) return;
   selectedAccount=paymentMethods[method][0];
-  const input=document.createElement("input");
-  input.type="text"; input.value=selectedAccount; input.readOnly=true;
-  accountBox.appendChild(input);
+  if(paymentMethods[method].length>1){
+    const select=document.createElement("select");
+    paymentMethods[method].forEach(acc=>{
+      const opt=document.createElement("option");
+      opt.value=acc; opt.textContent=acc;
+      select.appendChild(opt);
+    });
+    select.addEventListener("change",()=>selectedAccount=select.value);
+    accountBox.appendChild(select);
+  } else {
+    const copyDiv=document.createElement("div");
+    copyDiv.className="copy-box";
+    const input=document.createElement("input");
+    input.type="text"; input.value=selectedAccount; input.readOnly=true;
+    const copyBtn=document.createElement("button");
+    copyBtn.textContent="Copy";
+    copyBtn.onclick=()=>{ navigator.clipboard.writeText(selectedAccount); alert("Copied: "+selectedAccount); }
+    copyDiv.appendChild(input);
+    copyDiv.appendChild(copyBtn);
+    accountBox.appendChild(copyDiv);
+  }
 }
 
 window.submitOrder=async()=>{
@@ -170,28 +187,59 @@ window.submitOrder=async()=>{
   if(!txid){ msg.textContent="⚠️ Enter Transaction ID"; return;}
 
   submitBtn.disabled=true;
+
   onAuthStateChanged(auth, async(user)=>{
     if(user){
       try{
         let screenshotURL="";
         if(screenshotFile){
-          const storageRef=ref(storage,"screenshots/"+Date.now()+"_"+screenshotFile.name);
+          const storageRef=ref(storage,`orders/${user.uid}_${Date.now()}_${screenshotFile.name}`);
           await uploadBytes(storageRef,screenshotFile);
           screenshotURL=await getDownloadURL(storageRef);
         }
+
         await addDoc(collection(db,"orders"),{
-          email:user.email, userId:user.uid,
-          profileId, amount:selectedAmount.p,
-          method:selectedPaymentMethod, account:selectedAccount,
-          txid, screenshot:screenshotURL,
-          status:"pending", createdAt:serverTimestamp()
+          email:user.email,
+          profileId,
+          amount:selectedAmount.p,
+          method:selectedPaymentMethod,
+          account:selectedAccount,
+          txid,
+          screenshot:screenshotURL,
+          status:"pending",
+          createdAt:serverTimestamp(),
+          userId:user.uid
         });
         msg.textContent="✅ Order submitted!";
         setTimeout(()=>window.location.href="order-history.html",1000);
+
       }catch(e){ msg.textContent="❌ "+e.message; submitBtn.disabled=false; }
     } else { window.location.href="login.html"; }
   });
 }
+
+// Load avatar + sidebar user info
+onAuthStateChanged(auth, async(user)=>{
+  if(user){
+    const userDoc=doc(db,"users",user.uid);
+    const snap=await getDoc(userDoc);
+    const avatar=(snap.exists()&&snap.data().avatar)?snap.data().avatar:"https://via.placeholder.com/70";
+    document.getElementById("profilePic").src=avatar;
+    const name=snap.exists()?snap.data().name:user.displayName||"Guest";
+    const role=snap.exists()?snap.data().role:"User";
+    const phone=snap.exists()?snap.data().phone:"";
+    const email=user.email;
+    const balance=snap.exists()?snap.data().balance:0;
+    document.getElementById("userBox").innerHTML=`
+      <img src="${avatar}" alt="Avatar">
+      <h3>${name}</h3>
+      <p>${role}</p>
+      <p>${phone}</p>
+      <p>${email}</p>
+      <p>Balance: ${balance}</p>
+    `;
+  }
+});
 </script>
 </head>
 <body>
@@ -202,19 +250,27 @@ window.submitOrder=async()=>{
     <img id="profilePic" src="https://via.placeholder.com/40" alt="Profile">
     <div class="dropdown" id="dropdownMenu">
       <a href="profile.html">👤 Profile</a>
-      <a href="order-history.html">📜 History</a>
+      <a href="order.html">➕ Order</a>
       <a href="#" id="logoutBtn">🚪 Logout</a>
     </div>
   </div>
 </header>
 
 <div class="sidebar" id="sidebar">
+  <a href="index.html">🏠 Home</a>
   <a href="dashboard.html">📊 Dashboard</a>
+  <a href="profile.html">👤 Profile</a>
   <a href="order.html">➕ Order</a>
   <a href="order-history.html">📜 History</a>
-  <a href="profile.html">👤 Profile</a>
+  <a href="admin.html">🛠 Admin</a>
   <a href="support.html">💬 Support</a>
-  <a href="#" id="logoutBtn2" class="logout-btn">🚪 Logout</a>
+  <a href="faq.html">❓ FAQ</a>
+  <a href="about.html">ℹ About Us</a>
+  <a href="privacy.html">🔒 Privacy Policy</a>
+  <a href="terms.html">📄 Terms & Conditions</a>
+  <a href="refund.html">💰 Refund Policy</a>
+  <button id="logoutBtn2" class="logout-btn">🚪 Logout</button>
+  <div class="user-card" id="userBox">Loading user...</div>
 </div>
 
 <main>
@@ -232,7 +288,7 @@ window.submitOrder=async()=>{
   <label>Transaction ID</label>
   <input type="text" id="txid" placeholder="Enter Transaction ID">
 
-  <label>Upload Screenshot (optional)</label>
+  <label>Upload Screenshot (Optional)</label>
   <input type="file" id="screenshot" accept="image/*">
 
   <button id="submitBtn" onclick="submitOrder()">Submit Order</button>
