@@ -3,38 +3,41 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin Dashboard</title>
+<title>Admin Dashboard — Diamond Recharge</title>
 <style>
-  body { font-family: Arial, Helvetica, sans-serif; background: #0f1115; color: #e7eaf0; margin:0; }
-  .topbar { background:#111; padding:10px; color:#0ff; display:flex; align-items:center; }
-  .brand { flex:1; font-size:18px; }
-  .menu-btn { background:none; border:none; color:#0ff; font-size:20px; cursor:pointer; margin-right:10px; }
-  .sidebar { position:fixed; top:0; left:-220px; width:200px; height:100%; background:#111; padding:10px; transition:0.3s; overflow:auto; }
+  body { font-family: Arial, Helvetica, sans-serif; background: #0a0f1e; color: #fff; margin:0; }
+  .topbar { background:#111; padding:10px; color:#0ff; display:flex; align-items:center; position:fixed; width:100%; z-index:10; }
+  .brand { flex:1; font-size:18px; font-weight:bold; }
+  .menu-btn { background:none; border:none; color:#0ff; font-size:22px; cursor:pointer; margin-right:10px; }
+  .sidebar { position:fixed; top:50px; left:-220px; width:220px; height:calc(100% - 50px); background:#111; padding:10px; transition:0.3s; overflow:auto; box-shadow:2px 0 10px #0ff50a33; }
   .sidebar.open { left:0; }
-  .sidebar a { display:block; color:#0ff; padding:8px; text-decoration:none; margin-bottom:5px; border-radius:5px; }
+  .sidebar a { display:block; color:#0ff; padding:10px; text-decoration:none; margin-bottom:5px; border-radius:5px; }
   .sidebar a:hover { background:#0cc; }
-  .container { margin-left:220px; padding:20px; }
-  h2 { color:#06b6d4; text-align:center; margin-bottom:20px; }
+  .container { margin-left:0; padding:70px 20px 20px 20px; transition:margin-left 0.3s; }
+  .sidebar.open ~ .container { margin-left:220px; }
+  h2 { color:#06b6d4; text-align:center; margin-bottom:20px; text-shadow:0 0 5px #0ff; }
   .controls { margin-bottom: 10px; display: flex; flex-wrap: wrap; gap: 10px; }
-  .controls input, .controls select { padding: 5px; border-radius: 4px; border: 1px solid #333; background: #171a21; color: #e7eaf0; }
+  .controls input, .controls select { padding: 8px; border-radius: 5px; border: 1px solid #333; background: #171a21; color: #e7eaf0; }
   table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; }
-  table, th, td { border: 1px solid #444; }
-  th, td { padding: 6px; text-align: center; }
-  th { background: #1f2937; }
+  table, th, td { border: 1px solid #0ff; }
+  th, td { padding: 8px; text-align: center; }
+  th { background: #1f2937; color:#0ff; }
   tr:nth-child(even) { background: #171a21; }
   tr:nth-child(odd) { background: #0f1115; }
-  button.updateBtn, button.deleteBtn, button.pageBtn { padding: 4px 6px; border-radius: 4px; border: none; cursor: pointer; font-size: 12px; }
+  button.updateBtn, button.deleteBtn, button.pageBtn { padding: 5px 8px; border-radius: 5px; border: none; cursor: pointer; font-size: 12px; }
   button.updateBtn { background: #06b6d4; color: #000; }
   button.updateBtn:hover { background: #0ea5e9; }
   button.deleteBtn { background: #ef4444; color: #fff; }
   button.deleteBtn:hover { background: #f87171; }
-  button.pageBtn { background: #1f2937; color: #e7eaf0; margin: 2px; }
+  button.pageBtn { background: #1f2937; color: #0ff; margin: 2px; }
   button.pageBtn:hover { background: #374151; }
   #denied { color: red; text-align: center; font-size: 16px; margin-top: 50px; }
   @media(max-width:600px){
     table { font-size: 11px; }
     th, td { padding: 4px; }
     button.updateBtn, button.deleteBtn, button.pageBtn { padding: 3px 5px; font-size: 11px; }
+    .sidebar { width:180px; }
+    .sidebar.open ~ .container { margin-left:180px; }
   }
 </style>
 <script type="module">
@@ -42,7 +45,6 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/fireba
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
 import { getFirestore, collection, getDocs, orderBy, query, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
-// ==================== Firebase Config ====================
 const firebaseConfig = {
   apiKey: "AIzaSyAyhjOsIXNAkBglpRllt0OZIOJYpdB_9-8",
   authDomain: "diamond-recharge-f7f59.firebaseapp.com",
@@ -56,24 +58,12 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-// ==================== Sidebar Toggle ====================
-const menuBtn = document.createElement("button");
-menuBtn.className="menu-btn";
-menuBtn.textContent="☰";
-document.addEventListener("DOMContentLoaded", ()=>{
-    document.body.prepend(menuBtn);
-});
-menuBtn.addEventListener('click', ()=>{
-    document.getElementById("sidebar").classList.toggle("open");
-});
-
-// ==================== Admin Config ====================
 const adminEmails = ["samrat.khulnas@gmail.com"];
 let allOrders = [];
 let currentPage = 1;
 const ordersPerPage = 20;
 
-// ==================== Load Orders ====================
+// Load Orders
 async function loadOrders(){
   allOrders = [];
   const q = query(collection(db,"orders"), orderBy("createdAt","desc"));
@@ -86,7 +76,7 @@ async function loadOrders(){
   renderTable();
 }
 
-// ==================== Render Table ====================
+// Render Table
 function renderTable(){
   const searchEmail = document.getElementById("searchEmail").value.toLowerCase();
   const filterStatus = document.getElementById("filterStatus").value;
@@ -96,22 +86,20 @@ function renderTable(){
     (!filterStatus || o.status === filterStatus)
   );
 
-  // Reverse serial (descending)
-  filteredOrders = filteredOrders.reverse();
-
+  // latest order first, serial accordingly
   const totalPages = Math.ceil(filteredOrders.length / ordersPerPage);
   if(currentPage > totalPages) currentPage = totalPages || 1;
   const start = (currentPage-1)*ordersPerPage;
   const end = start + ordersPerPage;
-  const pageOrders = filteredOrders.slice(start, end);
+  const pageOrders = filteredOrders.slice(start,end);
 
   const orderTable = document.getElementById("orderTable");
-  orderTable.innerHTML = "";
+  orderTable.innerHTML="";
   pageOrders.forEach((d,index)=>{
+    const serial = filteredOrders.length - (start + index);
     const row = document.createElement("tr");
-    const serialStr = (start+index+1).toString().padStart(3,"0");
     row.innerHTML = `
-      <td>${serialStr}</td>
+      <td>${serial}</td>
       <td>${d.email||"N/A"}</td>
       <td>${d.profileId||"N/A"}</td>
       <td>${d.amount||0}</td>
@@ -126,9 +114,7 @@ function renderTable(){
         </select>
         <button class="updateBtn" onclick="updateStatus('${d.id}')">Update</button>
       </td>
-      <td>
-        <button class="deleteBtn" onclick="deleteOrder('${d.id}')">Delete</button>
-      </td>
+      <td><button class="deleteBtn" onclick="deleteOrder('${d.id}')">Delete</button></td>
     `;
     orderTable.appendChild(row);
   });
@@ -136,7 +122,7 @@ function renderTable(){
   renderPagination(totalPages);
 }
 
-// ==================== Pagination ====================
+// Pagination
 function renderPagination(totalPages){
   const container = document.getElementById("pagination");
   container.innerHTML="";
@@ -150,24 +136,23 @@ function renderPagination(totalPages){
   }
 }
 
-// ==================== Update & Delete ====================
-window.updateStatus = async(orderId)=>{
-  const newStatus = document.getElementById(`status_${orderId}`).value;
-  await updateDoc(doc(db,"orders",orderId),{status:newStatus});
+// Update / Delete
+window.updateStatus = async(id)=>{
+  const newStatus = document.getElementById(`status_${id}`).value;
+  await updateDoc(doc(db,"orders",id),{status:newStatus});
   alert("✅ Status updated!");
   loadOrders();
 }
-
-window.deleteOrder = async(orderId)=>{
-  if(confirm("Are you sure you want to delete this order?")){
-    await deleteDoc(doc(db,"orders",orderId));
+window.deleteOrder = async(id)=>{
+  if(confirm("Are you sure to delete this order?")){
+    await deleteDoc(doc(db,"orders",id));
     alert("🗑️ Order deleted!");
     loadOrders();
   }
 }
 
-// ==================== Auth Check ====================
-onAuthStateChanged(auth, user=>{
+// Auth & Admin Check
+onAuthStateChanged(auth,user=>{
   if(user){
     if(adminEmails.includes(user.email)){
       document.getElementById("adminContent").style.display="block";
@@ -176,56 +161,72 @@ onAuthStateChanged(auth, user=>{
       document.getElementById("denied").style.display="block";
     }
   } else {
-    alert("Please login first");
+    alert("Login first!");
     window.location.href="index.html";
   }
+});
+
+// Sidebar toggle
+document.addEventListener("DOMContentLoaded",()=>{
+  const menuBtn = document.querySelector(".menu-btn");
+  menuBtn.addEventListener("click",()=>{
+    document.querySelector(".sidebar").classList.toggle("open");
+  });
 });
 </script>
 </head>
 <body>
-<aside id="sidebar" class="sidebar">
+<nav class="topbar">
+  <button class="menu-btn">☰</button>
+  <div class="brand">Diamond Recharge Admin</div>
+</nav>
+
+<aside class="sidebar">
   <a href="home.html">Dashboard</a>
   <a href="products.html">Order Diamonds</a>
   <a href="cart.html">Order History</a>
   <a href="admin.html">Admin Panel</a>
 </aside>
 
-<h2>⚙️ Admin Dashboard</h2>
+<div class="container">
+  <h2>⚙️ Admin Dashboard</h2>
 
-<div id="adminContent" style="display:none;">
-  <div class="controls">
-    <input type="text" id="searchEmail" placeholder="Search by Email" oninput="renderTable()">
-    <select id="filterStatus" onchange="renderTable()">
-      <option value="">All Status</option>
-      <option value="pending">Pending</option>
-      <option value="completed">Completed</option>
-      <option value="cancelled">Cancelled</option>
-    </select>
+  <div id="adminContent" style="display:none;">
+    <div class="controls">
+      <input type="text" id="searchEmail" placeholder="Search by Email" oninput="renderTable()">
+      <select id="filterStatus" onchange="renderTable()">
+        <option value="">All Status</option>
+        <option value="pending">Pending</option>
+        <option value="completed">Completed</option>
+        <option value="cancelled">Cancelled</option>
+      </select>
+    </div>
+
+    <div style="overflow-x:auto;">
+      <table>
+        <thead>
+          <tr>
+            <th>Serial</th>
+            <th>User Email</th>
+            <th>Profile ID</th>
+            <th>Amount</th>
+            <th>Method</th>
+            <th>Account</th>
+            <th>TxID</th>
+            <th>Status</th>
+            <th>Delete</th>
+          </tr>
+        </thead>
+        <tbody id="orderTable"></tbody>
+      </table>
+    </div>
+
+    <div id="pagination" style="margin-top:10px;"></div>
   </div>
 
-  <div style="overflow-x:auto;">
-    <table>
-      <thead>
-        <tr>
-          <th>Serial</th>
-          <th>User Email</th>
-          <th>Profile ID</th>
-          <th>Amount</th>
-          <th>Method</th>
-          <th>Account</th>
-          <th>TxID</th>
-          <th>Status</th>
-          <th>Delete</th>
-        </tr>
-      </thead>
-      <tbody id="orderTable"></tbody>
-    </table>
+  <div id="denied" style="display:none;">
+    ❌ Access Denied. You are not admin.
   </div>
-  <div id="pagination" style="margin-top:10px;"></div>
-</div>
-
-<div id="denied" style="display:none;">
-  ❌ Access Denied. You are not admin.
 </div>
 </body>
 </html>
