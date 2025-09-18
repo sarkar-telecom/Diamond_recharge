@@ -44,6 +44,7 @@ main { margin-top:60px; padding:15px; margin-left:0; display:flex; justify-conte
 .role-text { color:#f97316; font-size:13px; }
 .email-text { color:#3b82f6; }
 .balance-text { color:#22c55e; font-weight:bold; }
+.phone-text { color:#facc15; }
 /* Footer buttons grid */
 .footer-buttons { display:grid; grid-template-columns:repeat(auto-fill,minmax(120px,1fr)); gap:10px; margin-top:20px; justify-items:center; }
 .footer-buttons button { background:#0f1824; color:#e7eaf0; border:1px solid #2b3347; padding:14px; border-radius:8px; font-weight:bold; cursor:pointer; transition:0.2s; width:100%; }
@@ -107,6 +108,7 @@ main { margin-top:60px; padding:15px; margin-left:0; display:flex; justify-conte
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAyhjOsIXNAkBglpRllt0OZIOJYpdB_9-8",
@@ -119,6 +121,7 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const db = getFirestore(app);
 const userBox = document.getElementById("userBox");
 
 // Sidebar toggle
@@ -138,20 +141,34 @@ function doLogout(){ signOut(auth).then(()=>window.location.reload()); }
 document.getElementById("logoutBtn").addEventListener("click", doLogout);
 document.getElementById("logoutBtn2").addEventListener("click", doLogout);
 
-// Load user info from Firebase Auth
-onAuthStateChanged(auth, (user)=>{
+// Load user info from Firebase Auth + Firestore
+onAuthStateChanged(auth, async(user)=>{
   if(user){
-    const name = user.displayName || "Guest User";
-    const email = user.email || "";
-    const photo = user.photoURL || "https://via.placeholder.com/80";
-    const role = "Admin"; // Firebase থেকে role নিতে চাইলে এখানে কোড যোগ করুন
-    const balance = "1000"; // Firebase থেকে balance নিতে চাইলে কোড যোগ করুন
+    let name = user.displayName || "Guest User";
+    let email = user.email || "";
+    let photo = user.photoURL || "https://via.placeholder.com/80";
+    let phone = "-";
+    let role = "Admin"; 
+    let balance = "0";
+
+    // Firestore user doc
+    const userRef = doc(db,"users",user.uid);
+    const userSnap = await getDoc(userRef);
+    if(userSnap.exists()){
+      const data = userSnap.data();
+      name = data.name || name;
+      phone = data.phone || phone;
+      role = data.role || role;
+      balance = data.balance || balance;
+      if(data.avatar) photo = data.avatar;
+    }
 
     userBox.innerHTML = `
       <img src="${photo}" alt="User">
       <div class="user-details">
         <h3>${name}</h3>
         <p class="email-text">${email}</p>
+        <p class="phone-text">${phone}</p>
         <p class="role-text">${role}</p>
         <p class="balance-text">Balance: ${balance}৳</p>
       </div>
