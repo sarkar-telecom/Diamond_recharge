@@ -31,12 +31,12 @@ header {
 .sidebar a { display:block; padding:12px 20px; text-decoration:none; color:#fff; border-bottom:1px solid #2a3445; }
 .sidebar a:hover { background:#2f3c52; }
 /* Main content */
-main { margin-top:60px; padding:15px; margin-left:0; transition:margin-left 0.3s; }
-.sidebar.active ~ main { margin-left:250px; }
-/* User Card */
+main { margin-top:60px; padding:15px; margin-left:0; display:flex; justify-content:center; transition:margin-left 0.3s; }
+/* User Card Centered */
 .user-card {
-  background:#0f1115; border:1px solid #2b3347; border-radius:12px; padding:10px;
-  display:flex; align-items:center; gap:10px; max-width:320px; margin:auto 0 20px 0;
+  background:#0f1115; border:1px solid #2b3347; border-radius:12px; padding:15px;
+  display:flex; align-items:center; gap:10px; max-width:400px; width:100%;
+  box-shadow:0 4px 12px rgba(0,0,0,0.4);
 }
 .user-card img { width:70px; height:70px; border-radius:50%; border:3px solid #06b6d4; box-shadow:0 0 15px #06b6d4; animation: glowPulse 2s infinite alternate; }
 .user-details h3 { margin:0; font-size:16px; color:#06b6d4; }
@@ -80,29 +80,29 @@ main { margin-top:60px; padding:15px; margin-left:0; transition:margin-left 0.3s
 </div>
 
 <main>
-  <!-- User Info Card -->
+  <!-- User Info Card Centered -->
   <div class="user-card" id="userBox">
     🔄 Loading user info...
   </div>
-
-  <!-- Navigation Buttons Grid -->
-  <div class="footer-buttons">
-    <button onclick="location.href='index.html'">🏠 Home</button>
-    <button onclick="location.href='dashboard.html'">📊 Dashboard</button>
-    <button onclick="location.href='profile.html'">👤 Profile</button>
-    <button onclick="location.href='admin.html'">🛠 Admin</button>
-    <button onclick="location.href='order.html'">➕ Order</button>
-    <button onclick="location.href='order-history.html'">📜 History</button>
-    <button onclick="location.href='forgot.html'">❓ Forgot</button>
-    <button onclick="location.href='reset.html'">♻ Reset</button>
-    <button onclick="location.href='register.html'">📝 Register</button>
-    <button onclick="location.href='https://wa.me/8801715118684'">💬 Support</button>
-    <button onclick="location.href='login.html'">🔑 Login</button>
-    <button onclick="location.href='logout.html'" class="logout-btn">🚪 Logout</button>
-  </div>
-
-  <p class="footer-copy">© SARKAR TELECOM 2025-2026</p>
 </main>
+
+<!-- Footer Buttons Grid -->
+<div class="footer-buttons">
+  <button onclick="location.href='index.html'">🏠 Home</button>
+  <button onclick="location.href='dashboard.html'">📊 Dashboard</button>
+  <button onclick="location.href='profile.html'">👤 Profile</button>
+  <button onclick="location.href='admin.html'">🛠 Admin</button>
+  <button onclick="location.href='order.html'">➕ Order</button>
+  <button onclick="location.href='order-history.html'">📜 History</button>
+  <button onclick="location.href='forgot.html'">❓ Forgot</button>
+  <button onclick="location.href='reset.html'">♻ Reset</button>
+  <button onclick="location.href='register.html'">📝 Register</button>
+  <button onclick="location.href='https://wa.me/8801715118684'">💬 Support</button>
+  <button onclick="location.href='login.html'">🔑 Login</button>
+  <button onclick="location.href='logout.html'" class="logout-btn">🚪 Logout</button>
+</div>
+
+<p class="footer-copy">© SARKAR TELECOM 2025-2026</p>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
@@ -125,24 +125,27 @@ const userBox = document.getElementById("userBox");
 document.querySelector(".menu-toggle").addEventListener("click", ()=>{
   document.getElementById("sidebar").classList.toggle("active");
 });
+
 // Dropdown toggle
 const profileMenu = document.getElementById("profileMenu");
 const dropdownMenu = document.getElementById("dropdownMenu");
-profileMenu.addEventListener("click", ()=> { dropdownMenu.style.display = dropdownMenu.style.display==="flex"?"none":"flex"; });
+profileMenu.addEventListener("click", ()=> {
+  dropdownMenu.style.display = dropdownMenu.style.display==="flex"?"none":"flex";
+});
 
 // Logout
 function doLogout(){ signOut(auth).then(()=>window.location.reload()); }
 document.getElementById("logoutBtn").addEventListener("click", doLogout);
 document.getElementById("logoutBtn2").addEventListener("click", doLogout);
 
-// Firebase Auth Detect
+// Load user info from Firebase Auth
 onAuthStateChanged(auth, (user)=>{
   if(user){
     const name = user.displayName || "Guest User";
     const email = user.email || "";
     const photo = user.photoURL || "https://via.placeholder.com/80";
-    const role = "Admin"; // আপনি চাইলে Firebase থেকে role ফিল্ড লোড করতে পারেন
-    const balance = "1000"; // চাইলে Firebase থেকে load করতে পারবেন
+    const role = "Admin"; // Firebase থেকে role নিতে চাইলে এখানে কোড যোগ করুন
+    const balance = "1000"; // Firebase থেকে balance নিতে চাইলে কোড যোগ করুন
 
     userBox.innerHTML = `
       <img src="${photo}" alt="User">
