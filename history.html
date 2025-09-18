@@ -42,16 +42,19 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-let allOrders = []; // সব অর্ডার রাখবে
+let allOrders = [];
 let currentPage = 1;
 const perPage = 20;
 
 function renderTable(orders){
   const tableBody = document.getElementById("ordersBody");
   tableBody.innerHTML = "";
-  orders.forEach(data=>{
+  const totalOrders = allOrders.length;
+  orders.forEach((data,index)=>{
+    const sl = totalOrders - ((currentPage-1)*perPage + index); // Reverse Serial Number
     const tr = document.createElement("tr");
     tr.innerHTML = `
+      <td>${sl}</td>
       <td>${data.profileId || "-"}</td>
       <td>${data.amount || "-"}</td>
       <td>${data.method || "-"}</td>
@@ -149,6 +152,7 @@ window.addEventListener("load",()=>{
 <table id="ordersTable">
 <thead>
 <tr>
+  <th>SL</th>
   <th>Profile ID</th>
   <th>Amount</th>
   <th>Method</th>
