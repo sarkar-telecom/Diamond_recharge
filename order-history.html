@@ -27,31 +27,42 @@ header {
 .site-title { font-weight:bold; font-size:18px; flex:1; text-align:center; }
 .profile { position:relative; cursor:pointer; display:flex; align-items:center; padding-right:30px; }
 .profile img { width:40px; height:40px; border-radius:50%; object-fit:cover; margin-left:25px; }
-.dropdown { position:absolute; right:0; top:50px; background:#fff; color:#333; min-width:160px; border-radius:6px; display:none; flex-direction:column; box-shadow:0 4px 6px rgba(0,0,0,0.2); }
-.dropdown a { padding:10px; text-decoration:none; color:#333; border-bottom:1px solid #eee; }
-.dropdown a:hover { background:#f0f0f0; }
+.dropdown { position:absolute; right:0; top:50px; background:#1c2431; color:#fff; min-width:160px; border-radius:6px; display:none; flex-direction:column; box-shadow:0 4px 6px rgba(0,0,0,0.2); }
+.dropdown a { padding:10px; text-decoration:none; color:#fff; border-bottom:1px solid #2a3445; }
+.dropdown a:hover { background:#2f3c52; }
 /* Sidebar */
-.sidebar { position:fixed; left:-250px; top:0; width:250px; height:100%; background:#1c2431; padding-top:60px; transition:left 0.3s ease; z-index:999; }
+.sidebar { position:fixed; left:-250px; top:0; width:250px; height:100%; background:#1c2431; padding-top:60px; transition:left 0.3s ease; z-index:999; overflow-y:auto; }
 .sidebar.active { left:0; }
 .sidebar a { display:block; padding:12px 20px; text-decoration:none; color:#fff; border-bottom:1px solid #2a3445; }
 .sidebar a:hover { background:#2f3c52; }
+.logout-btn { display:block; width:90%; margin:15px auto; padding:12px; background:#d62828; color:#fff; border:none; border-radius:8px; font-size:15px; cursor:pointer; text-align:center; }
+.logout-btn:hover { background:#b91c1c; }
 /* Main content */
-main { margin-top:60px; padding:10px; }
+main { margin-top:70px; padding:15px; }
 /* Search */
-#searchBox { width:100%; padding:4px; margin-bottom:5px; border-radius:6px; border:1px solid #333; background:#171a21; color:#fff; box-sizing:border-box; }
+#searchBox { width:100%; padding:8px; margin-bottom:10px; border-radius:6px; border:1px solid #333; background:#171a21; color:#fff; box-sizing:border-box; }
 /* Table */
 table { width:100%; border-collapse:collapse; table-layout:fixed; }
-th, td { padding:4px 6px; border:1px solid #333; text-align:center; font-size:11px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+th, td { padding:6px 8px; border:1px solid #333; text-align:center; font-size:12px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 th { background:#1f2937; }
 td { background:#171a21; }
 .status-pending { color:#facc15; font-weight:bold; }
 .status-completed { color:#22c55e; font-weight:bold; }
 .status-failed, .status-cancelled { color:#ef4444; font-weight:bold; }
 /* Pagination */
-.pagination { text-align:center; margin-top:5px; }
-.pagination button { margin:1px; padding:3px 5px; border:none; border-radius:6px; cursor:pointer; background:#1f2937; color:#fff; font-size:11px; }
-.pagination button.active { background:#fff; color:#000; }
+.pagination { text-align:center; margin-top:10px; }
+.pagination button { margin:2px; padding:4px 6px; border:none; border-radius:6px; cursor:pointer; background:#1f2937; color:#fff; font-size:12px; }
+.pagination button.active { background:#06b6d4; color:#000; }
 .pagination button:hover { background:#2f3c52; }
+/* Footer */
+footer {
+  background:#1b2735;
+  text-align:center;
+  padding:15px 10px;
+  margin-top:20px;
+  font-size:13px;
+  color:#bbb;
+}
 /* Responsive: scroll table */
 @media screen and (max-width:600px){ table { display:block; overflow-x:auto; white-space:nowrap; } }
 </style>
@@ -176,19 +187,27 @@ onAuthStateChanged(auth, async(user)=>{
   <div class="profile" id="profileMenu">
     <img id="profilePic" src="https://via.placeholder.com/40" alt="Profile">
     <div class="dropdown" id="dropdownMenu">
-      <a href="profile.html">Profile</a>
+      <a href="profile.html">👤 Profile</a>
       <a href="order.html">💎 Order Page</a>
-      <a href="#" id="logoutBtn">Logout</a>
+      <a href="#" id="logoutBtn">🚪 Logout</a>
     </div>
   </div>
 </header>
+
 <div class="sidebar" id="sidebar">
+  <a href="index.html">🏠 Home</a>
   <a href="dashboard.html">📊 Dashboard</a>
   <a href="profile.html">👤 Profile</a>
-  <a href="user-managment.html">📋 User Request</a>
+  <a href="order.html">➕ Order</a>
   <a href="order-history.html">📜 History</a>
-  <a href="order.html">💎 Order Page</a>
-  <a href="#" id="logoutBtn2">🚪 Logout</a>
+  <a href="admin.html">🛠 Admin</a>
+  <a href="support.html">💬 Support</a>
+  <a href="faq.html">❓ FAQ</a>
+  <a href="about.html">ℹ About Us</a>
+  <a href="privacy.html">🔒 Privacy Policy</a>
+  <a href="terms.html">📄 Terms & Conditions</a>
+  <a href="refund.html">💰 Refund Policy</a>
+  <button id="logoutBtn2" class="logout-btn">🚪 Logout</button>
 </div>
 
 <main>
@@ -210,5 +229,15 @@ onAuthStateChanged(auth, async(user)=>{
   </table>
   <div class="pagination" id="pagination"></div>
 </main>
+
+<footer>
+  <div class="footer-nav">
+    <a href="support.html">💬 Support</a>
+    <a href="order.html">➕ Order</a>
+    <a href="order-history.html">📜 History</a>
+    <a href="faq.html">❓ FAQ</a>
+  </div>
+  <div class="copyright">© SARKAR TELECOM - 2022-2026</div>
+</footer>
 </body>
 </html>
