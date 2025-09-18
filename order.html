@@ -61,7 +61,6 @@ footer { background:#1b2735; padding:20px 10px; text-align:center; }
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 import { getFirestore, collection, addDoc, serverTimestamp, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-storage.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAyhjOsIXNAkBglpRllt0OZIOJYpdB_9-8",
@@ -76,7 +75,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
-const storage = getStorage(app);
 
 const diamondAmounts = [
   {d:10,p:25},{d:50,p:115},{d:100,p:230},{d:200,p:460},{d:500,p:1130},
@@ -93,7 +91,7 @@ const paymentMethods = {
   "Binance (USDT)":["216953638"]
 };
 
-let selectedAmount=null, selectedPaymentMethod=null, selectedAccount=null, screenshotFile=null;
+let selectedAmount=null, selectedPaymentMethod=null, selectedAccount=null;
 
 document.addEventListener("DOMContentLoaded",()=>{
   // Sidebar toggle
@@ -131,10 +129,6 @@ document.addEventListener("DOMContentLoaded",()=>{
 
   document.getElementById("profileId").addEventListener("input",(e)=>{
     e.target.value=e.target.value.replace(/[^0-9\+]/g,'');
-  });
-
-  document.getElementById("screenshot").addEventListener("change",(e)=>{
-    screenshotFile=e.target.files[0];
   });
 });
 
@@ -191,13 +185,6 @@ window.submitOrder=async()=>{
   onAuthStateChanged(auth, async(user)=>{
     if(user){
       try{
-        let screenshotURL="";
-        if(screenshotFile){
-          const storageRef=ref(storage,`orders/${user.uid}_${Date.now()}_${screenshotFile.name}`);
-          await uploadBytes(storageRef,screenshotFile);
-          screenshotURL=await getDownloadURL(storageRef);
-        }
-
         await addDoc(collection(db,"orders"),{
           email:user.email,
           profileId,
@@ -205,7 +192,6 @@ window.submitOrder=async()=>{
           method:selectedPaymentMethod,
           account:selectedAccount,
           txid,
-          screenshot:screenshotURL,
           status:"pending",
           createdAt:serverTimestamp(),
           userId:user.uid
@@ -287,9 +273,6 @@ onAuthStateChanged(auth, async(user)=>{
 
   <label>Transaction ID</label>
   <input type="text" id="txid" placeholder="Enter Transaction ID">
-
-  <label>Upload Screenshot (Optional)</label>
-  <input type="file" id="screenshot" accept="image/*">
 
   <button id="submitBtn" onclick="submitOrder()">Submit Order</button>
   <p class="msg" id="msg"></p>
