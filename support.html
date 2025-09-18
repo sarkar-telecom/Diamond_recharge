@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Support - SARKAR TELECOM</title>
+<style>
+  body { margin:0; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background:#0d0d0d; color:#f0f0f0; }
+  header { display:flex; justify-content:space-between; align-items:center; background:#1b2735; padding:10px 15px; position:fixed; width:100%; top:0; z-index:1000; }
+  .menu-toggle { font-size:24px; cursor:pointer; background:none; border:none; color:#fff; }
+  .site-title { font-weight:bold; font-size:18px; flex:1; text-align:center; }
+  .profile { position:relative; cursor:pointer; display:flex; align-items:center; padding-right:30px; }
+  .profile img { width:40px; height:40px; border-radius:50%; object-fit:cover; margin-left:10px; }
+  .dropdown { position:absolute; right:0; top:50px; background:#fff; color:#333; min-width:180px; border-radius:6px; display:none; flex-direction:column; box-shadow:0 4px 6px rgba(0,0,0,0.2); z-index:2000; }
+  .dropdown .user-info { display:flex; flex-direction:column; padding:10px; border-bottom:1px solid #eee; }
+  .dropdown .user-info img { width:50px; height:50px; border-radius:50%; margin-bottom:5px; }
+  .dropdown a { padding:10px; text-decoration:none; color:#333; border-bottom:1px solid #eee; }
+  .dropdown a:hover { background:#f0f0f0; }
+
+  .sidebar { position:fixed; left:-250px; top:0; width:250px; height:100%; background:#1c2431; padding-top:60px; transition:left 0.3s ease; z-index:999; }
+  .sidebar.active { left:0; }
+  .sidebar a { display:block; padding:12px 20px; text-decoration:none; color:#fff; border-bottom:1px solid #2a3445; }
+  .sidebar a:hover { background:#2f3c52; }
+
+  main { margin-top:60px; padding:30px; max-width:900px; margin-left:auto; margin-right:auto; }
+
+  .support-section { background: rgba(255,255,255,0.05); border-radius:15px; padding:30px; box-shadow:0 4px 20px rgba(0,0,0,0.6); }
+  .support-section h1 { text-align:center; font-size:2.5rem; margin-bottom:20px; color:#00ffcc; }
+  .support-section p { font-size:1.1rem; margin-bottom:15px; text-align:justify; }
+  .highlight { color:#00ffcc; font-weight:bold; }
+
+  .faq-box { margin-top:20px; background:#171a21; padding:15px; border-radius:10px; border:1px solid #2b3347; }
+
+  @media(max-width:600px){ .support-section{padding:20px;} .support-section h1{font-size:2rem;} .support-section p{font-size:1rem;} }
+</style>
+</head>
+<body>
+
+<header>
+  <button class="menu-toggle">☰</button>
+  <div class="site-title">SARKAR TELECOM</div>
+  <div class="profile" id="profileMenu">
+    <img id="headerAvatar" src="https://via.placeholder.com/40" alt="Profile">
+    <div class="dropdown" id="dropdownMenu">
+      <div class="user-info" id="dropdownUserInfo">🔄 Loading...</div>
+      <a href="profile.html">Profile</a>
+      <a href="order.html">💎 Order Page</a>
+      <a href="#" id="logoutBtn">Logout</a>
+    </div>
+  </div>
+</header>
+
+<div class="sidebar" id="sidebar">
+  <a href="dashboard.html">📊 Dashboard</a>
+  <a href="profile.html">👤 Profile</a>
+  <a href="order-history.html">📜 History</a>
+  <a href="order.html">💎 Order Page</a>
+</div>
+
+<main>
+  <section class="support-section">
+    <h1>Support / সহায়তা</h1>
+    <p>আপনি আমাদের সাথে যোগাযোগ করতে পারেন নিচের মাধ্যমে: </p>
+    <ul>
+      <li>📞 ফোন: <span class="highlight">017XXXXXXXX</span></li>
+      <li>💬 WhatsApp: <span class="highlight"><a href="https://wa.me/88017XXXXXXXX" target="_blank">Click to Chat</a></span></li>
+      <li>📧 Email: <span class="highlight">support@sarkartelecom.com</span></li>
+    </ul>
+
+    <div class="faq-box">
+      <h2>FAQ / প্রায়শই জিজ্ঞাস্য প্রশ্ন</h2>
+      <p><strong>প্রশ্ন:</strong> কিভাবে order place করব?<br>
+         <strong>উত্তর:</strong> Dashboard থেকে Order Page এ গিয়ে প্রয়োজনীয় তথ্য পূরণ করুন।</p>
+      <p><strong>প্রশ্ন:</strong> পেমেন্ট কনফার্ম কবে হবে?<br>
+         <strong>উত্তর:</strong> সফল ট্রানজেকশন হলে অবিলম্বে balance update হবে।</p>
+    </div>
+
+    <div class="faq-box">
+      <h2>লাইভ চ্যাট ফাংশন (Optional)</h2>
+      <p>লাইভ চ্যাট তৈরি করতে Firebase Realtime Database বা Firestore ব্যবহার করতে পারেন। প্রতিটি message realtime update হবে। সহজ বিকল্প হিসেবে Tawk.to বা Crisp embed code ব্যবহার করা যায়।</p>
+    </div>
+  </section>
+</main>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAyhjOsIXNAkBglpRllt0OZIOJYpdB_9-8",
+  authDomain: "diamond-recharge-f7f59.firebaseapp.com",
+  projectId: "diamond-recharge-f7f59",
+  storageBucket: "diamond-recharge-f7f59.appspot.com",
+  messagingSenderId: "657717928489",
+  appId: "1:657717928489:web:70431ebc9afb7002d4b238"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+const headerAvatar = document.getElementById("headerAvatar");
+const dropdownUserInfo = document.getElementById("dropdownUserInfo");
+
+document.querySelector(".menu-toggle").addEventListener("click", ()=>{
+  document.getElementById("sidebar").classList.toggle("active");
+});
+
+const profileMenu = document.getElementById("profileMenu");
+const dropdownMenu = document.getElementById("dropdownMenu");
+profileMenu.addEventListener("click", ()=> {
+  dropdownMenu.style.display = dropdownMenu.style.display==="flex"?"none":"flex";
+});
+
+document.getElementById("logoutBtn").addEventListener("click", ()=>{
+  signOut(auth);
+});
+
+onAuthStateChanged(auth, async(user)=>{
+  if(user){
+    let name = user.displayName || "Guest User";
+    let email = user.email || "";
+    let phone = "-";
+    let role = "User"; 
+    let avatar = user.photoURL || "https://via.placeholder.com/80";
+
+    const userRef = doc(db,"users",user.uid);
+    const userSnap = await getDoc(userRef);
+    if(userSnap.exists()){
+      const data = userSnap.data();
+      name = data.name || name;
+      phone = data.phone || phone;
+      role = data.role || role;
+      if(data.avatar) avatar = data.avatar;
+    }
+
+    headerAvatar.src = avatar;
+    dropdownUserInfo.innerHTML = `
+      <img src="${avatar}" alt="Avatar">
+      <strong>${name}</strong>
+      <span class="email-text">${email}</span>
+      <span class="phone-text">${phone}</span>
+      <span class="role-text">${role}</span>
+    `;
+  } else {
+    headerAvatar.src = "https://via.placeholder.com/40";
+    dropdownUserInfo.innerHTML = "Not Logged In";
+  }
+});
+</script>
+
+</body>
+</html>
