@@ -3,26 +3,78 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Order Diamonds</title>
+<title>Order Diamonds - SARKAR TELECOM</title>
 <style>
-body { font-family: Arial, Helvetica, sans-serif; background:#0f1115; color:#e7eaf0; padding:10px; }
+body {
+  margin:0;
+  font-family: Arial, Helvetica, sans-serif;
+  background:#0f1824;
+  color:#e7eaf0;
+  display:flex;
+  flex-direction:column;
+  min-height:100vh;
+}
+/* Header */
+header {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  background:#1b2735;
+  padding:10px 15px;
+  position:fixed;
+  width:100%;
+  top:0;
+  z-index:1000;
+}
+.menu-toggle { font-size:24px; cursor:pointer; background:none; border:none; color:#fff; }
+.site-title { font-weight:bold; font-size:18px; flex:1; text-align:center; }
+.profile { position:relative; cursor:pointer; display:flex; align-items:center; padding-right:30px; }
+.profile img { width:40px; height:40px; border-radius:50%; object-fit:cover; margin-left:10px; }
+
+/* Dropdown */
+.dropdown { position:absolute; right:0; top:50px; background:#1c2431; color:#fff; min-width:160px; border-radius:6px; display:none; flex-direction:column; box-shadow:0 4px 6px rgba(0,0,0,0.2); }
+.dropdown a { padding:12px; text-decoration:none; color:#fff; border-bottom:1px solid #2a3445; font-size:14px; text-align:center; }
+.dropdown a:hover { background:#2f3c52; }
+
+/* Sidebar */
+.sidebar { position:fixed; left:-250px; top:0; width:250px; height:100%; background:#1c2431; padding-top:60px; transition:left 0.3s ease; z-index:999; overflow-y:auto; }
+.sidebar.active { left:0; }
+.sidebar a { display:block; padding:12px 20px; text-decoration:none; color:#fff; border-bottom:1px solid #2a3445; }
+.sidebar a:hover { background:#2f3c52; }
+
+/* Logout Button Style */
+.logout-btn { display:block; width:90%; margin:15px auto; padding:12px; background:#d62828; color:#fff; border:none; border-radius:8px; font-size:15px; cursor:pointer; text-align:center; }
+.logout-btn:hover { background:#b91c1c; }
+
+/* Main */
+main { margin-top:70px; padding:15px; flex:1; }
 h2 { text-align:center; color:#06b6d4; margin-bottom:20px; }
+
+/* Grid Buttons */
 .grid { display:grid; grid-template-columns: repeat(auto-fit,minmax(80px,1fr)); gap:10px; margin-bottom:10px; }
 .grid button { padding:10px; border:none; border-radius:6px; cursor:pointer; background:#1f2937; color:#e7eaf0; font-weight:bold; }
 .grid button.selected { background:#06b6d4; color:#000; }
+
 input, select { width:100%; padding:8px; margin:6px 0; border-radius:6px; border:1px solid #333; background:#171a21; color:#e7eaf0; }
 button#submitBtn { width:100%; padding:10px; border:none; border-radius:6px; background:#06b6d4; color:#000; font-weight:bold; cursor:pointer; margin-top:10px; }
 button#submitBtn:hover { background:#0ea5e9; }
-.copy-box { display:flex; gap:5px; align-items:center; margin-bottom:10px; }
-.copy-box input { flex:1; }
-.copy-box button { padding:6px; border:none; border-radius:6px; cursor:pointer; background:#06b6d4; color:#000; }
-.msg { margin-top:10px; font-size:14px; min-height:20px; }
-.amount-display { margin-bottom:10px; font-weight:bold; text-align:center; }
+button#submitBtn:disabled { background:#555; cursor:not-allowed; }
+
+.msg { margin-top:10px; font-size:14px; min-height:20px; text-align:center; }
+
+/* Footer */
+footer { background:#1b2735; padding:20px 10px; text-align:center; }
+.footer-nav { display:flex; justify-content:center; flex-wrap:wrap; gap:10px; margin-bottom:10px; }
+.footer-nav a { text-decoration:none; color:#fff; background:#06b6d4; padding:8px 14px; border-radius:20px; font-size:14px; transition:0.3s; }
+.footer-nav a:hover { background:#0891b2; }
+.copyright { font-size:13px; color:#aaa; }
 </style>
+
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
-import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+import { getFirestore, collection, addDoc, serverTimestamp, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-storage.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAyhjOsIXNAkBglpRllt0OZIOJYpdB_9-8",
@@ -37,6 +89,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+const storage = getStorage(app);
 
 const diamondAmounts = [
   {d:10,p:25},{d:50,p:115},{d:100,p:230},{d:200,p:460},{d:500,p:1130},
@@ -44,146 +97,156 @@ const diamondAmounts = [
 ];
 
 const paymentMethods = {
-  "bKash":["01715118684","01781332352","01790216921","01405475992"],
-  "Nagad":["01715118684","01790216921"],
-  "Rocket":["017151186847"],
-  "Upay":["01715118684"],
+  "bKash Personal":["01715118684","01781332352","01790216921","01405475992"],
+  "Nagad Personal":["01715118684","01790216921"],
+  "Rocket Personal":["017151186847"],
+  "Upay Personal":["01715118684"],
   "Nagad Agent":["01919961919"],
-  "bKash Payment":["01971744060","01911611637"]
+  "bKash Payment":["01971744060","01911611637"],
+  "Binance (USDT)":["216953638"]
 };
 
-let selectedAmount = null;
-let selectedPaymentMethod = null;
-let selectedAccount = null;
+let selectedAmount=null, selectedPaymentMethod=null, selectedAccount=null, screenshotFile=null;
 
-window.addEventListener("load",()=>{
-  const grid = document.getElementById("diamondGrid");
+document.addEventListener("DOMContentLoaded",()=>{
+  document.querySelector(".menu-toggle").addEventListener("click",()=>document.getElementById("sidebar").classList.toggle("active"));
+  document.getElementById("profileMenu").addEventListener("click",()=>{
+    const d=document.getElementById("dropdownMenu");
+    d.style.display=d.style.display==="flex"?"none":"flex";
+  });
+
+  document.getElementById("logoutBtn").addEventListener("click",doLogout);
+  document.getElementById("logoutBtn2").addEventListener("click",doLogout);
+
+  const grid=document.getElementById("diamondGrid");
   diamondAmounts.forEach(a=>{
-    const btn = document.createElement("button");
+    const btn=document.createElement("button");
     btn.textContent=`${a.d} 💎`;
     btn.onclick=()=>selectAmount(a,btn);
     grid.appendChild(btn);
   });
 
-  const methodSelect = document.getElementById("paymentMethod");
+  const methodSelect=document.getElementById("paymentMethod");
   Object.keys(paymentMethods).forEach(m=>{
-    const opt = document.createElement("option");
-    opt.value=m;
-    opt.textContent=m;
-    methodSelect.appendChild(opt);
+    const opt=document.createElement("option");
+    opt.value=m; opt.textContent=m; methodSelect.appendChild(opt);
   });
-
   methodSelect.addEventListener("change",()=>{
-    selectedPaymentMethod = methodSelect.value;
+    selectedPaymentMethod=methodSelect.value;
     showAccount(selectedPaymentMethod);
   });
 
-  // Profile ID input: only numbers + optional "+"
-  const profileInput = document.getElementById("profileId");
-  profileInput.addEventListener("input",()=>{
-    profileInput.value = profileInput.value.replace(/[^0-9\+]/g,'');
-  });
+  document.getElementById("screenshot").addEventListener("change",(e)=>screenshotFile=e.target.files[0]);
 });
 
+function doLogout(){ signOut(auth).then(()=>window.location.href="login.html"); }
+
 function selectAmount(a,btn){
-  selectedAmount = a;
+  selectedAmount=a;
   document.querySelectorAll("#diamondGrid button").forEach(b=>b.classList.remove("selected"));
   btn.classList.add("selected");
-  document.getElementById("amountDisplay").textContent = `Amount: ${a.p} /-`;
+  document.getElementById("amountDisplay").textContent=`Amount: ${a.p} /-`;
 }
 
 function showAccount(method){
-  const accountBox = document.getElementById("accountBox");
+  const accountBox=document.getElementById("accountBox");
   accountBox.innerHTML="";
-  if(!method || !paymentMethods[method]) return;
-  selectedAccount = paymentMethods[method][0];
-  if(paymentMethods[method].length>1){
-    const select = document.createElement("select");
-    paymentMethods[method].forEach(acc=>{
-      const opt = document.createElement("option");
-      opt.value = acc;
-      opt.textContent = acc;
-      select.appendChild(opt);
-    });
-    select.addEventListener("change",()=> selectedAccount=select.value);
-    accountBox.appendChild(select);
-  } else {
-    const input = document.createElement("input");
-    input.type="text";
-    input.value=selectedAccount;
-    input.readOnly=true;
-    accountBox.appendChild(input);
-  }
-
-  const copyBtn = document.createElement("button");
-  copyBtn.textContent="Copy";
-  copyBtn.onclick=()=>{ navigator.clipboard.writeText(selectedAccount); alert("Copied: "+selectedAccount); }
-  accountBox.appendChild(copyBtn);
+  if(!method||!paymentMethods[method]) return;
+  selectedAccount=paymentMethods[method][0];
+  const input=document.createElement("input");
+  input.type="text"; input.value=selectedAccount; input.readOnly=true;
+  accountBox.appendChild(input);
 }
 
-window.submitOrder = async()=>{
-  const profileId = document.getElementById("profileId").value.trim();
-  const txid = document.getElementById("txid").value.trim();
-  const msg = document.getElementById("msg");
+window.submitOrder=async()=>{
+  const profileId=document.getElementById("profileId").value.trim();
+  const txid=document.getElementById("txid").value.trim();
+  const msg=document.getElementById("msg");
+  const submitBtn=document.getElementById("submitBtn");
 
   if(!selectedAmount){ msg.textContent="⚠️ Select Diamond amount"; return;}
   if(!profileId){ msg.textContent="⚠️ Enter Profile ID / Number"; return;}
   if(!selectedPaymentMethod){ msg.textContent="⚠️ Select Payment Method"; return;}
   if(!txid){ msg.textContent="⚠️ Enter Transaction ID"; return;}
 
+  submitBtn.disabled=true;
   onAuthStateChanged(auth, async(user)=>{
     if(user){
       try{
+        let screenshotURL="";
+        if(screenshotFile){
+          const storageRef=ref(storage,"screenshots/"+Date.now()+"_"+screenshotFile.name);
+          await uploadBytes(storageRef,screenshotFile);
+          screenshotURL=await getDownloadURL(storageRef);
+        }
         await addDoc(collection(db,"orders"),{
-          email: user.email,
-          profileId,
-          amount: selectedAmount.p,
-          method: selectedPaymentMethod,
-          account: selectedAccount,
-          txid,
-          status: "pending",
-          createdAt: serverTimestamp(),
-          userId: user.uid   // ← এখানে যোগ করা হলো
+          email:user.email, userId:user.uid,
+          profileId, amount:selectedAmount.p,
+          method:selectedPaymentMethod, account:selectedAccount,
+          txid, screenshot:screenshotURL,
+          status:"pending", createdAt:serverTimestamp()
         });
         msg.textContent="✅ Order submitted!";
-        setTimeout(()=>{ window.location.href="order-history.html"; },1000);
-      }catch(e){
-        msg.textContent="❌ "+e.message;
-      }
-    }else{
-      alert("Please login first");
-      window.location.href="login.html";
-    }
+        setTimeout(()=>window.location.href="order-history.html",1000);
+      }catch(e){ msg.textContent="❌ "+e.message; submitBtn.disabled=false; }
+    } else { window.location.href="login.html"; }
   });
 }
 </script>
 </head>
 <body>
-<h2>💎 Order Diamonds</h2>
+<header>
+  <button class="menu-toggle">☰</button>
+  <div class="site-title">SARKAR TELECOM</div>
+  <div class="profile" id="profileMenu">
+    <img id="profilePic" src="https://via.placeholder.com/40" alt="Profile">
+    <div class="dropdown" id="dropdownMenu">
+      <a href="profile.html">👤 Profile</a>
+      <a href="order-history.html">📜 History</a>
+      <a href="#" id="logoutBtn">🚪 Logout</a>
+    </div>
+  </div>
+</header>
 
-<!-- Diamond amount grid -->
-<div id="diamondGrid" class="grid"></div>
-<div id="amountDisplay" class="amount-display"></div>
+<div class="sidebar" id="sidebar">
+  <a href="dashboard.html">📊 Dashboard</a>
+  <a href="order.html">➕ Order</a>
+  <a href="order-history.html">📜 History</a>
+  <a href="profile.html">👤 Profile</a>
+  <a href="support.html">💬 Support</a>
+  <a href="#" id="logoutBtn2" class="logout-btn">🚪 Logout</a>
+</div>
 
-<!-- Profile ID / Phone -->
-<label>Profile ID / Phone Number (with country code)</label>
-<input type="text" id="profileId" placeholder="Enter Profile ID / Phone Number">
+<main>
+  <h2>💎 Order Diamonds</h2>
+  <div id="diamondGrid" class="grid"></div>
+  <div id="amountDisplay" class="amount-display"></div>
 
-<!-- Payment Method -->
-<label>Payment Method</label>
-<select id="paymentMethod">
-  <option value="">Select Method</option>
-</select>
+  <label>Profile ID / Phone Number (with country code)</label>
+  <input type="text" id="profileId" placeholder="Enter Profile ID / Phone Number">
 
-<!-- Account number box & copy -->
-<div id="accountBox"></div>
+  <label>Payment Method</label>
+  <select id="paymentMethod"><option value="">Select Method</option></select>
+  <div id="accountBox"></div>
 
-<!-- Transaction ID -->
-<label>Transaction ID</label>
-<input type="text" id="txid" placeholder="Enter Transaction ID">
+  <label>Transaction ID</label>
+  <input type="text" id="txid" placeholder="Enter Transaction ID">
 
-<!-- Submit button -->
-<button id="submitBtn" onclick="submitOrder()">Submit Order</button>
-<p class="msg" id="msg"></p>
+  <label>Upload Screenshot (optional)</label>
+  <input type="file" id="screenshot" accept="image/*">
+
+  <button id="submitBtn" onclick="submitOrder()">Submit Order</button>
+  <p class="msg" id="msg"></p>
+</main>
+
+<footer>
+  <div class="footer-nav">
+    <a href="support.html">💬 Support</a>
+    <a href="order.html">➕ Order</a>
+    <a href="order-history.html">📜 History</a>
+    <a href="faq.html">❓ FAQ</a>
+  </div>
+  <div class="copyright">© SARKAR TELECOM - 2022-2026</div>
+</footer>
 </body>
 </html>
