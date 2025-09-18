@@ -5,16 +5,94 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Terms & Conditions - SARKAR TELECOM</title>
 <style>
-  body { margin:0; font-family: Arial, sans-serif; background:#0d0d0d; color:#fff; }
-  header, .sidebar, main, h1, p, etc same as Refund Policy page
+  body { margin:0; font-family: Arial,sans-serif; background:#0d0d0d; color:#fff; }
+  header { display:flex; justify-content:space-between; align-items:center; background:#1b2735; padding:10px 15px; position:fixed; width:100%; top:0; z-index:1000; }
+  .menu-toggle { font-size:24px; cursor:pointer; background:none; border:none; color:#fff; }
+  .site-title { font-weight:bold; font-size:18px; flex:1; text-align:center; }
+  .profile { position:relative; cursor:pointer; display:flex; align-items:center; padding-right:30px; }
+  .profile img { width:40px; height:40px; border-radius:50%; object-fit:cover; margin-left:10px; }
+  .dropdown { position:absolute; right:0; top:50px; background:#fff; color:#333; min-width:160px; border-radius:6px; display:none; flex-direction:column; box-shadow:0 4px 6px rgba(0,0,0,0.2); }
+  .dropdown a { padding:10px; text-decoration:none; color:#333; border-bottom:1px solid #eee; }
+  .dropdown a:hover { background:#f0f0f0; }
+  .sidebar { position:fixed; left:-250px; top:0; width:250px; height:100%; background:#1c2431; padding-top:60px; transition:left 0.3s ease; z-index:999; }
+  .sidebar.active { left:0; }
+  .sidebar a { display:block; padding:12px 20px; text-decoration:none; color:#fff; border-bottom:1px solid #2a3445; }
+  .sidebar a:hover { background:#2f3c52; }
+  main { margin-top:60px; padding:20px; max-width:900px; margin-left:auto; margin-right:auto; }
+  h1 { text-align:center; font-size:2rem; color:#00ffcc; margin-bottom:20px; }
+  p { background: rgba(255,255,255,0.05); padding:15px; border-radius:10px; box-shadow:0 4px 15px rgba(0,0,0,0.5); margin-bottom:10px; text-align:justify; }
+  @media(max-width:600px){ main{padding:10px;} h1{font-size:1.5rem;} }
 </style>
 <script type="module">
-  // Same Firebase auth + avatar + sidebar toggle code
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAyhjOsIXNAkBglpRllt0OZIOJYpdB_9-8",
+  authDomain: "diamond-recharge-f7f59.firebaseapp.com",
+  projectId: "diamond-recharge-f7f59",
+  storageBucket: "diamond-recharge-f7f59.appspot.com",
+  messagingSenderId: "657717928489",
+  appId: "1:657717928489:web:70431ebc9afb7002d4b238"
+};
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+// Sidebar toggle
+document.addEventListener("DOMContentLoaded", ()=>{
+  document.querySelector(".menu-toggle").addEventListener("click", ()=>{
+    document.getElementById("sidebar").classList.toggle("active");
+  });
+  const profileMenu = document.getElementById("profileMenu");
+  const dropdownMenu = document.getElementById("dropdownMenu");
+  profileMenu.addEventListener("click", ()=> { dropdownMenu.style.display = dropdownMenu.style.display==="flex"?"none":"flex"; });
+});
+
+// Logout
+function doLogout() { signOut(auth).then(()=>window.location.href="login.html"); }
+document.addEventListener("DOMContentLoaded", ()=>{
+  document.getElementById("logoutBtn").addEventListener("click", doLogout);
+  document.getElementById("logoutBtn2").addEventListener("click", doLogout);
+});
+
+// Load user avatar from Firebase
+onAuthStateChanged(auth, async(user)=>{
+  if(user){
+    const profilePic = document.getElementById("profilePic");
+    const profileDoc = doc(db,"users",user.uid);
+    const snap = await getDoc(profileDoc);
+    if(snap.exists() && snap.data().avatar){ profilePic.src = snap.data().avatar; }
+    else profilePic.src="https://via.placeholder.com/40";
+  }else{ window.location.href="login.html"; }
+});
 </script>
 </head>
 <body>
-<header>...same as above...</header>
-<div class="sidebar" id="sidebar">...same as above...</div>
+<header>
+  <button class="menu-toggle">☰</button>
+  <div class="site-title">SARKAR TELECOM</div>
+  <div class="profile" id="profileMenu">
+    <img id="profilePic" src="https://via.placeholder.com/40" alt="Profile">
+    <div class="dropdown" id="dropdownMenu">
+      <a href="profile.html">Profile</a>
+      <a href="order.html">💎 Order Page</a>
+      <a href="dashboard.html">📊 Dashboard</a>
+      <a href="#" id="logoutBtn">Logout</a>
+    </div>
+  </div>
+</header>
+<div class="sidebar" id="sidebar">
+  <a href="dashboard.html">📊 Dashboard</a>
+  <a href="profile.html">👤 Profile</a>
+  <a href="order-history.html">📜 History</a>
+  <a href="order.html">💎 Order Page</a>
+  <a href="support.html">💬 Support</a>
+  <a href="about.html">ℹ About Us</a>
+  <a href="#" id="logoutBtn2">🚪 Logout</a>
+</div>
+
 <main>
 <h1>Terms & Conditions</h1>
 <p>By using SARKAR TELECOM services, you agree to the following terms and conditions:</p>
