@@ -11,6 +11,7 @@
       background:#0f172a;
       color:#fff;
     }
+
     /* Header */
     .header {
       display:flex;
@@ -26,6 +27,11 @@
       font-size:18px;
       margin:0;
       color:#38bdf8;
+    }
+    .menu-btn {
+      font-size:22px;
+      cursor:pointer;
+      margin-right:15px;
     }
     .header-right {
       position:relative;
@@ -75,12 +81,15 @@
       width:250px;
       position:fixed;
       top:0;
-      left:0;
+      left:-250px;
       background:#1e293b;
       overflow-y:auto;
       padding-top:20px;
       transition:0.3s;
       z-index:999;
+    }
+    .sidebar.active {
+      left:0;
     }
     .sidebar a {
       display:block;
@@ -112,8 +121,12 @@
 
     /* Main content */
     .main {
-      margin-left:250px;
+      margin-left:0;
       padding:20px;
+      transition:0.3s;
+    }
+    .sidebar.active ~ .main {
+      margin-left:250px;
     }
 
     /* Footer */
@@ -145,6 +158,7 @@
 
   <!-- Header -->
   <div class="header">
+    <span class="menu-btn" onclick="toggleSidebar()">☰</span>
     <h1>Sarkar Telecom</h1>
     <div class="header-right" onclick="toggleDropdown()">
       <img src="https://via.placeholder.com/40" alt="User Avatar" id="headerAvatar" class="avatar">
@@ -181,7 +195,7 @@
   <!-- Main content -->
   <div class="main">
     <h2>Welcome to Sarkar Telecom</h2>
-    <p>This is a sample page with updated dropdown + sidebar + footer.</p>
+    <p>This is a fixed layout with Firebase avatar + responsive sidebar.</p>
   </div>
 
   <!-- Footer -->
@@ -195,7 +209,42 @@
     <p>© SARKAR TELECOM - 2022-2026</p>
   </footer>
 
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script>
+    // আপনার Firebase config এখানে দিন
+    const firebaseConfig = {
+      apiKey: "AIzaSyAyhjOsIXNAkBglpRllt0OZIOJYpdB_9-8",
+      authDomain: "diamond-recharge-f7f59.firebaseapp.com",
+      projectId: "diamond-recharge-f7f59",
+      storageBucket: "diamond-recharge-f7f59.appspot.com",
+      messagingSenderId: "1029384756",
+      appId: "1:1029384756:web:abcd1234"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+
+    // Avatar + User Info Load
+    auth.onAuthStateChanged(user=>{
+      if(user){
+        if(user.photoURL){
+          document.getElementById("headerAvatar").src=user.photoURL;
+        }
+        document.getElementById("userBox").innerHTML = `
+          <b>${user.displayName||'No Name'}</b><br>
+          ${user.email}<br>
+          UID: ${user.uid}
+        `;
+      }
+    });
+
+    // Sidebar toggle
+    function toggleSidebar(){
+      document.getElementById("sidebar").classList.toggle("active");
+    }
+
+    // Dropdown toggle
     function toggleDropdown() {
       const menu=document.getElementById('dropdownMenu');
       menu.style.display = (menu.style.display==='flex') ? 'none':'flex';
