@@ -1,65 +1,48 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Order History - SARKAR TELECOM</title>
+<title>Admin Dashboard</title>
 <style>
-body {
-  margin:0;
-  font-family: Arial,sans-serif;
-  background:#0f1824;
-  color:#fff;
-}
-/* Header */
-header {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  background:#1b2735;
-  padding:10px 15px;
-  position:fixed;
-  width:100%;
-  top:0;
-  z-index:1000;
-}
-.menu-toggle { font-size:24px; cursor:pointer; background:none; border:none; color:#fff; }
-.site-title { font-weight:bold; font-size:18px; flex:1; text-align:center; }
-.profile { position:relative; cursor:pointer; padding-left:8px; }
-.profile img { width:40px; height:40px; border-radius:50%; }
-.dropdown { position:absolute; right:0; top:50px; background:#fff; color:#333; min-width:160px; border-radius:6px; display:none; flex-direction:column; box-shadow:0 4px 6px rgba(0,0,0,0.2); }
-.dropdown a { padding:10px; text-decoration:none; color:#333; border-bottom:1px solid #eee; }
-.dropdown a:hover { background:#f0f0f0; }
-/* Sidebar */
-.sidebar { position:fixed; left:-250px; top:0; width:250px; height:100%; background:#1c2431; padding-top:60px; transition:left 0.3s ease; z-index:999; }
-.sidebar.active { left:0; }
-.sidebar a { display:block; padding:12px 20px; text-decoration:none; color:#fff; border-bottom:1px solid #2a3445; }
-.sidebar a:hover { background:#2f3c52; }
-/* Main content */
-main { margin-top:60px; padding:10px; }
-/* Search */
-#searchBox { width:100%; padding:4px; margin-bottom:5px; border-radius:6px; border:1px solid #333; background:#171a21; color:#fff; box-sizing:border-box; }
-/* Table */
-table { width:100%; border-collapse:collapse; table-layout:fixed; }
-th, td { padding:4px 6px; border:1px solid #333; text-align:center; font-size:11px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-th { background:#1f2937; }
-td { background:#171a21; }
-.status-pending { color:#facc15; font-weight:bold; }
-.status-completed { color:#22c55e; font-weight:bold; }
-.status-failed, .status-cancelled { color:#ef4444; font-weight:bold; }
-/* Pagination */
-.pagination { text-align:center; margin-top:5px; }
-.pagination button { margin:1px; padding:3px 5px; border:none; border-radius:6px; cursor:pointer; background:#1f2937; color:#fff; font-size:11px; }
-.pagination button.active { background:#fff; color:#000; }
-.pagination button:hover { background:#2f3c52; }
-/* Responsive: scroll table */
-@media screen and (max-width:600px){ table { display:block; overflow-x:auto; white-space:nowrap; } }
+  body { font-family: Arial, Helvetica, sans-serif; background: #0f1115; color: #e7eaf0; margin:0; }
+  .topbar { background:#111; padding:10px; color:#0ff; display:flex; align-items:center; }
+  .brand { flex:1; font-size:18px; }
+  .menu-btn { background:none; border:none; color:#0ff; font-size:20px; cursor:pointer; margin-right:10px; }
+  .sidebar { position:fixed; top:0; left:-220px; width:200px; height:100%; background:#111; padding:10px; transition:0.3s; overflow:auto; }
+  .sidebar.open { left:0; }
+  .sidebar a { display:block; color:#0ff; padding:8px; text-decoration:none; margin-bottom:5px; border-radius:5px; }
+  .sidebar a:hover { background:#0cc; }
+  .container { margin-left:220px; padding:20px; }
+  h2 { color:#06b6d4; text-align:center; margin-bottom:20px; }
+  .controls { margin-bottom: 10px; display: flex; flex-wrap: wrap; gap: 10px; }
+  .controls input, .controls select { padding: 5px; border-radius: 4px; border: 1px solid #333; background: #171a21; color: #e7eaf0; }
+  table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; }
+  table, th, td { border: 1px solid #444; }
+  th, td { padding: 6px; text-align: center; }
+  th { background: #1f2937; }
+  tr:nth-child(even) { background: #171a21; }
+  tr:nth-child(odd) { background: #0f1115; }
+  button.updateBtn, button.deleteBtn, button.pageBtn { padding: 4px 6px; border-radius: 4px; border: none; cursor: pointer; font-size: 12px; }
+  button.updateBtn { background: #06b6d4; color: #000; }
+  button.updateBtn:hover { background: #0ea5e9; }
+  button.deleteBtn { background: #ef4444; color: #fff; }
+  button.deleteBtn:hover { background: #f87171; }
+  button.pageBtn { background: #1f2937; color: #e7eaf0; margin: 2px; }
+  button.pageBtn:hover { background: #374151; }
+  #denied { color: red; text-align: center; font-size: 16px; margin-top: 50px; }
+  @media(max-width:600px){
+    table { font-size: 11px; }
+    th, td { padding: 4px; }
+    button.updateBtn, button.deleteBtn, button.pageBtn { padding: 3px 5px; font-size: 11px; }
+  }
 </style>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
-import { getFirestore, collection, query, where, orderBy, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+import { getFirestore, collection, getDocs, orderBy, query, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
+// ==================== Firebase Config ====================
 const firebaseConfig = {
   apiKey: "AIzaSyAyhjOsIXNAkBglpRllt0OZIOJYpdB_9-8",
   authDomain: "diamond-recharge-f7f59.firebaseapp.com",
@@ -73,140 +56,176 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-// Sidebar toggle
+// ==================== Sidebar Toggle ====================
+const menuBtn = document.createElement("button");
+menuBtn.className="menu-btn";
+menuBtn.textContent="☰";
 document.addEventListener("DOMContentLoaded", ()=>{
-  document.querySelector(".menu-toggle").addEventListener("click", ()=>{
-    document.getElementById("sidebar").classList.toggle("active");
+    document.body.prepend(menuBtn);
+});
+menuBtn.addEventListener('click', ()=>{
+    document.getElementById("sidebar").classList.toggle("open");
+});
+
+// ==================== Admin Config ====================
+const adminEmails = ["samrat.khulnas@gmail.com"];
+let allOrders = [];
+let currentPage = 1;
+const ordersPerPage = 20;
+
+// ==================== Load Orders ====================
+async function loadOrders(){
+  allOrders = [];
+  const q = query(collection(db,"orders"), orderBy("createdAt","desc"));
+  const snap = await getDocs(q);
+  snap.forEach(docSnap => {
+    const d = docSnap.data();
+    d.id = docSnap.id;
+    allOrders.push(d);
   });
-  const profileMenu = document.getElementById("profileMenu");
-  const dropdownMenu = document.getElementById("dropdownMenu");
-  profileMenu.addEventListener("click", ()=> { dropdownMenu.style.display = dropdownMenu.style.display==="flex"?"none":"flex"; });
-});
+  renderTable();
+}
 
-// Logout
-function doLogout() { signOut(auth).then(()=>window.location.href="login.html"); }
-document.addEventListener("DOMContentLoaded", ()=>{
-  document.getElementById("logoutBtn").addEventListener("click", doLogout);
-  document.getElementById("logoutBtn2").addEventListener("click", doLogout);
-});
+// ==================== Render Table ====================
+function renderTable(){
+  const searchEmail = document.getElementById("searchEmail").value.toLowerCase();
+  const filterStatus = document.getElementById("filterStatus").value;
 
-// Orders
-let allOrders=[], currentPage=1, perPage=20;
-function formatTime(ts){ 
-  if(!ts?.toDate) return "-"; 
-  const d=ts.toDate(); 
-  let h=d.getHours(); 
-  const m=d.getMinutes().toString().padStart(2,'0'); 
-  const ampm=h>=12?'PM':'AM'; 
-  h=h%12||12; 
-  return `${h}:${m} ${ampm}`; 
-}
-function renderTable(orders){ 
-  const tbody=document.getElementById("ordersBody"); 
-  tbody.innerHTML=""; 
-  const total=allOrders.length; 
-  orders.forEach((d,i)=>{ 
-    const sl=total-((currentPage-1)*perPage+i); 
-    const tr=document.createElement("tr"); 
-    tr.innerHTML=`<td>${sl}</td>
-      <td>${d.profileId||"-"}</td>
-      <td>${d.amount||"-"}</td>
-      <td>${d.method||"-"}</td>
-      <td>${d.account||"-"}</td>
-      <td>${d.txid||"-"}</td>
-      <td class="status-${d.status.toLowerCase()}">${d.status||"-"}</td>
-      <td>${formatTime(d.createdAt)}</td>`;
-    tbody.appendChild(tr); 
-  }); 
-}
-function renderPagination(total){ 
-  const pag=document.getElementById("pagination"); 
-  pag.innerHTML=""; 
-  const pages=Math.ceil(total/perPage); 
-  if(pages<=1) return; 
-  for(let i=1;i<=pages;i++){ 
-    const btn=document.createElement("button"); 
-    btn.textContent=i; 
-    btn.className=i===currentPage?"active":""; 
-    btn.onclick=()=>{ currentPage=i; showPage(); }; 
-    pag.appendChild(btn); 
-  } 
-}
-function showPage(){ 
-  const s=(currentPage-1)*perPage; 
-  renderTable(allOrders.slice(s,s+perPage)); 
-  renderPagination(allOrders.length); 
-}
-function filterOrders(){ 
-  const q=document.getElementById("searchBox").value.toLowerCase(); 
-  const filtered=allOrders.filter(o=>((o.profileId||"").toLowerCase().includes(q)||(o.amount||"").toString().includes(q)||(o.method||"").toLowerCase().includes(q)||(o.account||"").toLowerCase().includes(q)||(o.txid||"").toLowerCase().includes(q)||(o.status||"").toLowerCase().includes(q))); 
-  renderTable(filtered.slice(0,perPage)); 
-  currentPage=1; 
-  renderPagination(filtered.length); 
-}
-document.addEventListener("DOMContentLoaded", ()=>{
-  document.getElementById("searchBox").addEventListener("input", filterOrders);
-});
+  let filteredOrders = allOrders.filter(o => 
+    (!searchEmail || (o.email && o.email.toLowerCase().includes(searchEmail))) &&
+    (!filterStatus || o.status === filterStatus)
+  );
 
-// Load Orders and Avatar from Firestore
-onAuthStateChanged(auth, async(user)=>{
+  // Reverse serial (descending)
+  filteredOrders = filteredOrders.reverse();
+
+  const totalPages = Math.ceil(filteredOrders.length / ordersPerPage);
+  if(currentPage > totalPages) currentPage = totalPages || 1;
+  const start = (currentPage-1)*ordersPerPage;
+  const end = start + ordersPerPage;
+  const pageOrders = filteredOrders.slice(start, end);
+
+  const orderTable = document.getElementById("orderTable");
+  orderTable.innerHTML = "";
+  pageOrders.forEach((d,index)=>{
+    const row = document.createElement("tr");
+    const serialStr = (start+index+1).toString().padStart(3,"0");
+    row.innerHTML = `
+      <td>${serialStr}</td>
+      <td>${d.email||"N/A"}</td>
+      <td>${d.profileId||"N/A"}</td>
+      <td>${d.amount||0}</td>
+      <td>${d.method||"N/A"}</td>
+      <td>${d.account||"N/A"}</td>
+      <td>${d.txid||"N/A"}</td>
+      <td>
+        <select id="status_${d.id}">
+          <option value="pending" ${d.status==="pending"?"selected":""}>Pending</option>
+          <option value="completed" ${d.status==="completed"?"selected":""}>Completed</option>
+          <option value="cancelled" ${d.status==="cancelled"?"selected":""}>Cancelled</option>
+        </select>
+        <button class="updateBtn" onclick="updateStatus('${d.id}')">Update</button>
+      </td>
+      <td>
+        <button class="deleteBtn" onclick="deleteOrder('${d.id}')">Delete</button>
+      </td>
+    `;
+    orderTable.appendChild(row);
+  });
+
+  renderPagination(totalPages);
+}
+
+// ==================== Pagination ====================
+function renderPagination(totalPages){
+  const container = document.getElementById("pagination");
+  container.innerHTML="";
+  for(let i=1;i<=totalPages;i++){
+    const btn = document.createElement("button");
+    btn.textContent=i;
+    btn.className="pageBtn";
+    if(i===currentPage) btn.style.background="#06b6d4";
+    btn.onclick=()=>{currentPage=i; renderTable();};
+    container.appendChild(btn);
+  }
+}
+
+// ==================== Update & Delete ====================
+window.updateStatus = async(orderId)=>{
+  const newStatus = document.getElementById(`status_${orderId}`).value;
+  await updateDoc(doc(db,"orders",orderId),{status:newStatus});
+  alert("✅ Status updated!");
+  loadOrders();
+}
+
+window.deleteOrder = async(orderId)=>{
+  if(confirm("Are you sure you want to delete this order?")){
+    await deleteDoc(doc(db,"orders",orderId));
+    alert("🗑️ Order deleted!");
+    loadOrders();
+  }
+}
+
+// ==================== Auth Check ====================
+onAuthStateChanged(auth, user=>{
   if(user){
-    // Avatar
-    const userDoc = doc(db,"users",user.uid);
-    const snap = await getDoc(userDoc);
-    const img=document.getElementById("profilePic");
-    if(snap.exists() && snap.data().avatar){ img.src = snap.data().avatar; }
-    else{ img.src="https://via.placeholder.com/40"; }
-
-    // Orders
-    const ordersRef = collection(db,"orders");
-    const q = query(ordersRef, where("userId","==",user.uid), orderBy("createdAt","desc"));
-    const snapshot = await getDocs(q);
-    allOrders=[];
-    snapshot.forEach(d=>allOrders.push(d.data()));
-    showPage();
-  }else window.location.href="login.html";
+    if(adminEmails.includes(user.email)){
+      document.getElementById("adminContent").style.display="block";
+      loadOrders();
+    } else {
+      document.getElementById("denied").style.display="block";
+    }
+  } else {
+    alert("Please login first");
+    window.location.href="index.html";
+  }
 });
 </script>
 </head>
 <body>
-<header>
-  <button class="menu-toggle">☰</button>
-  <div class="site-title">SARKAR TELECOM</div>
-  <div class="profile" id="profileMenu">
-    <img id="profilePic" src="https://via.placeholder.com/40" alt="Profile">
-    <div class="dropdown" id="dropdownMenu">
-      <a href="profile.html">Profile</a>
-      <a href="#" id="logoutBtn">Logout</a>
-    </div>
+<aside id="sidebar" class="sidebar">
+  <a href="home.html">Dashboard</a>
+  <a href="products.html">Order Diamonds</a>
+  <a href="cart.html">Order History</a>
+  <a href="admin.html">Admin Panel</a>
+</aside>
+
+<h2>⚙️ Admin Dashboard</h2>
+
+<div id="adminContent" style="display:none;">
+  <div class="controls">
+    <input type="text" id="searchEmail" placeholder="Search by Email" oninput="renderTable()">
+    <select id="filterStatus" onchange="renderTable()">
+      <option value="">All Status</option>
+      <option value="pending">Pending</option>
+      <option value="completed">Completed</option>
+      <option value="cancelled">Cancelled</option>
+    </select>
   </div>
-</header>
-<div class="sidebar" id="sidebar">
-  <a href="dashboard.html">📊 Dashboard</a>
-  <a href="profile.html">👤 Profile</a>
-  <a href="user-managment.html">📋 User Request</a>
-  <a href="order-history.html">📜 History</a>
-  <a href="#" id="logoutBtn2">🚪 Logout</a>
+
+  <div style="overflow-x:auto;">
+    <table>
+      <thead>
+        <tr>
+          <th>Serial</th>
+          <th>User Email</th>
+          <th>Profile ID</th>
+          <th>Amount</th>
+          <th>Method</th>
+          <th>Account</th>
+          <th>TxID</th>
+          <th>Status</th>
+          <th>Delete</th>
+        </tr>
+      </thead>
+      <tbody id="orderTable"></tbody>
+    </table>
+  </div>
+  <div id="pagination" style="margin-top:10px;"></div>
 </div>
 
-<main>
-  <input type="text" id="searchBox" placeholder="Search Profile ID / Amount / Method / Account / TXID / Status">
-  <table>
-    <thead>
-      <tr>
-        <th>SL</th>
-        <th>Profile ID</th>
-        <th>Amount</th>
-        <th>Method</th>
-        <th>Account</th>
-        <th>TXID</th>
-        <th>Status</th>
-        <th>Created At</th>
-      </tr>
-    </thead>
-    <tbody id="ordersBody"></tbody>
-  </table>
-  <div class="pagination" id="pagination"></div>
-</main>
+<div id="denied" style="display:none;">
+  ❌ Access Denied. You are not admin.
+</div>
 </body>
 </html>
