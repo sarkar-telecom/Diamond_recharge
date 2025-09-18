@@ -6,159 +6,60 @@
 <title>Order History - SARKAR TELECOM</title>
 <style>
 body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: #0f1824;
-  color: #fff;
+  margin:0;
+  font-family: Arial,sans-serif;
+  background:#0f1824;
+  color:#fff;
 }
-
 /* Header */
 header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: #1b2735;
-  padding: 10px 15px;
-  position: fixed;
-  width: 100%;
-  top: 0;
-  z-index: 1000;
-  box-sizing: border-box;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  background:#1b2735;
+  padding:10px 15px;
+  position:fixed;
+  width:100%;
+  top:0;
+  z-index:1000;
 }
-.menu-toggle {
-  font-size: 24px;
-  cursor: pointer;
-  background: none;
-  border: none;
-  color: #fff;
-}
-.site-title {
-  font-weight: bold;
-  font-size: 18px;
-  flex: 1;
-  text-align: center;
-}
-.profile {
-  position: relative;
-  cursor: pointer;
-  padding-left: 8px;
-}
-.profile img {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-}
-.dropdown {
-  position: absolute;
-  right: 0;
-  top: 50px;
-  background: #fff;
-  color: #333;
-  min-width: 160px;
-  border-radius: 6px;
-  display: none;
-  flex-direction: column;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.2);
-}
-.dropdown a {
-  padding: 10px;
-  text-decoration: none;
-  color: #333;
-  border-bottom: 1px solid #eee;
-}
-.dropdown a:hover { background: #f0f0f0; }
-
+.menu-toggle { font-size:24px; cursor:pointer; background:none; border:none; color:#fff; }
+.site-title { font-weight:bold; font-size:18px; flex:1; text-align:center; }
+.profile { position:relative; cursor:pointer; padding-left:8px; }
+.profile img { width:40px; height:40px; border-radius:50%; }
+.dropdown { position:absolute; right:0; top:50px; background:#fff; color:#333; min-width:160px; border-radius:6px; display:none; flex-direction:column; box-shadow:0 4px 6px rgba(0,0,0,0.2); }
+.dropdown a { padding:10px; text-decoration:none; color:#333; border-bottom:1px solid #eee; }
+.dropdown a:hover { background:#f0f0f0; }
 /* Sidebar */
-.sidebar {
-  position: fixed;
-  left: -250px;
-  top: 0;
-  width: 250px;
-  height: 100%;
-  background: #1c2431;
-  padding-top: 60px;
-  transition: left 0.3s ease;
-  z-index: 999;
-}
-.sidebar.active { left: 0; }
-.sidebar a {
-  display: block;
-  padding: 12px 20px;
-  text-decoration: none;
-  color: #fff;
-  border-bottom: 1px solid #2a3445;
-}
-.sidebar a:hover { background: #2f3c52; }
-
+.sidebar { position:fixed; left:-250px; top:0; width:250px; height:100%; background:#1c2431; padding-top:60px; transition:left 0.3s ease; z-index:999; }
+.sidebar.active { left:0; }
+.sidebar a { display:block; padding:12px 20px; text-decoration:none; color:#fff; border-bottom:1px solid #2a3445; }
+.sidebar a:hover { background:#2f3c52; }
 /* Main content */
-main {
-  margin-top: 60px;
-  padding: 10px;
-}
-
-/* Search box */
-#searchBox {
-  width: 100%;
-  padding: 6px;
-  margin-bottom: 5px;
-  border-radius: 6px;
-  border: 1px solid #333;
-  background: #171a21;
-  color: #fff;
-  box-sizing: border-box;
-}
-
+main { margin-top:60px; padding:10px; }
+/* Search */
+#searchBox { width:100%; padding:4px; margin-bottom:5px; border-radius:6px; border:1px solid #333; background:#171a21; color:#fff; box-sizing:border-box; }
 /* Table */
-table {
-  width: 100%;
-  border-collapse: collapse;
-  table-layout: fixed;
-}
-th, td {
-  padding: 8px;
-  border: 1px solid #333;
-  text-align: center;
-  font-size: 12px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-th { background: #1f2937; }
-td { background: #171a21; }
+table { width:100%; border-collapse:collapse; table-layout:fixed; }
+th, td { padding:4px 6px; border:1px solid #333; text-align:center; font-size:11px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+th { background:#1f2937; }
+td { background:#171a21; }
 .status-pending { color:#facc15; font-weight:bold; }
 .status-completed { color:#22c55e; font-weight:bold; }
-.status-failed { color:#ef4444; font-weight:bold; }
-.status-cancelled { color:#ef4444; font-weight:bold; }
-
-.pagination {
-  text-align:center;
-  margin-top:5px;
-}
-.pagination button {
-  margin:1px;
-  padding:4px 6px;
-  border:none;
-  border-radius:6px;
-  cursor:pointer;
-  background:#1f2937;
-  color:#fff;
-  font-size:12px;
-}
+.status-failed, .status-cancelled { color:#ef4444; font-weight:bold; }
+/* Pagination */
+.pagination { text-align:center; margin-top:5px; }
+.pagination button { margin:1px; padding:3px 5px; border:none; border-radius:6px; cursor:pointer; background:#1f2937; color:#fff; font-size:11px; }
 .pagination button.active { background:#fff; color:#000; }
 .pagination button:hover { background:#2f3c52; }
-
-/* Responsive: only scroll, table layout preserved */
-@media screen and (max-width:600px){
-  table { display:block; overflow-x:auto; white-space:nowrap; }
-  th, td { white-space:nowrap; }
-}
+/* Responsive: scroll table */
+@media screen and (max-width:600px){ table { display:block; overflow-x:auto; white-space:nowrap; } }
 </style>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
-import { getFirestore, collection, query, where, orderBy, getDocs } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+import { getFirestore, collection, query, where, orderBy, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
-// Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyAyhjOsIXNAkBglpRllt0OZIOJYpdB_9-8",
   authDomain: "diamond-recharge-f7f59.firebaseapp.com",
@@ -177,12 +78,9 @@ document.addEventListener("DOMContentLoaded", ()=>{
   document.querySelector(".menu-toggle").addEventListener("click", ()=>{
     document.getElementById("sidebar").classList.toggle("active");
   });
-
   const profileMenu = document.getElementById("profileMenu");
   const dropdownMenu = document.getElementById("dropdownMenu");
-  profileMenu.addEventListener("click", ()=> {
-    dropdownMenu.style.display = dropdownMenu.style.display==="flex"?"none":"flex";
-  });
+  profileMenu.addEventListener("click", ()=> { dropdownMenu.style.display = dropdownMenu.style.display==="flex"?"none":"flex"; });
 });
 
 // Logout
@@ -211,13 +109,13 @@ function renderTable(orders){
     const sl=total-((currentPage-1)*perPage+i); 
     const tr=document.createElement("tr"); 
     tr.innerHTML=`<td>${sl}</td>
-                    <td>${d.profileId||"-"}</td>
-                    <td>${d.amount||"-"}</td>
-                    <td>${d.method||"-"}</td>
-                    <td>${d.account||"-"}</td>
-                    <td>${d.txid||"-"}</td>
-                    <td class="status-${d.status.toLowerCase()}">${d.status||"-"}</td>
-                    <td>${formatTime(d.createdAt)}</td>`;
+      <td>${d.profileId||"-"}</td>
+      <td>${d.amount||"-"}</td>
+      <td>${d.method||"-"}</td>
+      <td>${d.account||"-"}</td>
+      <td>${d.txid||"-"}</td>
+      <td class="status-${d.status.toLowerCase()}">${d.status||"-"}</td>
+      <td>${formatTime(d.createdAt)}</td>`;
     tbody.appendChild(tr); 
   }); 
 }
@@ -250,16 +148,23 @@ document.addEventListener("DOMContentLoaded", ()=>{
   document.getElementById("searchBox").addEventListener("input", filterOrders);
 });
 
-// Load Orders from Firestore
-onAuthStateChanged(auth,user=>{
+// Load Orders and Avatar from Firestore
+onAuthStateChanged(auth, async(user)=>{
   if(user){
-    const ordersRef=collection(db,"orders");
-    const q=query(ordersRef,where("userId","==",user.uid),orderBy("createdAt","desc"));
-    getDocs(q).then(sn=>{
-      allOrders=[];
-      sn.forEach(d=>allOrders.push(d.data()));
-      showPage();
-    });
+    // Avatar
+    const userDoc = doc(db,"users",user.uid);
+    const snap = await getDoc(userDoc);
+    const img=document.getElementById("profilePic");
+    if(snap.exists() && snap.data().avatar){ img.src = snap.data().avatar; }
+    else{ img.src="https://via.placeholder.com/40"; }
+
+    // Orders
+    const ordersRef = collection(db,"orders");
+    const q = query(ordersRef, where("userId","==",user.uid), orderBy("createdAt","desc"));
+    const snapshot = await getDocs(q);
+    allOrders=[];
+    snapshot.forEach(d=>allOrders.push(d.data()));
+    showPage();
   }else window.location.href="login.html";
 });
 </script>
