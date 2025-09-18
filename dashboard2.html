@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admin Dashboard - SARKAR TELECOM</title>
 <style>
-/* Reset & Body */
 body { margin:0; font-family: Arial,sans-serif; background:#0f1824; color:#fff; }
 /* Header */
 header {
@@ -43,12 +42,16 @@ main { margin-top:60px; padding:15px; margin-left:0; transition:margin-left 0.3s
 .user-details h3 { margin:0; font-size:16px; color:#06b6d4; }
 .user-details p { margin:2px 0; font-size:13px; font-weight:bold; }
 .role-text { color:#f97316; font-size:13px; }
-.footer-copy { margin-top:20px; font-size:14px; color:#9aa3b2; text-align:center; }
-.footer-buttons { display:flex; flex-wrap:wrap; gap:10px; margin-top:20px; justify-content:center; }
-.footer-buttons button { background:#0f1824; color:#e7eaf0; border:1px solid #2b3347; padding:14px; border-radius:8px; font-weight:bold; cursor:pointer; transition:0.2s; }
+.email-text { color:#3b82f6; }
+.balance-text { color:#22c55e; font-weight:bold; }
+/* Footer buttons grid */
+.footer-buttons { display:grid; grid-template-columns:repeat(auto-fill,minmax(120px,1fr)); gap:10px; margin-top:20px; justify-items:center; }
+.footer-buttons button { background:#0f1824; color:#e7eaf0; border:1px solid #2b3347; padding:14px; border-radius:8px; font-weight:bold; cursor:pointer; transition:0.2s; width:100%; }
 .footer-buttons button:hover { background:#06b6d4; color:#001; }
+/* Footer copy */
+.footer-copy { margin-top:20px; font-size:14px; color:#9aa3b2; text-align:center; }
 /* Responsive */
-@media(max-width:768px){ .sidebar { left:-250px; } .sidebar.active ~ main { margin-left:0; } header .site-title { font-size:16px; } .footer-buttons { flex-direction:column; } }
+@media(max-width:768px){ .sidebar { left:-250px; } .sidebar.active ~ main { margin-left:0; } header .site-title { font-size:16px; } }
 @keyframes glowPulse { 0% { box-shadow:0 0 10px #06b6d4; } 100% { box-shadow:0 0 20px #06b6d4; } }
 </style>
 </head>
@@ -77,12 +80,12 @@ main { margin-top:60px; padding:15px; margin-left:0; transition:margin-left 0.3s
 </div>
 
 <main>
-  <!-- User Card -->
+  <!-- User Info Card -->
   <div class="user-card" id="userBox">
-    🔄 Checking login...
+    🔄 Loading user info...
   </div>
 
-  <!-- Footer Buttons (like your previous footer) -->
+  <!-- Navigation Buttons Grid -->
   <div class="footer-buttons">
     <button onclick="location.href='index.html'">🏠 Home</button>
     <button onclick="location.href='dashboard.html'">📊 Dashboard</button>
@@ -138,12 +141,16 @@ onAuthStateChanged(auth, (user)=>{
     const name = user.displayName || "Guest User";
     const email = user.email || "";
     const photo = user.photoURL || "https://via.placeholder.com/80";
+    const role = "Admin"; // আপনি চাইলে Firebase থেকে role ফিল্ড লোড করতে পারেন
+    const balance = "1000"; // চাইলে Firebase থেকে load করতে পারবেন
+
     userBox.innerHTML = `
       <img src="${photo}" alt="User">
       <div class="user-details">
         <h3>${name}</h3>
         <p class="email-text">${email}</p>
-        <p class="role-text">Logged in</p>
+        <p class="role-text">${role}</p>
+        <p class="balance-text">Balance: ${balance}৳</p>
       </div>
     `;
   } else {
