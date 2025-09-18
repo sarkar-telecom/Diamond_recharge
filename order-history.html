@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>My Orders</title>
 <style>
-body { font-family: Arial, Helvetica, sans-serif; background:#0f1115; color:#e7eaf0; padding:5px; }
+body { font-family: Arial, Helvetica, sans-serif; background:#0f1115; color:#e7eaf0; padding:5px; margin:0; }
 h2 { text-align:center; color:#06b6d4; margin-bottom:5px; font-size:18px; }
 button#orderPageBtn { background:#06b6d4; color:#000; border:none; padding:6px 10px; border-radius:6px; cursor:pointer; margin-bottom:5px; font-size:14px; }
 button#orderPageBtn:hover { background:#0ea5e9; }
@@ -17,6 +17,7 @@ td { background:#171a21; }
 .status-pending { color:#facc15; font-weight:bold; }
 .status-completed { color:#22c55e; font-weight:bold; }
 .status-failed { color:#ef4444; font-weight:bold; }
+.status-cancelled { color:#ef4444; font-weight:bold; }
 .msg { text-align:center; margin-top:5px; font-size:14px; color:#06b6d4; }
 .pagination { text-align:center; margin-top:5px; }
 .pagination button { margin:1px; padding:4px 6px; border:none; border-radius:6px; cursor:pointer; background:#1f2937; color:#06b6d4; font-size:12px; }
@@ -29,6 +30,16 @@ td { background:#171a21; }
   button#orderPageBtn { font-size:12px; padding:4px 6px; }
   input#searchBox { font-size:12px; padding:4px; }
   .msg { font-size:12px; }
+  table, thead, tbody, th, td, tr { display:block; }
+  thead tr { display:none; }
+  tbody tr { margin-bottom:5px; border:1px solid #333; border-radius:6px; padding:4px; background:#1a1c21; }
+  td { border:none; text-align:left; padding:2px 4px; white-space:normal; }
+  td::before { 
+    content: attr(data-label); 
+    font-weight:bold; 
+    display:inline-block; 
+    width:80px; 
+  }
 }
 </style>
 <script type="module">
@@ -54,6 +65,16 @@ let allOrders = [];
 let currentPage = 1;
 const perPage = 20;
 
+function formatTime(timestamp){
+  if(!timestamp?.toDate) return "-";
+  const d = timestamp.toDate();
+  let hours = d.getHours();
+  const minutes = d.getMinutes().toString().padStart(2,'0');
+  const ampm = hours>=12 ? 'PM' : 'AM';
+  hours = hours%12 || 12;
+  return `${hours}:${minutes} ${ampm}`;
+}
+
 function renderTable(orders){
   const tableBody = document.getElementById("ordersBody");
   tableBody.innerHTML = "";
@@ -62,14 +83,14 @@ function renderTable(orders){
     const sl = totalOrders - ((currentPage-1)*perPage + index);
     const tr = document.createElement("tr");
     tr.innerHTML = `
-      <td>${sl}</td>
-      <td>${data.profileId || "-"}</td>
-      <td>${data.amount || "-"}</td>
-      <td>${data.method || "-"}</td>
-      <td>${data.account || "-"}</td>
-      <td>${data.txid || "-"}</td>
-      <td class="status-${data.status.toLowerCase()}">${data.status || "-"}</td>
-      <td>${data.createdAt?.toDate ? data.createdAt.toDate().toLocaleString() : "-"}</td>
+      <td data-label="SL">${sl}</td>
+      <td data-label="Profile ID">${data.profileId || "-"}</td>
+      <td data-label="Amount">${data.amount || "-"}</td>
+      <td data-label="Method">${data.method || "-"}</td>
+      <td data-label="Account">${data.account || "-"}</td>
+      <td data-label="TXID">${data.txid || "-"}</td>
+      <td data-label="Status" class="status-${data.status.toLowerCase()}">${data.status || "-"}</td>
+      <td data-label="Created At">${formatTime(data.createdAt)}</td>
     `;
     tableBody.appendChild(tr);
   });
