@@ -1,123 +1,105 @@
-<footer class="site-footer">
-  <div class="footer-container">
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard - SARKAR TELECOM</title>
+<style>
+/* Reset & Body */
+body { margin:0; font-family: Arial,sans-serif; background:#0f1824; color:#fff; }
+/* Header */
+header {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  background:#1b2735;
+  padding:10px 15px;
+  position:fixed;
+  width:100%;
+  top:0;
+  z-index:1000;
+}
+.menu-toggle { font-size:24px; cursor:pointer; background:none; border:none; color:#fff; }
+.site-title { font-weight:bold; font-size:18px; flex:1; text-align:center; }
+.profile { position:relative; cursor:pointer; display:flex; align-items:center; padding-right:30px; }
+.profile img { width:40px; height:40px; border-radius:50%; object-fit:cover; margin-left:10px; }
+.dropdown { position:absolute; right:0; top:50px; background:#fff; color:#333; min-width:160px; border-radius:6px; display:none; flex-direction:column; box-shadow:0 4px 6px rgba(0,0,0,0.2); }
+.dropdown a { padding:10px; text-decoration:none; color:#333; border-bottom:1px solid #eee; }
+.dropdown a:hover { background:#f0f0f0; }
+/* Sidebar */
+.sidebar { position:fixed; left:-250px; top:0; width:250px; height:100%; background:#1c2431; padding-top:60px; transition:left 0.3s ease; z-index:999; }
+.sidebar.active { left:0; }
+.sidebar a { display:block; padding:12px 20px; text-decoration:none; color:#fff; border-bottom:1px solid #2a3445; }
+.sidebar a:hover { background:#2f3c52; }
+/* Main content */
+main { margin-top:60px; padding:15px; margin-left:0; transition:margin-left 0.3s; }
+.sidebar.active ~ main { margin-left:250px; }
+/* User Card */
+.user-card {
+  background:#0f1115; border:1px solid #2b3347; border-radius:12px; padding:10px;
+  display:flex; align-items:center; gap:10px; max-width:320px; margin:auto 0 20px 0;
+}
+.user-card img { width:70px; height:70px; border-radius:50%; border:3px solid #06b6d4; box-shadow:0 0 15px #06b6d4; animation: glowPulse 2s infinite alternate; }
+.user-details h3 { margin:0; font-size:16px; color:#06b6d4; }
+.user-details p { margin:2px 0; font-size:13px; font-weight:bold; }
+.role-text { color:#f97316; font-size:13px; }
+.footer-copy { margin-top:20px; font-size:14px; color:#9aa3b2; text-align:center; }
+.footer-buttons { display:flex; flex-wrap:wrap; gap:10px; margin-top:20px; justify-content:center; }
+.footer-buttons button { background:#0f1824; color:#e7eaf0; border:1px solid #2b3347; padding:14px; border-radius:8px; font-weight:bold; cursor:pointer; transition:0.2s; }
+.footer-buttons button:hover { background:#06b6d4; color:#001; }
+/* Responsive */
+@media(max-width:768px){ .sidebar { left:-250px; } .sidebar.active ~ main { margin-left:0; } header .site-title { font-size:16px; } .footer-buttons { flex-direction:column; } }
+@keyframes glowPulse { 0% { box-shadow:0 0 10px #06b6d4; } 100% { box-shadow:0 0 20px #06b6d4; } }
+</style>
+</head>
+<body>
 
-    <!-- Left Buttons -->
-    <div class="footer-nav-grid">
-      <button onclick="location.href='index.html'">🏠 Home</button>
-      <button onclick="location.href='dashboard.html'">📊 Dashboard</button>
-      <button onclick="location.href='profile.html'">👤 Profile</button>
-      <button onclick="location.href='admin.html'">🛠 Admin</button>
-      <button onclick="location.href='order.html'">➕ Order</button>
-      <button onclick="location.href='order-history.html'">📜 History</button>
+<header>
+  <button class="menu-toggle">☰</button>
+  <div class="site-title">SARKAR TELECOM</div>
+  <div class="profile" id="profileMenu">
+    <img id="profilePic" src="https://via.placeholder.com/40" alt="Profile">
+    <div class="dropdown" id="dropdownMenu">
+      <a href="profile.html">Profile</a>
+      <a href="order.html">💎 Order Page</a>
+      <a href="#" id="logoutBtn">Logout</a>
     </div>
+  </div>
+</header>
 
-    <!-- User Info Card -->
-    <div class="user-card" id="userBox">
-      🔄 Checking login...
-    </div>
+<div class="sidebar" id="sidebar">
+  <a href="dashboard.html">📊 Dashboard</a>
+  <a href="profile.html">👤 Profile</a>
+  <a href="user-managment.html">📋 User Request</a>
+  <a href="order-history.html">📜 History</a>
+  <a href="order.html">💎 Order Page</a>
+  <a href="#" id="logoutBtn2">🚪 Logout</a>
+</div>
 
-    <!-- Right Buttons -->
-    <div class="footer-nav-grid">
-      <button onclick="location.href='forgot.html'">❓ Forgot</button>
-      <button onclick="location.href='reset.html'">♻ Reset</button>
-      <button onclick="location.href='register.html'">📝 Register</button>
-      <button onclick="location.href='https://wa.me/8801715118684'">💬 Support</button>
-      <button onclick="location.href='login.html'">🔑 Login</button>
-      <button onclick="location.href='logout.html'" class="logout-btn">🚪 Logout</button>
-    </div>
+<main>
+  <!-- User Card -->
+  <div class="user-card" id="userBox">
+    🔄 Checking login...
+  </div>
+
+  <!-- Footer Buttons (like your previous footer) -->
+  <div class="footer-buttons">
+    <button onclick="location.href='index.html'">🏠 Home</button>
+    <button onclick="location.href='dashboard.html'">📊 Dashboard</button>
+    <button onclick="location.href='profile.html'">👤 Profile</button>
+    <button onclick="location.href='admin.html'">🛠 Admin</button>
+    <button onclick="location.href='order.html'">➕ Order</button>
+    <button onclick="location.href='order-history.html'">📜 History</button>
+    <button onclick="location.href='forgot.html'">❓ Forgot</button>
+    <button onclick="location.href='reset.html'">♻ Reset</button>
+    <button onclick="location.href='register.html'">📝 Register</button>
+    <button onclick="location.href='https://wa.me/8801715118684'">💬 Support</button>
+    <button onclick="location.href='login.html'">🔑 Login</button>
+    <button onclick="location.href='logout.html'" class="logout-btn">🚪 Logout</button>
   </div>
 
   <p class="footer-copy">© SARKAR TELECOM 2025-2026</p>
-</footer>
-
-<style>
-.site-footer {
-  background:#1b2735; /* Dashboard theme match */
-  padding:20px 10px;
-  margin-top:30px;
-  color:#e7eaf0;
-  text-align:center;
-  border-top:1px solid #2a3445;
-}
-.footer-container {
-  display:flex;
-  justify-content:space-between;
-  align-items:stretch;
-  flex-wrap:wrap;
-  gap:15px;
-}
-.footer-nav-grid {
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:10px;
-  flex:1;
-}
-.footer-nav-grid button {
-  background:#0f1824;
-  color:#e7eaf0;
-  border:1px solid #2a3445;
-  padding:14px;
-  border-radius:8px;
-  font-size:15px;
-  font-weight:bold;
-  cursor:pointer;
-  transition:0.2s;
-  height:60px;
-}
-.footer-nav-grid button:hover {
-  background:#06b6d4;
-  color:#001;
-}
-.user-card {
-  flex: 0 1 320px;
-  background:#0f1824;
-  border:1px solid #2b3347;
-  border-radius:12px;
-  padding:8px;
-  display:flex;
-  align-items:center;
-  gap:10px;
-  min-width:260px;
-  max-width:320px;
-  margin:auto;
-  box-shadow:0 4px 12px rgba(0,0,0,0.4);
-  box-sizing:border-box;
-}
-.user-card img {
-  width:70px;
-  height:70px;
-  border-radius:50%;
-  border:3px solid #06b6d4;
-  box-shadow:0 0 15px #06b6d4;
-  animation: glowPulse 2s infinite alternate;
-}
-.user-details h3 { margin:4px 0; font-size:16px; color:#06b6d4; }
-.user-details p { margin:3px 0; font-size:13px; font-weight:bold; }
-.role-text { color:#f97316; font-size:13px; }
-.balance-gradient {
-  background: linear-gradient(90deg, #06b6d4, #22c55e);
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
-  font-weight:bold;
-}
-.phone-text { color:#facc15; }
-.email-text { color:#3b82f6; }
-.footer-copy {
-  margin-top:20px;
-  font-size:14px;
-  color:#9aa3b2;
-}
-@media(max-width:768px){
-  .footer-container { flex-direction:column; }
-  .footer-nav-grid { width:100%; grid-template-columns:repeat(3,1fr); }
-  .user-card { width:100%; max-width:100%; justify-content:center; }
-  .user-details { text-align:center; }
-}
-@keyframes glowPulse {
-  0% { box-shadow:0 0 10px #06b6d4; }
-  100% { box-shadow:0 0 20px #06b6d4; }
-}
-</style>
+</main>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
@@ -136,7 +118,22 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const userBox = document.getElementById("userBox");
 
-onAuthStateChanged(auth, (user) => {
+// Sidebar toggle
+document.querySelector(".menu-toggle").addEventListener("click", ()=>{
+  document.getElementById("sidebar").classList.toggle("active");
+});
+// Dropdown toggle
+const profileMenu = document.getElementById("profileMenu");
+const dropdownMenu = document.getElementById("dropdownMenu");
+profileMenu.addEventListener("click", ()=> { dropdownMenu.style.display = dropdownMenu.style.display==="flex"?"none":"flex"; });
+
+// Logout
+function doLogout(){ signOut(auth).then(()=>window.location.reload()); }
+document.getElementById("logoutBtn").addEventListener("click", doLogout);
+document.getElementById("logoutBtn2").addEventListener("click", doLogout);
+
+// Firebase Auth Detect
+onAuthStateChanged(auth, (user)=>{
   if(user){
     const name = user.displayName || "Guest User";
     const email = user.email || "";
@@ -158,11 +155,6 @@ onAuthStateChanged(auth, (user) => {
     `;
   }
 });
-
-document.querySelectorAll(".logout-btn").forEach(btn=>{
-  btn.addEventListener("click",(e)=>{
-    e.preventDefault();
-    signOut(auth).then(()=>window.location.reload());
-  });
-});
 </script>
+</body>
+</html>
