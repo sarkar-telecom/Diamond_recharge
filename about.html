@@ -5,61 +5,70 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>About Us - SARKAR TELECOM</title>
 <style>
-body { margin:0; font-family: Arial,sans-serif; background:#0f1824; color:#fff; }
-/* Header */
-header {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  background:#1b2735;
-  padding:10px 15px;
-  position:fixed;
-  width:100%;
-  top:0;
-  z-index:1000;
-}
-.menu-toggle { font-size:24px; cursor:pointer; background:none; border:none; color:#fff; }
-.site-title { font-weight:bold; font-size:18px; flex:1; text-align:center; }
-.profile { position:relative; cursor:pointer; display:flex; align-items:center; padding-right:30px; }
-.profile img { width:40px; height:40px; border-radius:50%; object-fit:cover; margin-left:10px; }
-.dropdown { position:absolute; right:0; top:50px; background:#fff; color:#333; min-width:180px; border-radius:6px; display:none; flex-direction:column; box-shadow:0 4px 6px rgba(0,0,0,0.2); z-index:2000; }
-.dropdown .user-info { display:flex; flex-direction:column; padding:10px; border-bottom:1px solid #eee; }
-.dropdown .user-info img { width:50px; height:50px; border-radius:50%; margin-bottom:5px; }
-.dropdown a { padding:10px; text-decoration:none; color:#333; border-bottom:1px solid #eee; }
-.dropdown a:hover { background:#f0f0f0; }
-/* Sidebar */
-.sidebar { position:fixed; left:-250px; top:0; width:250px; height:100%; background:#1c2431; padding-top:60px; transition:left 0.3s ease; z-index:999; }
-.sidebar.active { left:0; }
-.sidebar a { display:block; padding:12px 20px; text-decoration:none; color:#fff; border-bottom:1px solid #2a3445; }
-.sidebar a:hover { background:#2f3c52; }
-/* Main content */
-main { margin-top:60px; padding:20px; }
-/* User Card Centered */
-.user-card {
-  background:#0f1115; border:1px solid #2b3347; border-radius:12px; padding:15px;
-  display:flex; align-items:center; gap:10px; max-width:400px; width:100%;
-  box-shadow:0 4px 12px rgba(0,0,0,0.4); margin:20px auto;
-}
-.user-card img { width:70px; height:70px; border-radius:50%; border:3px solid #06b6d4; box-shadow:0 0 15px #06b6d4; animation: glowPulse 2s infinite alternate; }
-.user-details h3 { margin:0; font-size:16px; color:#06b6d4; }
-.user-details p { margin:2px 0; font-size:13px; font-weight:bold; }
-.role-text { color:#f97316; font-size:13px; }
-.email-text { color:#3b82f6; }
-.balance-text { color:#22c55e; font-weight:bold; }
-.phone-text { color:#facc15; }
-/* About section */
-.about-box { max-width:800px; margin:20px auto; padding:20px; background:#1c2431; border-radius:12px; border:1px solid #2b3347; }
-.about-box h2 { color:#06b6d4; margin-bottom:10px; text-align:center; }
-.about-box p { line-height:1.6; color:#e7eaf0; text-align:justify; }
-/* Footer buttons grid */
-.footer-buttons { display:grid; grid-template-columns:repeat(auto-fill,minmax(120px,1fr)); gap:10px; margin-top:20px; justify-items:center; }
-.footer-buttons button { background:#0f1824; color:#e7eaf0; border:1px solid #2b3347; padding:14px; border-radius:8px; font-weight:bold; cursor:pointer; transition:0.2s; width:100%; }
-.footer-buttons button:hover { background:#06b6d4; color:#001; }
-/* Footer copy */
-.footer-copy { margin-top:20px; font-size:14px; color:#9aa3b2; text-align:center; }
-/* Responsive */
-@media(max-width:768px){ .sidebar { left:-250px; } header .site-title { font-size:16px; } }
-@keyframes glowPulse { 0% { box-shadow:0 0 10px #06b6d4; } 100% { box-shadow:0 0 20px #06b6d4; } }
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #0d0d0d;
+    color: #f0f0f0;
+    line-height: 1.6;
+  }
+
+  /* Header */
+  header {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    background:#1b2735;
+    padding:10px 15px;
+    position:fixed;
+    width:100%;
+    top:0;
+    z-index:1000;
+  }
+  .menu-toggle { font-size:24px; cursor:pointer; background:none; border:none; color:#fff; }
+  .site-title { font-weight:bold; font-size:18px; flex:1; text-align:center; }
+  .profile { position:relative; cursor:pointer; display:flex; align-items:center; padding-right:30px; }
+  .profile img { width:40px; height:40px; border-radius:50%; object-fit:cover; margin-left:10px; }
+  .dropdown { position:absolute; right:0; top:50px; background:#fff; color:#333; min-width:180px; border-radius:6px; display:none; flex-direction:column; box-shadow:0 4px 6px rgba(0,0,0,0.2); z-index:2000; }
+  .dropdown .user-info { display:flex; flex-direction:column; padding:10px; border-bottom:1px solid #eee; }
+  .dropdown .user-info img { width:50px; height:50px; border-radius:50%; margin-bottom:5px; }
+  .dropdown a { padding:10px; text-decoration:none; color:#333; border-bottom:1px solid #eee; }
+  .dropdown a:hover { background:#f0f0f0; }
+
+  /* Sidebar */
+  .sidebar { position:fixed; left:-250px; top:0; width:250px; height:100%; background:#1c2431; padding-top:60px; transition:left 0.3s ease; z-index:999; }
+  .sidebar.active { left:0; }
+  .sidebar a { display:block; padding:12px 20px; text-decoration:none; color:#fff; border-bottom:1px solid #2a3445; }
+  .sidebar a:hover { background:#2f3c52; }
+
+  /* Main Content */
+  main { margin-top:60px; padding:30px; max-width:900px; margin-left:auto; margin-right:auto; }
+
+  /* About Section */
+  .about-section {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+    padding: 30px;
+  }
+  .about-section h1 {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+    color: #00ffcc;
+  }
+  .about-section p {
+    font-size: 1.1rem;
+    margin-bottom: 15px;
+    text-align: justify;
+  }
+  .highlight { color: #00ffcc; font-weight: bold; }
+
+  @media (max-width: 600px) {
+    .about-section { padding: 20px; }
+    .about-section h1 { font-size: 2rem; }
+    .about-section p { font-size: 1rem; }
+  }
 </style>
 </head>
 <body>
@@ -84,40 +93,20 @@ main { margin-top:60px; padding:20px; }
   <a href="user-managment.html">📋 User Request</a>
   <a href="order-history.html">📜 History</a>
   <a href="order.html">💎 Order Page</a>
-  <a href="#" id="logoutBtn2">🚪 Logout</a>
 </div>
 
 <main>
-  <div class="user-card" id="userBox">🔄 Loading user info...</div>
-
-  <div class="about-box">
-    <h2>আমাদের সম্পর্কে</h2>
-    <p>
-      SARKAR TELECOM একটি বিশ্বস্ত ও আধুনিক টেলিকম সেবা প্রদানকারী প্রতিষ্ঠান, যা ২০২২ সাল থেকে সফলভাবে পরিচালিত হয়ে আসছে। আমরা মূলত একটি ডিজিটাল গিফট ও রিচার্জ সার্ভিস প্রদানকারী প্ল্যাটফর্ম, যেখানে IMO Diamond Top-Up সহ বিভিন্ন ডিজিটাল সেবা দ্রুত, নিরাপদ ও সহজ উপায়ে সরবরাহ করা হয়। <p>
-
-<p> আমাদের মূল লক্ষ্য হলো গ্রাহকদের ডিজিটাল জীবনকে আরও সহজ ও উপভোগ্য করে তোলা। এজন্য আমরা সর্বদা আমাদের সিস্টেম আপডেট রাখি এবং নতুন নতুন ফিচার যুক্ত করি, যাতে ব্যবহারকারীরা আরও উন্নত অভিজ্ঞতা পান। <p>
-
-<p> আমাদের দক্ষ ও অভিজ্ঞ টিম প্রতিনিয়ত গ্রাহকদের প্রয়োজন অনুযায়ী সেবা উন্নত করতে কাজ করে। আমরা প্রতিটি গ্রাহকের মতামত ও প্রতিক্রিয়াকে গুরুত্ব সহকারে বিবেচনা করি এবং সেই অনুযায়ী সেবা প্রদান করি। <p>
-<p>
-SARKAR TELECOM-এ আপনার সন্তুষ্টিই আমাদের সবচেয়ে বড় সাফল্য। <p>
-  </div>
+  <section class="about-section">
+    <h1>About Us</h1>
+    <p><span class="highlight">SARKAR TELECOM</span> একটি বিশ্বস্ত ও আধুনিক টেলিকম সেবা প্রদানকারী প্রতিষ্ঠান, যা <strong>২০২২ সাল</strong> থেকে সফলভাবে পরিচালিত হয়ে আসছে। আমরা মূলত একটি ডিজিটাল গিফট ও রিচার্জ সার্ভিস প্রদানকারী প্ল্যাটফর্ম, যেখানে <strong>IMO Diamond Top-Up</strong> সহ বিভিন্ন ডিজিটাল সেবা দ্রুত, নিরাপদ ও সহজ উপায়ে সরবরাহ করা হয়।</p>
+    
+    <p>আমাদের মূল লক্ষ্য হলো গ্রাহকদের ডিজিটাল জীবনকে আরও সহজ ও উপভোগ্য করে তোলা। এজন্য আমরা সর্বদা আমাদের সিস্টেম আপডেট রাখি এবং নতুন নতুন ফিচার যুক্ত করি, যাতে ব্যবহারকারীরা আরও উন্নত অভিজ্ঞতা পান।</p>
+    
+    <p>আমাদের দক্ষ ও অভিজ্ঞ টিম প্রতিনিয়ত গ্রাহকদের প্রয়োজন অনুযায়ী সেবা উন্নত করতে কাজ করে। আমরা প্রতিটি গ্রাহকের মতামত ও প্রতিক্রিয়াকে গুরুত্ব সহকারে বিবেচনা করি এবং সেই অনুযায়ী সেবা প্রদান করি।</p>
+    
+    <p><span class="highlight">SARKAR TELECOM-এ আপনার সন্তুষ্টিই আমাদের সবচেয়ে বড় সাফল্য।</span></p>
+  </section>
 </main>
-
-<div class="footer-buttons">
-  <button onclick="location.href='index.html'">🏠 Home</button>
-  <button onclick="location.href='dashboard.html'">📊 Dashboard</button>
-  <button onclick="location.href='profile.html'">👤 Profile</button>
-  <button onclick="location.href='admin.html'">🛠 Admin</button>
-  <button onclick="location.href='order.html'">➕ Order</button>
-  <button onclick="location.href='order-history.html'">📜 History</button>
-  <button onclick="location.href='forgot.html'">❓ Forgot</button>
-  <button onclick="location.href='reset.html'">♻ Reset</button>
-  <button onclick="location.href='register.html'">📝 Register</button>
-  <button onclick="location.href='https://wa.me/8801715118684'">💬 Support</button>
-  <button onclick="location.href='login.html'">🔑 Login</button>
-  <button onclick="location.href='logout.html'" class="logout-btn">🚪 Logout</button>
-</div>
-<p class="footer-copy">© SARKAR TELECOM 2025-2026</p>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
@@ -137,7 +126,6 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-const userBox = document.getElementById("userBox");
 const headerAvatar = document.getElementById("headerAvatar");
 const dropdownUserInfo = document.getElementById("dropdownUserInfo");
 
@@ -151,9 +139,9 @@ profileMenu.addEventListener("click", ()=> {
   dropdownMenu.style.display = dropdownMenu.style.display==="flex"?"none":"flex";
 });
 
-function doLogout(){ signOut(auth).then(()=>window.location.reload()); }
-document.getElementById("logoutBtn").addEventListener("click", doLogout);
-document.getElementById("logoutBtn2").addEventListener("click", doLogout);
+document.getElementById("logoutBtn").addEventListener("click", ()=>{
+  signOut(auth);
+});
 
 onAuthStateChanged(auth, async(user)=>{
   if(user){
@@ -161,7 +149,6 @@ onAuthStateChanged(auth, async(user)=>{
     let email = user.email || "";
     let phone = "-";
     let role = "User"; 
-    let balance = "0";
     let avatar = user.photoURL || "https://via.placeholder.com/80";
 
     const userRef = doc(db,"users",user.uid);
@@ -171,7 +158,6 @@ onAuthStateChanged(auth, async(user)=>{
       name = data.name || name;
       phone = data.phone || phone;
       role = data.role || role;
-      balance = data.balance || balance;
       if(data.avatar) avatar = data.avatar;
     }
 
@@ -182,28 +168,10 @@ onAuthStateChanged(auth, async(user)=>{
       <span class="email-text">${email}</span>
       <span class="phone-text">${phone}</span>
       <span class="role-text">${role}</span>
-      <span class="balance-text">Balance: ${balance}৳</span>
-    `;
-
-    userBox.innerHTML = `
-      <img src="${avatar}" alt="User">
-      <div class="user-details">
-        <h3>${name}</h3>
-        <p class="email-text">${email}</p>
-        <p class="phone-text">${phone}</p>
-        <p class="role-text">${role}</p>
-        <p class="balance-text">Balance: ${balance}৳</p>
-      </div>
     `;
   } else {
     headerAvatar.src = "https://via.placeholder.com/40";
     dropdownUserInfo.innerHTML = "Not Logged In";
-    userBox.innerHTML = `
-      <div class="user-details">
-        <h3>Not Logged In</h3>
-        <p><a href="login.html">🔑 Login</a></p>
-      </div>
-    `;
   }
 });
 </script>
