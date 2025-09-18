@@ -121,7 +121,6 @@ onAuthStateChanged(auth, async(user)=>{
     </div>
   </div>
 </header>
-
 <div class="sidebar" id="sidebar">
   <a href="index.html">🏠 Home</a>
   <a href="dashboard.html">📊 Dashboard</a>
@@ -139,9 +138,14 @@ onAuthStateChanged(auth, async(user)=>{
   <a href="register.html">📝 Register</a>
   <a href="forgot.html">❔ Forgot Password</a>
   <a href="reset.html">♻ Reset Password</a>
-  <a href="#" id="logoutBtn2">🚪 Logout</a>
-  <div class="user-card" id="userBox">Loading user...
- </div>
+
+  <!-- Fixed Logout Button -->
+  <button id="logoutBtn2" class="logout-btn">🚪 Logout</button>
+
+  <!-- User Info Box -->
+  <div class="user-card" id="userBox">
+    Loading user...
+  </div>
 </div>
 
 <main>
