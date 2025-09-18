@@ -3,49 +3,62 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>My Orders</title>
+<title>Order History - SARKAR TELECOM</title>
 <style>
-body { font-family: Arial, Helvetica, sans-serif; background:#0f1115; color:#e7eaf0; padding:5px; margin:0; }
-h2 { text-align:center; color:#06b6d4; margin-bottom:5px; font-size:18px; }
-button#orderPageBtn { background:#06b6d4; color:#000; border:none; padding:6px 10px; border-radius:6px; cursor:pointer; margin-bottom:5px; font-size:14px; }
-button#orderPageBtn:hover { background:#0ea5e9; }
-input#searchBox { width:100%; padding:6px; margin-bottom:5px; border-radius:6px; border:1px solid #333; background:#171a21; color:#e7eaf0; font-size:14px; box-sizing:border-box; }
-table { width:100%; border-collapse: collapse; margin-bottom:5px; display:none; table-layout: fixed; word-wrap: break-word; }
-th, td { padding:4px; text-align:center; border:1px solid #333; font-size:12px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-th { background:#1f2937; color:#06b6d4; }
+body {
+  margin:0;
+  font-family: Arial,sans-serif;
+  background:#0f1824;
+  color:#fff;
+}
+/* Header */
+header {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  background:#1b2735;
+  padding:10px 15px;
+  position:fixed;
+  width:100%;
+  top:0;
+  z-index:1000;
+}
+.menu-toggle { font-size:24px; cursor:pointer; background:none; border:none; color:#fff; }
+.site-title { font-weight:bold; font-size:18px; flex:1; text-align:center; }
+.profile { position:relative; cursor:pointer; display:flex; align-items:center; padding-right:30px; }
+.profile img { width:40px; height:40px; border-radius:50%; object-fit:cover; margin-left:25px; }
+.dropdown { position:absolute; right:0; top:50px; background:#fff; color:#333; min-width:160px; border-radius:6px; display:none; flex-direction:column; box-shadow:0 4px 6px rgba(0,0,0,0.2); }
+.dropdown a { padding:10px; text-decoration:none; color:#333; border-bottom:1px solid #eee; }
+.dropdown a:hover { background:#f0f0f0; }
+/* Sidebar */
+.sidebar { position:fixed; left:-250px; top:0; width:250px; height:100%; background:#1c2431; padding-top:60px; transition:left 0.3s ease; z-index:999; }
+.sidebar.active { left:0; }
+.sidebar a { display:block; padding:12px 20px; text-decoration:none; color:#fff; border-bottom:1px solid #2a3445; }
+.sidebar a:hover { background:#2f3c52; }
+/* Main content */
+main { margin-top:60px; padding:10px; }
+/* Search */
+#searchBox { width:100%; padding:4px; margin-bottom:5px; border-radius:6px; border:1px solid #333; background:#171a21; color:#fff; box-sizing:border-box; }
+/* Table */
+table { width:100%; border-collapse:collapse; table-layout:fixed; }
+th, td { padding:4px 6px; border:1px solid #333; text-align:center; font-size:11px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+th { background:#1f2937; }
 td { background:#171a21; }
 .status-pending { color:#facc15; font-weight:bold; }
 .status-completed { color:#22c55e; font-weight:bold; }
-.status-failed { color:#ef4444; font-weight:bold; }
-.status-cancelled { color:#ef4444; font-weight:bold; }
-.msg { text-align:center; margin-top:5px; font-size:14px; color:#06b6d4; }
+.status-failed, .status-cancelled { color:#ef4444; font-weight:bold; }
+/* Pagination */
 .pagination { text-align:center; margin-top:5px; }
-.pagination button { margin:1px; padding:4px 6px; border:none; border-radius:6px; cursor:pointer; background:#1f2937; color:#06b6d4; font-size:12px; }
-.pagination button.active { background:#06b6d4; color:#000; }
-.pagination button:hover { background:#0ea5e9; color:#000; }
-
-/* Responsive adjustments */
-@media screen and (max-width:600px){
-  th, td { font-size:10px; padding:3px; }
-  button#orderPageBtn { font-size:12px; padding:4px 6px; }
-  input#searchBox { font-size:12px; padding:4px; }
-  .msg { font-size:12px; }
-  table, thead, tbody, th, td, tr { display:block; }
-  thead tr { display:none; }
-  tbody tr { margin-bottom:5px; border:1px solid #333; border-radius:6px; padding:4px; background:#1a1c21; }
-  td { border:none; text-align:left; padding:2px 4px; white-space:normal; }
-  td::before { 
-    content: attr(data-label); 
-    font-weight:bold; 
-    display:inline-block; 
-    width:80px; 
-  }
-}
+.pagination button { margin:1px; padding:3px 5px; border:none; border-radius:6px; cursor:pointer; background:#1f2937; color:#fff; font-size:11px; }
+.pagination button.active { background:#fff; color:#000; }
+.pagination button:hover { background:#2f3c52; }
+/* Responsive: scroll table */
+@media screen and (max-width:600px){ table { display:block; overflow-x:auto; white-space:nowrap; } }
 </style>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
-import { getFirestore, collection, query, where, orderBy, getDocs } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+import { getFirestore, collection, query, where, orderBy, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAyhjOsIXNAkBglpRllt0OZIOJYpdB_9-8",
@@ -56,146 +69,146 @@ const firebaseConfig = {
   appId: "1:657717928489:web:70431ebc9afb7002d4b238",
   measurementId: "G-TDK78BQ8SQ"
 };
-
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-let allOrders = [];
-let currentPage = 1;
-const perPage = 20;
-
-function formatTime(timestamp){
-  if(!timestamp?.toDate) return "-";
-  const d = timestamp.toDate();
-  let hours = d.getHours();
-  const minutes = d.getMinutes().toString().padStart(2,'0');
-  const ampm = hours>=12 ? 'PM' : 'AM';
-  hours = hours%12 || 12;
-  return `${hours}:${minutes} ${ampm}`;
-}
-
-function renderTable(orders){
-  const tableBody = document.getElementById("ordersBody");
-  tableBody.innerHTML = "";
-  const totalOrders = allOrders.length;
-  orders.forEach((data,index)=>{
-    const sl = totalOrders - ((currentPage-1)*perPage + index);
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td data-label="SL">${sl}</td>
-      <td data-label="Profile ID">${data.profileId || "-"}</td>
-      <td data-label="Amount">${data.amount || "-"}</td>
-      <td data-label="Method">${data.method || "-"}</td>
-      <td data-label="Account">${data.account || "-"}</td>
-      <td data-label="TXID">${data.txid || "-"}</td>
-      <td data-label="Status" class="status-${data.status.toLowerCase()}">${data.status || "-"}</td>
-      <td data-label="Created At">${formatTime(data.createdAt)}</td>
-    `;
-    tableBody.appendChild(tr);
+// Sidebar toggle
+document.addEventListener("DOMContentLoaded", ()=>{
+  document.querySelector(".menu-toggle").addEventListener("click", ()=>{
+    document.getElementById("sidebar").classList.toggle("active");
   });
-  document.getElementById("ordersTable").style.display = orders.length ? "table" : "none";
-}
+  const profileMenu = document.getElementById("profileMenu");
+  const dropdownMenu = document.getElementById("dropdownMenu");
+  profileMenu.addEventListener("click", ()=> { dropdownMenu.style.display = dropdownMenu.style.display==="flex"?"none":"flex"; });
+});
 
-function renderPagination(total){
-  const pagDiv = document.getElementById("pagination");
-  pagDiv.innerHTML = "";
-  const totalPages = Math.ceil(total/perPage);
-  if(totalPages<=1) return;
-  for(let i=1;i<=totalPages;i++){
-    const btn = document.createElement("button");
-    btn.textContent = i;
-    btn.className = i===currentPage ? "active" : "";
-    btn.onclick = ()=>{
-      currentPage = i;
-      showPage();
-    };
-    pagDiv.appendChild(btn);
-  }
-}
+// Logout
+function doLogout() { signOut(auth).then(()=>window.location.href="login.html"); }
+document.addEventListener("DOMContentLoaded", ()=>{
+  document.getElementById("logoutBtn").addEventListener("click", doLogout);
+  document.getElementById("logoutBtn2").addEventListener("click", doLogout);
+});
 
-function showPage(){
-  const start = (currentPage-1)*perPage;
-  const end = start+perPage;
-  renderTable(allOrders.slice(start,end));
-  renderPagination(allOrders.length);
+// Orders
+let allOrders=[], currentPage=1, perPage=20;
+function formatTime(ts){ 
+  if(!ts?.toDate) return "-"; 
+  const d=ts.toDate(); 
+  let h=d.getHours(); 
+  const m=d.getMinutes().toString().padStart(2,'0'); 
+  const ampm=h>=12?'PM':'AM'; 
+  h=h%12||12; 
+  return `${h}:${m} ${ampm}`; 
 }
-
-function filterOrders(){
-  const queryStr = document.getElementById("searchBox").value.toLowerCase();
-  const filtered = allOrders.filter(o=>{
-    return (
-      (o.profileId||"").toLowerCase().includes(queryStr) ||
-      (o.amount||"").toString().includes(queryStr) ||
-      (o.method||"").toLowerCase().includes(queryStr) ||
-      (o.account||"").toLowerCase().includes(queryStr) ||
-      (o.txid||"").toLowerCase().includes(queryStr) ||
-      (o.status||"").toLowerCase().includes(queryStr)
-    );
-  });
-  renderTable(filtered.slice(0,perPage));
-  currentPage=1;
-  renderPagination(filtered.length);
+function renderTable(orders){ 
+  const tbody=document.getElementById("ordersBody"); 
+  tbody.innerHTML=""; 
+  const total=allOrders.length; 
+  orders.forEach((d,i)=>{ 
+    const sl=total-((currentPage-1)*perPage+i); 
+    const tr=document.createElement("tr"); 
+    tr.innerHTML=`<td>${sl}</td>
+      <td>${d.profileId||"-"}</td>
+      <td>${d.amount||"-"}</td>
+      <td>${d.method||"-"}</td>
+      <td>${d.account||"-"}</td>
+      <td>${d.txid||"-"}</td>
+      <td class="status-${d.status?.toLowerCase()||"pending"}">${d.status||"-"}</td>
+      <td>${formatTime(d.createdAt)}</td>`;
+    tbody.appendChild(tr); 
+  }); 
 }
-
-window.addEventListener("load",()=>{
-  const msg = document.getElementById("msg");
-  msg.textContent = "⏳ Loading orders...";
-  
+function renderPagination(total){ 
+  const pag=document.getElementById("pagination"); 
+  pag.innerHTML=""; 
+  const pages=Math.ceil(total/perPage); 
+  if(pages<=1) return; 
+  for(let i=1;i<=pages;i++){ 
+    const btn=document.createElement("button"); 
+    btn.textContent=i; 
+    btn.className=i===currentPage?"active":""; 
+    btn.onclick=()=>{ currentPage=i; showPage(); }; 
+    pag.appendChild(btn); 
+  } 
+}
+function showPage(){ 
+  const s=(currentPage-1)*perPage; 
+  renderTable(allOrders.slice(s,s+perPage)); 
+  renderPagination(allOrders.length); 
+}
+function filterOrders(){ 
+  const q=document.getElementById("searchBox").value.toLowerCase(); 
+  const filtered=allOrders.filter(o=>((o.profileId||"").toLowerCase().includes(q)||(o.amount||"").toString().includes(q)||(o.method||"").toLowerCase().includes(q)||(o.account||"").toLowerCase().includes(q)||(o.txid||"").toLowerCase().includes(q)||(o.status||"").toLowerCase().includes(q))); 
+  renderTable(filtered.slice(0,perPage)); 
+  currentPage=1; 
+  renderPagination(filtered.length); 
+}
+document.addEventListener("DOMContentLoaded", ()=>{
   document.getElementById("searchBox").addEventListener("input", filterOrders);
-  
-  onAuthStateChanged(auth, async(user)=>{
-    if(user){
-      try{
-        const q = query(
-          collection(db,"orders"),
-          where("userId","==",user.uid),
-          orderBy("createdAt","desc")
-        );
-        const snapshot = await getDocs(q);
-        if(snapshot.empty){
-          msg.textContent = "No orders yet.";
-        } else {
-          allOrders = snapshot.docs.map(doc=>doc.data());
-          msg.textContent = "";
-          showPage();
-        }
-      }catch(e){
-        msg.textContent = "Error: "+e.message;
-      }
-    }else{
-      alert("Please login first");
-      window.location.href="login.html";
-    }
-  });
+});
+
+// Load Orders and Avatar from Firestore
+onAuthStateChanged(auth, async(user)=>{
+  if(user){
+    // Avatar
+    const userDoc = doc(db,"users",user.uid);
+    const snap = await getDoc(userDoc);
+    const img=document.getElementById("profilePic");
+    if(snap.exists() && snap.data().avatar){ img.src = snap.data().avatar; }
+    else{ img.src="https://via.placeholder.com/40"; }
+
+    // Orders
+    const ordersRef = collection(db,"orders");
+    const q = query(ordersRef, where("userId","==",user.uid), orderBy("createdAt","desc"));
+    const snapshot = await getDocs(q);
+    allOrders=[];
+    snapshot.forEach(d=>allOrders.push(d.data()));
+    showPage();
+  }else window.location.href="login.html";
 });
 </script>
 </head>
 <body>
-<h2>💎 My Order History</h2>
+<header>
+  <button class="menu-toggle">☰</button>
+  <div class="site-title">SARKAR TELECOM</div>
+  <div class="profile" id="profileMenu">
+    <img id="profilePic" src="https://via.placeholder.com/40" alt="Profile">
+    <div class="dropdown" id="dropdownMenu">
+      <a href="profile.html">Profile</a>
+      <a href="order.html">💎 Order Page</a>
+      <a href="#" id="logoutBtn">Logout</a>
+    </div>
+  </div>
+</header>
+<div class="sidebar" id="sidebar">
+  <a href="dashboard.html">📊 Dashboard</a>
+  <a href="profile.html">👤 Profile</a>
+  <a href="user-managment.html">📋 User Request</a>
+  <a href="order-history.html">📜 History</a>
+  <a href="order.html">💎 Order Page</a>
+  <a href="#" id="logoutBtn2">🚪 Logout</a>
+</div>
 
-<button id="orderPageBtn" onclick="window.location.href='order.html'">💠 Order Diamonds</button>
-
-<input type="text" id="searchBox" placeholder="Search by Profile ID, Amount, Method, Account, TXID, Status">
-
-<table id="ordersTable">
-<thead>
-<tr>
-  <th>SL</th>
-  <th>Profile ID</th>
-  <th>Amount</th>
-  <th>Method</th>
-  <th>Account</th>
-  <th>TXID</th>
-  <th>Status</th>
-  <th>Created At</th>
-</tr>
-</thead>
-<tbody id="ordersBody">
-</tbody>
-</table>
-
-<div class="pagination" id="pagination"></div>
-<p id="msg" class="msg"></p>
+<main>
+  <input type="text" id="searchBox" placeholder="Search Profile ID / Amount / Method / Account / TXID / Status">
+  <table>
+    <thead>
+      <tr>
+        <th>SL</th>
+        <th>Profile ID</th>
+        <th>Amount</th>
+        <th>Method</th>
+        <th>Account</th>
+        <th>TXID</th>
+        <th>Status</th>
+        <th>Created At</th>
+      </tr>
+    </thead>
+    <tbody id="ordersBody"></tbody>
+  </table>
+  <div class="pagination" id="pagination"></div>
+</main>
 </body>
 </html>
