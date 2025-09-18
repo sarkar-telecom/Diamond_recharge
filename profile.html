@@ -1,306 +1,317 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Profile</title>
-  <script type="module">
-    // ==============================
-    // Firebase Import & Config
-    // ==============================
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getAuth, onAuthStateChanged, signOut, updateEmail } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-    import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Profile - SARKAR TELECOM</title>
+<style>
+/* ================== Body & Fonts ================== */
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #0f1824;
+  color: #e7eaf0;
+}
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyAyhjOsIXNAkBglpRllt0OZIOJYpdB_9-8",
-      authDomain: "diamond-recharge-f7f59.firebaseapp.com",
-      projectId: "diamond-recharge-f7f59",
-      storageBucket: "diamond-recharge-f7f59.appspot.com",
-      messagingSenderId: "754927631060",
-      appId: "1:754927631060:web:xxxxxx"
-    };
+/* ================== Header ================== */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #1b2735;
+  padding: 10px 15px;
+  position: fixed;
+  width: 100%;
+  top: 0;
+  z-index: 1000;
+}
+.menu-toggle {
+  font-size: 24px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  color: #fff;
+}
+.site-title {
+  font-weight: bold;
+  font-size: 18px;
+  flex: 1;
+  text-align: center;
+}
+.profile {
+  position: relative;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding-right: 30px;
+}
+.profile img {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-left: 25px;
+}
+.dropdown {
+  position: absolute;
+  right: 0;
+  top: 50px;
+  background: #fff;
+  color: #333;
+  min-width: 160px;
+  border-radius: 6px;
+  display: none;
+  flex-direction: column;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+}
+.dropdown a {
+  padding: 10px;
+  text-decoration: none;
+  color: #333;
+  border-bottom: 1px solid #eee;
+}
+.dropdown a:hover { background: #f0f0f0; }
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
+/* ================== Sidebar ================== */
+.sidebar {
+  position: fixed;
+  left: -250px;
+  top: 0;
+  width: 250px;
+  height: 100%;
+  background: #1c2431;
+  padding-top: 60px;
+  transition: left 0.3s ease;
+  z-index: 999;
+}
+.sidebar.active { left: 0; }
+.sidebar a {
+  display: block;
+  padding: 12px 20px;
+  text-decoration: none;
+  color: #fff;
+  border-bottom: 1px solid #2a3445;
+}
+.sidebar a:hover { background: #2f3c52; }
 
-    const userAvatar = document.getElementById("userAvatar");
-    const userName = document.getElementById("userName");
-    const profileMenu = document.getElementById("profileMenu");
-    const dropdownMenu = document.getElementById("dropdownMenu");
+/* ================== Main ================== */
+main {
+  margin-top: 70px;
+  padding: 15px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+h2 { text-align: center; color: #06b6d4; margin-bottom: 20px; }
 
-    const form = document.getElementById("profileForm");
-    const avatarInput = document.getElementById("avatar");
-    const avatarPreview = document.getElementById("avatarPreview");
+.profile-card {
+  background: #1c2431;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+}
 
-    // ==============================
-    // Auth State
-    // ==============================
-    onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        const docRef = doc(db, "users", user.uid);
-        const snap = await getDoc(docRef);
+.profile-card img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  display: block;
+  margin: 0 auto 10px;
+}
 
-        if (snap.exists()) {
-          const data = snap.data();
-          userAvatar.src = data.avatar || "https://via.placeholder.com/40";
-          userName.innerText = data.name || user.email;
+.form-group {
+  margin-bottom: 12px;
+}
+label { display: block; margin-bottom: 5px; font-size: 14px; }
+input {
+  width: 100%;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #333;
+  background: #171a21;
+  color: #e7eaf0;
+  box-sizing: border-box;
+}
+input[readonly] { background: #2a3445; color: #ccc; }
+button {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  background: #06b6d4;
+  color: #000;
+  font-weight: bold;
+  cursor: pointer;
+}
+button:hover { background: #0ea5e9; }
 
-          // Pre-fill form
-          document.getElementById("name").value = data.name || "";
-          document.getElementById("email").value = user.email;
-          document.getElementById("phone").value = data.phone || "";
-          document.getElementById("profileId").value = data.profileId || "";
-          avatarInput.value = data.avatar || "";
-          avatarPreview.src = data.avatar || "https://via.placeholder.com/100";
-        } else {
-          userName.innerText = user.email;
-        }
-      } else {
-        window.location.href = "login.html";
-      }
-    });
-
-    // ==============================
-    // Save Profile
-    // ==============================
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const user = auth.currentUser;
-      if (!user) return;
-
-      const newName = document.getElementById("name").value;
-      const newEmail = document.getElementById("email").value;
-      const newPhone = document.getElementById("phone").value;
-      const newProfileId = document.getElementById("profileId").value;
-      const newAvatar = avatarInput.value;
-
-      try {
-        if (newEmail && newEmail !== user.email) {
-          try {
-            await updateEmail(user, newEmail);
-          } catch (err) {
-            alert("⚠️ Please re-login to update email.");
-          }
-        }
-
-        await setDoc(doc(db, "users", user.uid), {
-          name: newName,
-          phone: newPhone,
-          profileId: newProfileId,
-          avatar: newAvatar,
-          email: newEmail
-        }, { merge: true });
-
-        alert("✅ Profile updated!");
-      } catch (err) {
-        console.error(err);
-        alert("❌ Error updating profile.");
-      }
-    });
-
-    // ==============================
-    // Avatar Live Preview
-    // ==============================
-    avatarInput.addEventListener("input", (e) => {
-      avatarPreview.src = e.target.value || "https://via.placeholder.com/100";
-    });
-
-    // ==============================
-    // Phone Input Validation
-    // ==============================
-    document.getElementById("phone").addEventListener("input", (e) => {
-      e.target.value = e.target.value.replace(/[^0-9+]/g, "");
-    });
-
-    // ==============================
-    // Dropdown Menu Toggle
-    // ==============================
-    profileMenu.addEventListener("click", () => {
-      dropdownMenu.style.display =
-        dropdownMenu.style.display === "block" ? "none" : "block";
-    });
-
-    document.addEventListener("click", (e) => {
-      if (!profileMenu.contains(e.target)) {
-        dropdownMenu.style.display = "none";
-      }
-    });
-
-    // ==============================
-    // Logout
-    // ==============================
-    document.getElementById("logout").addEventListener("click", async () => {
-      await signOut(auth);
-      window.location.href = "login.html";
-    });
-  </script>
-
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      background: #f9f9f9;
-    }
-
-    header {
-      background: #fff;
-      padding: 10px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-      position: sticky;
-      top: 0;
-    }
-
-    header h2 {
-      margin: 0;
-      color: #333;
-    }
-
-    .profile-menu {
-      position: relative;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .profile-menu img {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      object-fit: cover;
-    }
-
-    .dropdown {
-      position: absolute;
-      top: 50px;
-      right: 0;
-      background: white;
-      border: 1px solid #ddd;
-      border-radius: 5px;
-      display: none;
-      flex-direction: column;
-      min-width: 150px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    }
-
-    .dropdown a {
-      padding: 10px;
-      text-decoration: none;
-      color: #333;
-      display: block;
-    }
-
-    .dropdown a:hover {
-      background: #f0f0f0;
-    }
-
-    main {
-      padding: 20px;
-    }
-
-    form {
-      background: white;
-      padding: 20px;
-      border-radius: 8px;
-      max-width: 400px;
-      margin: auto;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-
-    form h3 {
-      margin-top: 0;
-      color: #444;
-    }
-
-    label {
-      display: block;
-      margin: 10px 0 5px;
-      font-weight: bold;
-      color: #555;
-    }
-
-    input {
-      width: 100%;
-      padding: 8px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-    }
-
-    button {
-      margin-top: 15px;
-      padding: 10px;
-      width: 100%;
-      background: #007bff;
-      border: none;
-      color: white;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-
-    button:hover {
-      background: #0056b3;
-    }
-
-    .avatar-preview {
-      display: flex;
-      justify-content: center;
-      margin-bottom: 15px;
-    }
-
-    .avatar-preview img {
-      width: 100px;
-      height: 100px;
-      border-radius: 50%;
-      border: 2px solid #ddd;
-      object-fit: cover;
-    }
-  </style>
+</style>
 </head>
 <body>
-  <header>
-    <h2>Diamond Recharge</h2>
-    <div class="profile-menu" id="profileMenu">
-      <img id="userAvatar" src="https://via.placeholder.com/40" alt="avatar">
-      <span id="userName">Loading...</span>
-      <div class="dropdown" id="dropdownMenu">
-        <a href="profile.html">Profile</a>
-        <a href="order.html">My Orders</a>
-        <a href="#" id="logout">Logout</a>
-      </div>
+
+<header>
+  <button class="menu-toggle">☰</button>
+  <div class="site-title">SARKAR TELECOM</div>
+  <div class="profile" id="profileMenu">
+    <img id="profilePic" src="https://via.placeholder.com/40" alt="Profile">
+    <div class="dropdown" id="dropdownMenu">
+      <a href="dashboard.html">Dashboard</a>
+      <a href="orderss.htm">Orders</a>
+      <a href="#" id="logoutBtn">Logout</a>
     </div>
-  </header>
+  </div>
+</header>
 
-  <main>
-    <form id="profileForm">
-      <h3>My Profile</h3>
+<div class="sidebar" id="sidebar">
+  <a href="dashboard.html">📊 Dashboard</a>
+  <a href="profile.html">👤 Profile</a>
+  <a href="user-managment.html">📋 User Request</a>
+  <a href="orderss.htm">📜 Orders</a>
+  <a href="#" id="logoutBtn2">🚪 Logout</a>
+</div>
 
-      <div class="avatar-preview">
-        <img id="avatarPreview" src="https://via.placeholder.com/100" alt="avatar preview">
-      </div>
-
-      <label for="avatar">Avatar URL</label>
-      <input type="text" id="avatar" placeholder="Enter image URL" />
-
+<main>
+  <h2>👤 My Profile</h2>
+  <div class="profile-card">
+    <img id="avatarPreview" src="https://via.placeholder.com/100" alt="Avatar">
+    
+    <div class="form-group">
       <label for="name">Name</label>
-      <input type="text" id="name" />
-
+      <input type="text" id="name">
+    </div>
+    <div class="form-group">
       <label for="email">Email</label>
-      <input type="email" id="email" />
-
+      <input type="email" id="email">
+    </div>
+    <div class="form-group">
       <label for="phone">Phone</label>
-      <input type="text" id="phone" />
+      <input type="text" id="phone">
+    </div>
+    <div class="form-group">
+      <label for="avatar">Avatar URL</label>
+      <input type="text" id="avatar">
+    </div>
+    <button id="saveBtn">Save Changes</button>
 
-      <label for="profileId">Profile ID</label>
-      <input type="text" id="profileId" />
+    <hr style="margin:15px 0; border:1px solid #2a3445;">
 
-      <button type="submit">Save</button>
-    </form>
-  </main>
+    <div class="form-group">
+      <label>Role</label>
+      <input type="text" id="role" readonly>
+    </div>
+    <div class="form-group">
+      <label>Balance</label>
+      <input type="text" id="balance" readonly>
+    </div>
+    <div class="form-group">
+      <label>Tier</label>
+      <input type="text" id="tier" readonly>
+    </div>
+    <div class="form-group">
+      <label>Weekly Total</label>
+      <input type="text" id="weeklyTotal" readonly>
+    </div>
+    <div class="form-group">
+      <label>Weekly Diamonds</label>
+      <input type="text" id="weeklyDiamonds" readonly>
+    </div>
+  </div>
+</main>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut, updateEmail, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAyhjOsIXNAkBglpRllt0OZIOJYpdB_9-8",
+  authDomain: "diamond-recharge-f7f59.firebaseapp.com",
+  projectId: "diamond-recharge-f7f59",
+  storageBucket: "diamond-recharge-f7f59.appspot.com",
+  messagingSenderId: "657717928489",
+  appId: "1:657717928489:web:70431ebc9afb7002d4b238",
+  measurementId: "G-TDK78BQ8SQ"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+// Sidebar toggle
+document.querySelector(".menu-toggle").addEventListener("click",()=>{
+  document.getElementById("sidebar").classList.toggle("active");
+});
+
+// Dropdown toggle
+const profileMenu=document.getElementById("profileMenu");
+const dropdownMenu=document.getElementById("dropdownMenu");
+profileMenu.addEventListener("click",()=>{ 
+  dropdownMenu.style.display = dropdownMenu.style.display==="flex"?"none":"flex"; 
+});
+
+// Load profile
+let currentUserId=null;
+onAuthStateChanged(auth, async(user)=>{
+  if(user){
+    currentUserId=user.uid;
+    document.getElementById("profilePic").src=user.photoURL || "https://via.placeholder.com/40";
+    
+    const docRef=doc(db,"users",user.uid);
+    const docSnap=await getDoc(docRef);
+    if(docSnap.exists()){
+      const data=docSnap.data();
+      document.getElementById("name").value = data.name || "";
+      document.getElementById("email").value = data.email || user.email || "";
+      document.getElementById("phone").value = data.phone || "";
+      document.getElementById("avatar").value = data.avatar || user.photoURL || "";
+      document.getElementById("avatarPreview").src = data.avatar || user.photoURL || "https://via.placeholder.com/100";
+
+      document.getElementById("role").value = data.role || "";
+      document.getElementById("balance").value = data.balance ?? 0;
+      document.getElementById("tier").value = data.tier ?? 0;
+      document.getElementById("weeklyTotal").value = data.weeklyTotal ?? 0;
+      document.getElementById("weeklyDiamonds").value = data.weeklyDiamonds ?? 0;
+    }
+  }else{
+    window.location.href="login.html";
+  }
+});
+
+// Save profile
+document.getElementById("saveBtn").addEventListener("click", async()=>{
+  if(!currentUserId) return;
+
+  const newEmail=document.getElementById("email").value;
+  const phone=document.getElementById("phone").value;
+  const avatar=document.getElementById("avatar").value;
+
+  try{
+    if(auth.currentUser){
+      if(newEmail && newEmail!==auth.currentUser.email){
+        await updateEmail(auth.currentUser,newEmail);
+      }
+      if(avatar && avatar!==auth.currentUser.photoURL){
+        await updateProfile(auth.currentUser,{photoURL:avatar});
+      }
+    }
+    await updateDoc(doc(db,"users",currentUserId),{
+      email:newEmail,
+      phone,
+      avatar
+    });
+    alert("Profile updated successfully!");
+    document.getElementById("avatarPreview").src=avatar || "https://via.placeholder.com/100";
+    document.getElementById("profilePic").src=avatar || "https://via.placeholder.com/40";
+  }catch(err){
+    alert("Error updating profile: "+err.message);
+  }
+});
+
+// Logout
+function doLogout(){ signOut(auth).then(()=>window.location.href="login.html"); }
+document.getElementById("logoutBtn").addEventListener("click",doLogout);
+document.getElementById("logoutBtn2").addEventListener("click",doLogout);
+</script>
+
 </body>
 </html>
