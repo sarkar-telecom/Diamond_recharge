@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard - SARKAR TELECOM</title>
+
+<!-- Favicon -->
+<link rel="icon" type="image/png" href="images/favicon.png">
+
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
+<style>
+body {
+  margin:0; font-family:'Roboto',sans-serif; background:#0f1824; color:#fff; display:flex; min-height:100vh;
+}
+/* Header */
+header { display:flex; justify-content:space-between; align-items:center; background:#1b2735; padding:10px 15px; position:fixed; width:100%; top:0; z-index:1000; }
+.site-logo { display:flex; align-items:center; gap:10px; }
+.site-logo img { height:40px; width:auto; }
+.site-logo span { font-weight:700; font-size:14px; color:#06b6d4; }
+.menu-toggle { font-size:24px; cursor:pointer; background:none; border:none; color:#fff; }
+.profile { position:relative; cursor:pointer; display:flex; align-items:center; gap:8px; }
+.profile img { width:36px; height:36px; border-radius:50%; object-fit:cover; }
+.dropdown { position:absolute; right:0; top:45px; background:#1c2431; color:#fff; min-width:160px; border-radius:6px; display:none; flex-direction:column; box-shadow:0 4px 6px rgba(0,0,0,0.3); }
+.dropdown a { padding:10px; text-decoration:none; color:#fff; border-bottom:1px solid #2a3445; }
+.dropdown a:hover { background:#2f3c52; }
+
+/* Sidebar */
+.sidebar { position:fixed; left:-250px; top:0; width:250px; height:100%; background:#1c2431; padding-top:60px; transition:left 0.3s ease; z-index:999; overflow-y:auto; }
+.sidebar.active { left:0; }
+.sidebar a { display:block; padding:12px 20px; text-decoration:none; color:#fff; border-bottom:1px solid #2a3445; font-size:14px; }
+.sidebar a:hover { background:#2f3c52; }
+.logout-btn { display:block; width:90%; margin:15px auto; padding:10px; background:#d62828; color:#fff; border:none; border-radius:8px; cursor:pointer; font-weight:500; text-align:center; }
+.logout-btn:hover { background:#b91c1c; }
+
+/* User Card */
+.user-card { background:#0f1115; border:1px solid #2b3347; border-radius:12px; padding:10px; display:flex; flex-direction:column; align-items:center; gap:6px; margin:15px; text-align:center; }
+.user-card img { width:70px; height:70px; border-radius:50%; border:3px solid #06b6d4; object-fit:cover; }
+.user-card h3 { margin:4px 0; font-size:16px; color:#06b6d4; }
+.user-card p { margin:2px 0; font-size:13px; color:#fff; }
+
+/* Main */
+main { margin-top:60px; padding:15px; flex:1; transition: margin-left 0.3s ease; margin-left:0; }
+main.shift { margin-left:250px; }
+
+/* Table */
+#searchBox { width:100%; padding:8px; margin-bottom:10px; border-radius:6px; border:1px solid #333; background:#171a21; color:#fff; box-sizing:border-box; }
+table { width:100%; border-collapse:collapse; table-layout:fixed; }
+th, td { padding:6px 8px; border:1px solid #333; text-align:center; font-size:12px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+th { background:#1f2937; }
+td { background:#171a21; }
+.status-pending { color:#facc15; font-weight:bold; }
+.status-completed { color:#22c55e; font-weight:bold; }
+.status-cancelled { color:#ef4444; font-weight:bold; }
+button.updateBtn { padding:4px 8px; border:none; border-radius:6px; cursor:pointer; background:#06b6d4; color:#000; font-weight:bold; }
+button.updateBtn:hover { background:#0ea5e9; }
+select.status-select { padding:4px 6px; border-radius:6px; border:none; background:#1f2937; color:#fff; }
+
+/* Pagination */
+.pagination { text-align:center; margin-top:10px; }
+.pagination button { margin:2px; padding:4px 6px; border:none; border-radius:6px; cursor:pointer; background:#1f2937; color:#fff; font-size:12px; }
+.pagination button.active { background:#06b6d4; color:#000; }
+.pagination button:hover { background:#2f3c52; }
+
+/* Footer */
+footer { background:#1b2735; padding:20px 10px; text-align:center; }
+.footer-nav { display:flex; justify-content:center; flex-wrap:wrap; gap:10px; margin-bottom:10px; }
+.footer-nav a { text-decoration:none; color:#fff; background:#06b6d4; padding:8px 14px; border-radius:20px; font-size:14px; transition:0.3s; }
+.footer-nav a:hover { background:#0891b2; }
+.copyright { font-size:13px; color:#aaa; }
+
+@media(max-width:768px){
+  main.shift { margin-left:0; }
+  table { display:block; overflow-x:auto; white-space:nowrap; }
+}
+</style>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+import { getFirestore, collection, query, orderBy, getDocs, doc, updateDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAyhjOsIXNAkBglpRllt0OZIOJYpdB_9-8",
+  authDomain: "diamond-recharge-f7f59.firebaseapp.com",
+  projectId: "diamond-recharge-f7f59",
+  storageBucket: "diamond-recharge-f7f59.appspot.com",
+  messagingSenderId: "657717928489",
+  appId: "1:657717928489:web:70431ebc9afb7002d4b238"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+// Sidebar toggle & dropdown
+document.addEventListener("DOMContentLoaded", ()=>{
+  const sidebar = document.getElementById("sidebar");
+  const mainContent = document.querySelector("main");
+  document.querySelector(".menu-toggle").addEventListener("click", ()=>{
+    sidebar.classList.toggle("active");
+    mainContent.classList.toggle("shift");
+  });
+  const profileMenu = document.getElementById("profileMenu");
+  const dropdownMenu = document.getElementById("dropdownMenu");
+  profileMenu.addEventListener("click", ()=> {
+    dropdownMenu.style.display = dropdownMenu.style.display==="flex"?"none":"flex";
+  });
+});
+
+// Logout
+function doLogout(){ signOut(auth).then(()=>window.location.href="login.html"); }
+document.addEventListener("DOMContentLoaded", ()=>{
+  const btns = document.querySelectorAll("#logoutBtn, #logoutBtn2");
+  btns.forEach(btn=>btn.addEventListener("click", doLogout));
+});
+
+// Load Firebase user info
+onAuthStateChanged(auth, async(user)=>{
+  if(user){
+    const snap = await getDoc(doc(db,"users",user.uid));
+    const data = snap.exists() ? snap.data() : {};
+    const avatar = data.avatar || user.photoURL || "https://via.placeholder.com/70";
+    const name = data.name || user.displayName || "Guest User";
+    const role = data.role || "User";
+    const email = user.email || "";
+    const balance = data.balance !== undefined ? data.balance : 0;
+    document.getElementById("profilePic").src = avatar;
+    document.getElementById("userBox").innerHTML = `
+      <img src="${avatar}" alt="Avatar">
+      <h3>${name}</h3>
+      <p>📌 Role: ${role}</p>
+      <p>✉ ${email}</p>
+      <p>💰 Balance: ${balance}</p>
+    `;
+    loadOrders();
+  } else { window.location.href="login.html"; }
+});
+
+// Orders
+let allOrders=[], currentPage=1, perPage=20;
+
+function formatTime(ts){
+  if(!ts?.toDate) return "-";
+  const d = ts.toDate();
+  let h=d.getHours(); const m=d.getMinutes().toString().padStart(2,'0'); const ampm=h>=12?'PM':'AM';
+  h=h%12||12;
+  return `${h}:${m} ${ampm}`;
+}
+
+function renderTable(orders){
+  const tbody = document.getElementById("ordersTbody");
+  tbody.innerHTML="";
+  const start=(currentPage-1)*perPage;
+  const end=start+perPage;
+  const pageOrders = orders.slice(start,end);
+  pageOrders.forEach(o=>{
+    tbody.innerHTML+=`<tr>
+      <td>${o.profileId||""}</td>
+      <td>${o.amount||""}</td>
+      <td>${o.method||""}</td>
+      <td>${o.account||""}</td>
+      <td>${o.txid||""}</td>
+      <td class="status-${o.status.toLowerCase()}">${o.status}</td>
+      <td>${formatTime(o.createdAt)}</td>
+      <td>
+        <select class="status-select" data-id="${o.id}">
+          <option value="Pending" ${o.status==="Pending"?"selected":""}>Pending</option>
+          <option value="Completed" ${o.status==="Completed"?"selected":""}>Completed</option>
+          <option value="Cancelled" ${o.status==="Cancelled"?"selected":""}>Cancelled</option>
+        </select>
+      </td>
+    </tr>`;
+  });
+  renderPagination(orders.length);
+  document.querySelectorAll(".status-select").forEach(sel=>{
+    sel.addEventListener("change", async(e)=>{
+      const id=e.target.dataset.id;
+      await updateDoc(doc(db,"orders",id),{status:e.target.value});
+      allOrders.find(x=>x.id===id).status=e.target.value;
+      renderTable(allOrders);
+    });
+  });
+}
+
+function renderPagination(total){
+  const pages=Math.ceil(total/perPage);
+  const container=document.getElementById("pagination");
+  container.innerHTML="";
+  for(let i=1;i<=pages;i++){
+    const btn=document.createElement("button");
+    btn.innerText=i;
+    if(i===currentPage) btn.classList.add("active");
+    btn.addEventListener("click", ()=>{ currentPage=i; renderTable(allOrders); });
+    container.appendChild(btn);
+  }
+}
+
+async function loadOrders(){
+  const q = query(collection(db,"orders"), orderBy("createdAt","desc"));
+  const snap = await getDocs(q);
+  allOrders=[];
+  snap.forEach(docu=>{
+    allOrders.push({id:docu.id,...docu.data()});
+  });
+  renderTable(allOrders);
+}
+
+// Search
+document.addEventListener("DOMContentLoaded", ()=>{
+  const searchBox=document.getElementById("searchBox");
+  searchBox.addEventListener("input", ()=>{
+    const val=searchBox.value.toLowerCase();
+    const filtered=allOrders.filter(o=>Object.values(o).some(v=>String(v).toLowerCase().includes(val)));
+    currentPage=1;
+    renderTable(filtered);
+  });
+});
+</script>
+</head>
+
+<body>
+<header>
+  <button class="menu-toggle">☰</button>
+  <div class="site-logo">
+    <img src="images/logo.png" alt="SARKAR TELECOM">
+    <span>Fast & Secure Mobile Recharge Service</span>
+  </div>
+  <div class="profile" id="profileMenu">
+    <img id="profilePic" src="https://via.placeholder.com/36" alt="Profile">
+    <div class="dropdown" id="dropdownMenu">
+      <a href="profile.html">👤 Profile</a>
+      <a href="order.html">➕ Order</a>
+      <a href="#" id="logoutBtn">🚪 Logout</a>
+    </div>
+  </div>
+</header>
+
+<div class="sidebar" id="sidebar">
+  <a href="index.html">🏠 Home</a>
+  <a href="dashboard.html">📊 Dashboard</a>
+  <a href="profile.html">👤 Profile</a>
+  <a href="order.html">➕ Order</a>
+  <a href="order-history.html">📜 Order History</a>
+  <a href="support.html">💬 Support</a>
+  <a href="faq.html">❓ FAQ</a>
+  <a href="about.html">ℹ About Us</a>
+  <a href="privacy.html">🔒 Privacy Policy</a>
+  <a href="terms.html">📄 Terms & Conditions</a>
+  <a href="refund.html">💎 Refund Policy</a>
+  <a href="sitemap.html">🌐 Sitemap</a>
+  <a href="admin.html">🛠 Admin Panel</a>
+  <a href="login.html">🔑 Login</a>
+  <a href="register.html">📝 Register</a>
+  <a href="forgot.html">❔ Forgot Password</a>
+  <a href="reset.html">♻ Reset Password</a>
+  <button id="logoutBtn2" class="logout-btn">🚪 Logout</button>
+  <div class="user-card" id="userBox">Loading user...</div>
+</div>
+
+<main>
+  <h1>Orders Dashboard</h1>
+  <input type="text" id="searchBox" placeholder="Search orders...">
+  <table>
+    <thead>
+      <tr>
+        <th>Profile ID</th>
+        <th>Amount</th>
+        <th>Method</th>
+        <th>Account</th>
+        <th>TXID</th>
+        <th>Status</th>
+        <th>Created At</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody id="ordersTbody">
+      <!-- Data will be populated -->
+    </tbody>
+  </table>
+  <div class="pagination" id="pagination"></div>
+</main>
+
+<footer>
+  <div class="footer-nav">
+    <a href="about.html">ℹ About</a>
+    <a href="privacy.html">🔒 Privacy</a>
+    <a href="terms.html">📄 Terms</a>
+    <a href="refund.html">💎 Refund</a>
+    <a href="support.html">💬 Support</a>
+  </div>
+  <div class="copyright">
+    © SARKAR TELECOM - 2025
+  </div>
+</footer>
+</body>
+</html>
