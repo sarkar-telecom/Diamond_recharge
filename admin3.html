@@ -7,9 +7,12 @@
 <style>
 body {
   margin:0;
-  font-family: Arial,sans-serif;
+  font-family: Arial, sans-serif;
   background:#0f1824;
   color:#fff;
+  display:flex;
+  flex-direction:column;
+  min-height:100vh;
 }
 /* Header */
 header {
@@ -26,44 +29,61 @@ header {
 .menu-toggle { font-size:24px; cursor:pointer; background:none; border:none; color:#fff; }
 .site-title { font-weight:bold; font-size:18px; flex:1; text-align:center; }
 .profile { position:relative; cursor:pointer; display:flex; align-items:center; padding-right:30px; }
-.profile img { width:40px; height:40px; border-radius:50%; object-fit:cover; margin-left:25px; }
-.dropdown { position:absolute; right:0; top:50px; background:#fff; color:#333; min-width:160px; border-radius:6px; display:none; flex-direction:column; box-shadow:0 4px 6px rgba(0,0,0,0.2); }
-.dropdown a { padding:10px; text-decoration:none; color:#333; border-bottom:1px solid #eee; }
-.dropdown a:hover { background:#f0f0f0; }
+.profile img { width:40px; height:40px; border-radius:50%; object-fit:cover; margin-left:10px; }
+.dropdown { position:absolute; right:0; top:50px; background:#1c2431; color:#fff; min-width:160px; border-radius:6px; display:none; flex-direction:column; box-shadow:0 4px 6px rgba(0,0,0,0.2); }
+.dropdown a { padding:10px; text-decoration:none; color:#fff; border-bottom:1px solid #2a3445; }
+.dropdown a:hover { background:#2f3c52; }
 /* Sidebar */
-.sidebar { position:fixed; left:-250px; top:0; width:250px; height:100%; background:#1c2431; padding-top:60px; transition:left 0.3s ease; z-index:999; }
+.sidebar { position:fixed; left:-250px; top:0; width:250px; height:100%; background:#1c2431; padding-top:60px; transition:left 0.3s ease; z-index:999; overflow-y:auto; }
 .sidebar.active { left:0; }
 .sidebar a { display:block; padding:12px 20px; text-decoration:none; color:#fff; border-bottom:1px solid #2a3445; }
 .sidebar a:hover { background:#2f3c52; }
+.logout-btn { display:block; width:90%; margin:15px auto; padding:12px; background:#d62828; color:#fff; border:none; border-radius:8px; font-size:15px; cursor:pointer; text-align:center; }
+.logout-btn:hover { background:#b91c1c; }
+/* User card */
+.user-card { background:#0f1115; border:1px solid #2b3347; border-radius:12px; padding:10px; display:flex; align-items:center; gap:10px; margin:15px; flex-direction:column; text-align:center; }
+.user-card img { width:70px; height:70px; border-radius:50%; border:3px solid #06b6d4; }
+.user-card h3 { margin:4px 0; font-size:16px; color:#06b6d4; }
+.user-card p { margin:2px 0; font-size:13px; color:#fff; }
 /* Main content */
-main { margin-top:60px; padding:10px; }
+main { margin-top:70px; padding:15px; flex:1; }
 /* Search */
-#searchBox { width:100%; padding:4px; margin-bottom:5px; border-radius:6px; border:1px solid #333; background:#171a21; color:#fff; box-sizing:border-box; }
+#searchBox { width:100%; padding:8px; margin-bottom:10px; border-radius:6px; border:1px solid #333; background:#171a21; color:#fff; box-sizing:border-box; }
 /* Table */
 table { width:100%; border-collapse:collapse; table-layout:fixed; }
-th, td { padding:4px 6px; border:1px solid #333; text-align:center; font-size:11px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+th, td { padding:6px 8px; border:1px solid #333; text-align:center; font-size:12px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 th { background:#1f2937; }
 td { background:#171a21; }
 .status-pending { color:#facc15; font-weight:bold; }
 .status-completed { color:#22c55e; font-weight:bold; }
-.status-failed, .status-cancelled { color:#ef4444; font-weight:bold; }
+.status-cancelled { color:#ef4444; font-weight:bold; }
 /* Pagination */
-.pagination { text-align:center; margin-top:5px; }
-.pagination button { margin:1px; padding:3px 5px; border:none; border-radius:6px; cursor:pointer; background:#1f2937; color:#fff; font-size:11px; }
-.pagination button.active { background:#fff; color:#000; }
+.pagination { text-align:center; margin-top:10px; }
+.pagination button { margin:2px; padding:4px 6px; border:none; border-radius:6px; cursor:pointer; background:#1f2937; color:#fff; font-size:12px; }
+.pagination button.active { background:#06b6d4; color:#000; }
 .pagination button:hover { background:#2f3c52; }
-/* Responsive */
+/* Footer */
+footer {
+  background:#1b2735;
+  text-align:center;
+  padding:15px 10px;
+  font-size:13px;
+  color:#bbb;
+}
+/* Footer nav */
+.footer-nav { display:flex; justify-content:center; flex-wrap:wrap; gap:10px; margin-bottom:10px; }
+.footer-nav a { text-decoration:none; color:#fff; background:#06b6d4; padding:8px 14px; border-radius:20px; font-size:14px; transition:0.3s; }
+.footer-nav a:hover { background:#0891b2; }
+/* Responsive table */
 @media screen and (max-width:600px){ table { display:block; overflow-x:auto; white-space:nowrap; } th, td { font-size:10px; padding:3px; } }
-button.updateBtn, button.deleteBtn { padding:3px 5px; margin:1px; border:none; border-radius:4px; cursor:pointer; }
-button.updateBtn { background:#22c55e; color:#000; }
-button.deleteBtn { background:#ef4444; color:#fff; }
+button.updateBtn { padding:4px 6px; margin:1px; border:none; border-radius:4px; cursor:pointer; background:#22c55e; color:#000; }
 button.updateBtn:hover { background:#16a34a; }
-button.deleteBtn:hover { background:#dc2626; }
+select.status-select { padding:2px 4px; border-radius:4px; background:#1f2937; color:#fff; border:none; }
 </style>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
-import { getFirestore, collection, query, where, orderBy, getDocs, doc, getDoc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+import { getFirestore, collection, query, orderBy, getDocs, doc, updateDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAyhjOsIXNAkBglpRllt0OZIOJYpdB_9-8",
@@ -78,119 +98,131 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-// Sidebar toggle
+let allOrders=[], currentPage=1, perPage=20;
+
+function formatTime(ts){
+  if(!ts?.toDate) return "-";
+  const d = ts.toDate();
+  let h=d.getHours();
+  const m=d.getMinutes().toString().padStart(2,'0');
+  const ampm=h>=12?'PM':'AM';
+  h=h%12||12;
+  return `${h}:${m} ${ampm}`;
+}
+
+// Sidebar & Dropdown
 document.addEventListener("DOMContentLoaded", ()=>{
-  document.querySelector(".menu-toggle").addEventListener("click", ()=>{
-    document.getElementById("sidebar").classList.toggle("active");
-  });
+  document.querySelector(".menu-toggle").addEventListener("click", ()=>document.getElementById("sidebar").classList.toggle("active"));
   const profileMenu = document.getElementById("profileMenu");
   const dropdownMenu = document.getElementById("dropdownMenu");
   profileMenu.addEventListener("click", ()=> { dropdownMenu.style.display = dropdownMenu.style.display==="flex"?"none":"flex"; });
+
+  document.getElementById("logoutBtn").addEventListener("click", ()=>signOut(auth).then(()=>window.location.href="login.html"));
+  document.getElementById("logoutBtn2").addEventListener("click", ()=>signOut(auth).then(()=>window.location.href="login.html"));
 });
 
-// Logout
-function doLogout() { signOut(auth).then(()=>window.location.href="login.html"); }
-document.addEventListener("DOMContentLoaded", ()=>{
-  document.getElementById("logoutBtn").addEventListener("click", doLogout);
-  document.getElementById("logoutBtn2").addEventListener("click", doLogout);
-});
-
-// Orders
-let allOrders=[], currentPage=1, perPage=20;
-function formatTime(ts){ 
-  if(!ts?.toDate) return "-"; 
-  const d=ts.toDate(); 
-  let h=d.getHours(); 
-  const m=d.getMinutes().toString().padStart(2,'0'); 
-  const ampm=h>=12?'PM':'AM'; 
-  h=h%12||12; 
-  return `${h}:${m} ${ampm}`; 
-}
-function renderTable(orders){ 
-  const tbody=document.getElementById("ordersBody"); 
-  tbody.innerHTML=""; 
-  const total=allOrders.length; 
-  orders.forEach((d,i)=>{ 
-    const sl=total-((currentPage-1)*perPage+i); 
-    const tr=document.createElement("tr"); 
-    tr.innerHTML=`<td>${sl}</td>
+// Render table
+function renderTable(orders){
+  const tbody = document.getElementById("ordersBody");
+  tbody.innerHTML = "";
+  const total = allOrders.length;
+  orders.forEach((d,i)=>{
+    const sl = total - ((currentPage-1)*perPage + i);
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${sl}</td>
       <td>${d.profileId||"-"}</td>
       <td>${d.amount||"-"}</td>
       <td>${d.method||"-"}</td>
       <td>${d.account||"-"}</td>
       <td>${d.txid||"-"}</td>
-      <td class="status-${d.status?.toLowerCase()||"pending"}">${d.status||"-"}</td>
-      <td>${formatTime(d.createdAt)}</td>
       <td>
-        <button class="updateBtn" onclick="updateStatus('${d.id}')">Update</button>
-        <button class="deleteBtn" onclick="deleteOrder('${d.id}')">Delete</button>
-      </td>`;
-    tbody.appendChild(tr); 
-  }); 
+        <select class="status-select" id="status_${d.id}">
+          <option value="pending" ${d.status==="pending"?"selected":""}>Pending</option>
+          <option value="completed" ${d.status==="completed"?"selected":""}>Completed</option>
+          <option value="cancelled" ${d.status==="cancelled"?"selected":""}>Cancelled</option>
+        </select>
+      </td>
+      <td>${formatTime(d.createdAt)}</td>
+      <td><button class="updateBtn" onclick="updateStatus('${d.id}')">Update</button></td>
+    `;
+    tbody.appendChild(tr);
+  });
 }
-function renderPagination(total){ 
-  const pag=document.getElementById("pagination"); 
-  pag.innerHTML=""; 
-  const pages=Math.ceil(total/perPage); 
-  if(pages<=1) return; 
-  for(let i=1;i<=pages;i++){ 
-    const btn=document.createElement("button"); 
-    btn.textContent=i; 
-    btn.className=i===currentPage?"active":""; 
-    btn.onclick=()=>{ currentPage=i; showPage(); }; 
-    pag.appendChild(btn); 
-  } 
-}
-function showPage(){ 
-  const s=(currentPage-1)*perPage; 
-  renderTable(allOrders.slice(s,s+perPage)); 
-  renderPagination(allOrders.length); 
-}
-function filterOrders(){ 
-  const q=document.getElementById("searchBox").value.toLowerCase(); 
-  const filtered=allOrders.filter(o=>((o.profileId||"").toLowerCase().includes(q)||(o.amount||"").toString().includes(q)||(o.method||"").toLowerCase().includes(q)||(o.account||"").toLowerCase().includes(q)||(o.txid||"").toLowerCase().includes(q)||(o.status||"").toLowerCase().includes(q))); 
-  renderTable(filtered.slice(0,perPage)); 
-  currentPage=1; 
-  renderPagination(filtered.length); 
-}
-document.addEventListener("DOMContentLoaded", ()=>{
-  document.getElementById("searchBox").addEventListener("input", filterOrders);
-});
 
-// Update/Delete functions
-window.updateStatus = async(id)=>{
-  const newStatus = document.getElementById(`status_${id}`)?.value || "pending";
-  await updateDoc(doc(db,"orders",id), { status: newStatus });
-  alert("✅ Status updated!");
-  loadOrders();
-}
-window.deleteOrder = async(id)=>{
-  if(confirm("Are you sure you want to delete this order?")){
-    await deleteDoc(doc(db,"orders",id));
-    alert("🗑️ Order deleted!");
-    loadOrders();
+// Pagination
+function renderPagination(total){
+  const pag = document.getElementById("pagination");
+  pag.innerHTML = "";
+  const pages = Math.ceil(total/perPage);
+  if(pages<=1) return;
+  for(let i=1;i<=pages;i++){
+    const btn = document.createElement("button");
+    btn.textContent = i;
+    btn.className = i===currentPage?"active":"";
+    btn.onclick = ()=>{ currentPage=i; showPage(); };
+    pag.appendChild(btn);
   }
 }
 
-// Load orders
+function showPage(){
+  const s=(currentPage-1)*perPage;
+  renderTable(allOrders.slice(s,s+perPage));
+  renderPagination(allOrders.length);
+}
+
+function filterOrders(){
+  const q = document.getElementById("searchBox").value.toLowerCase();
+  const filtered = allOrders.filter(o=>((o.profileId||"").toLowerCase().includes(q) || (o.amount||"").toString().includes(q) || (o.method||"").toLowerCase().includes(q) || (o.account||"").toLowerCase().includes(q) || (o.txid||"").toLowerCase().includes(q) || (o.status||"").toLowerCase().includes(q)));
+  currentPage = 1;
+  renderTable(filtered.slice(0,perPage));
+  renderPagination(filtered.length);
+}
+
+document.addEventListener("DOMContentLoaded", ()=>document.getElementById("searchBox").addEventListener("input", filterOrders));
+
+// Load Orders
 async function loadOrders(){
-  if(!auth.currentUser) return;
   const ordersRef = collection(db,"orders");
   const q = query(ordersRef, orderBy("createdAt","desc"));
-  const snapshot = await getDocs(q);
-  allOrders=[];
-  snapshot.forEach(d=>allOrders.push({...d.data(), id:d.id}));
+  const snap = await getDocs(q);
+  allOrders = [];
+  snap.forEach(d=>allOrders.push({...d.data(), id:d.id}));
   showPage();
 }
 
-// Load user info
+// Update Status
+window.updateStatus = async(id)=>{
+  const val = document.getElementById(`status_${id}`).value;
+  await updateDoc(doc(db,"orders",id), { status: val });
+  alert("✅ Status updated!");
+  loadOrders();
+}
+
+// Auth + Sidebar User Info
 onAuthStateChanged(auth, async(user)=>{
   if(user){
     const userDoc = doc(db,"users",user.uid);
     const snap = await getDoc(userDoc);
-    const img=document.getElementById("profilePic");
-    if(snap.exists() && snap.data().avatar){ img.src = snap.data().avatar; }
-    else img.src="https://via.placeholder.com/40";
+    const img = document.getElementById("profilePic");
+    if(snap.exists() && snap.data().avatar) img.src = snap.data().avatar;
+    else img.src = "https://via.placeholder.com/40";
+
+    const userBox = document.getElementById("userBox");
+    const avatar = snap.exists() && snap.data().avatar ? snap.data().avatar : "https://via.placeholder.com/70";
+    const name = snap.exists() && snap.data().name ? snap.data().name : user.displayName || "Guest";
+    const role = snap.exists() && snap.data().role ? snap.data().role : "Admin";
+    const phone = snap.exists() && snap.data().phone ? snap.data().phone : "";
+    const email = user.email;
+    const balance = snap.exists() && snap.data().balance ? snap.data().balance : 0;
+    userBox.innerHTML=`
+      <img src="${avatar}" alt="Avatar">
+      <h3>${name}</h3>
+      <p>${role}</p>
+      <p>${phone}</p>
+      <p>${email}</p>
+      <p>Balance: ${balance}</p>
+    `;
     loadOrders();
   } else window.location.href="login.html";
 });
@@ -203,9 +235,9 @@ onAuthStateChanged(auth, async(user)=>{
   <div class="profile" id="profileMenu">
     <img id="profilePic" src="https://via.placeholder.com/40" alt="Profile">
     <div class="dropdown" id="dropdownMenu">
-      <a href="profile.html">Profile</a>
+      <a href="profile.html">👤 Profile</a>
       <a href="order.html">💎 Order Page</a>
-      <a href="#" id="logoutBtn">Logout</a>
+      <a href="#" id="logoutBtn">🚪 Logout</a>
     </div>
   </div>
 </header>
@@ -215,7 +247,8 @@ onAuthStateChanged(auth, async(user)=>{
   <a href="profile.html">👤 Profile</a>
   <a href="order-history.html">📜 Order History</a>
   <a href="order.html">💎 Order Page</a>
-  <a href="#" id="logoutBtn2">🚪 Logout</a>
+  <button id="logoutBtn2" class="logout-btn">🚪 Logout</button>
+  <div class="user-card" id="userBox">Loading user...</div>
 </div>
 
 <main>
@@ -238,5 +271,15 @@ onAuthStateChanged(auth, async(user)=>{
   </table>
   <div class="pagination" id="pagination"></div>
 </main>
+
+<footer>
+  <div class="footer-nav">
+    <a href="support.html">💬 Support</a>
+    <a href="order.html">➕ Order</a>
+    <a href="order-history.html">📜 History</a>
+    <a href="faq.html">❓ FAQ</a>
+  </div>
+  <div>© SARKAR TELECOM - 2022-2026</div>
+</footer>
 </body>
 </html>
