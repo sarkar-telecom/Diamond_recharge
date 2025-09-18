@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard - SARKAR TELECOM</title>
+<style>
+  body { margin:0; font-family: Arial, sans-serif; background:#0f1824; color:#fff; }
+  header { display:flex; justify-content:space-between; align-items:center; background:#1b2735; padding:10px 15px; position:fixed; width:100%; top:0; z-index:1000; }
+  .menu-toggle { font-size:24px; cursor:pointer; background:none; border:none; color:#fff; }
+  .site-title { font-weight:bold; font-size:18px; flex:1; text-align:center; }
+  .profile { position:relative; cursor:pointer; display:flex; align-items:center; padding-right:30px; }
+  .profile img { width:40px; height:40px; border-radius:50%; object-fit:cover; margin-left:10px; }
+  .dropdown { position:absolute; right:0; top:50px; background:#fff; color:#333; min-width:160px; border-radius:6px; display:none; flex-direction:column; box-shadow:0 4px 6px rgba(0,0,0,0.2); z-index:1001; }
+  .dropdown a { padding:10px; text-decoration:none; color:#333; border-bottom:1px solid #eee; }
+  .dropdown a:hover { background:#f0f0f0; }
+
+  .sidebar { position:fixed; left:-250px; top:0; width:250px; height:100%; background:#1c2431; padding-top:60px; transition:left 0.3s ease; z-index:999; overflow-y:auto; }
+  .sidebar.active { left:0; }
+  .sidebar a { display:block; padding:12px 20px; text-decoration:none; color:#fff; border-bottom:1px solid #2a3445; font-size:14px; }
+  .sidebar a:hover { background:#2f3c52; }
+
+  main { margin-top:60px; padding:15px; margin-left:0; transition: margin-left 0.3s ease; }
+  main.shift { margin-left:250px; }
+
+  /* User Card in Sidebar Footer */
+  .user-card { background:#0f1115; border:1px solid #2b3347; border-radius:12px; padding:10px; display:flex; align-items:center; gap:10px; margin:15px; flex-direction:column; text-align:center; }
+  .user-card img { width:70px; height:70px; border-radius:50%; border:3px solid #06b6d4; }
+  .user-card h3 { margin:4px 0; font-size:16px; color:#06b6d4; }
+  .user-card p { margin:2px 0; font-size:13px; color:#fff; }
+
+  @media(max-width:768px){
+    main.shift { margin-left:0; }
+  }
+</style>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAyhjOsIXNAkBglpRllt0OZIOJYpdB_9-8",
+  authDomain: "diamond-recharge-f7f59.firebaseapp.com",
+  projectId: "diamond-recharge-f7f59",
+  storageBucket: "diamond-recharge-f7f59.appspot.com",
+  messagingSenderId: "657717928489",
+  appId: "1:657717928489:web:70431ebc9afb7002d4b238",
+  measurementId: "G-TDK78BQ8SQ"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+// Sidebar toggle
+document.addEventListener("DOMContentLoaded", ()=>{
+  const sidebar = document.getElementById("sidebar");
+  const mainContent = document.querySelector("main");
+  document.querySelector(".menu-toggle").addEventListener("click", ()=>{
+    sidebar.classList.toggle("active");
+    mainContent.classList.toggle("shift");
+  });
+
+  const profileMenu = document.getElementById("profileMenu");
+  const dropdownMenu = document.getElementById("dropdownMenu");
+  profileMenu.addEventListener("click", ()=> {
+    dropdownMenu.style.display = dropdownMenu.style.display==="flex"?"none":"flex";
+  });
+});
+
+// Logout function
+function doLogout(){ signOut(auth).then(()=>window.location.href="login.html"); }
+document.addEventListener("DOMContentLoaded", ()=>{
+  document.getElementById("logoutBtn").addEventListener("click", doLogout);
+  document.getElementById("logoutBtn2").addEventListener("click", doLogout);
+});
+
+// Load user info
+onAuthStateChanged(auth, async(user)=>{
+  if(user){
+    const userDoc = doc(db,"users",user.uid);
+    const snap = await getDoc(userDoc);
+    const avatar = snap.exists() && snap.data().avatar ? snap.data().avatar : "https://via.placeholder.com/70";
+    const name = snap.exists() && snap.data().name ? snap.data().name : user.displayName || "Guest User";
+    const email = user.email || "";
+    const phone = snap.exists() && snap.data().phone ? snap.data().phone : "";
+
+    // Profile dropdown
+    const profilePic = document.getElementById("profilePic");
+    profilePic.src = avatar;
+
+    // Sidebar footer user card
+    const userBox = document.getElementById("userBox");
+    userBox.innerHTML = `
+      <img src="${avatar}" alt="Avatar">
+      <h3>${name}</h3>
+      <p>${email}</p>
+      <p>${phone}</p>
+    `;
+  } else { window.location.href="login.html"; }
+});
+</script>
+</head>
+<body>
+<header>
+  <button class="menu-toggle">☰</button>
+  <div class="site-title">SARKAR TELECOM</div>
+  <div class="profile" id="profileMenu">
+    <img id="profilePic" src="https://via.placeholder.com/40" alt="Profile">
+    <div class="dropdown" id="dropdownMenu">
+      <a href="profile.html">👤 Profile</a>
+      <a href="order.html">💎 Order Page</a>
+      <a href="#" id="logoutBtn">🚪 Logout</a>
+    </div>
+  </div>
+</header>
+
+<div class="sidebar" id="sidebar">
+  <a href="index.html">🏠 Home</a>
+  <a href="dashboard.html">📊 Dashboard</a>
+  <a href="profile.html">👤 Profile</a>
+  <a href="order.html">➕ Order</a>
+  <a href="order-history.html">📜 History</a>
+  <a href="admin.html">🛠 Admin</a>
+  <a href="support.html">💬 Support</a>
+  <a href="faq.html">❓ FAQ</a>
+  <a href="about.html">ℹ About Us</a>
+  <a href="privacy.html">🔒 Privacy Policy</a>
+  <a href="terms.html">📄 Terms & Conditions</a>
+  <a href="refund.html">💰 Refund Policy</a>
+  <a href="login.html">🔑 Login</a>
+  <a href="register.html">📝 Register</a>
+  <a href="forgot.html">❔ Forgot Password</a>
+  <a href="reset.html">♻ Reset Password</a>
+  <div class="user-card" id="userBox">Loading user...</div>
+  <a href="#" id="logoutBtn2">🚪 Logout</a>
+</div>
+
+<main>
+  <h1>Welcome to Dashboard</h1>
+  <p>এখানে আপনার ড্যাশবোর্ড কন্টেন্ট দেখানো হবে।</p>
+</main>
+</body>
+</html>
