@@ -36,32 +36,9 @@ header {
   flex:1;
   text-align:center;
 }
-.profile { 
-  position:relative; 
-  cursor:pointer; 
-  display:flex; 
-  align-items:center; 
-  padding-right:30px;
-}
-.profile img { 
-  width:45px; 
-  height:45px; 
-  border-radius:50%; 
-  object-fit:cover; 
-  margin-left:25px;
-}
-.dropdown { 
-  position:absolute; 
-  right:0; 
-  top:50px; 
-  background:#fff; 
-  color:#333; 
-  min-width:160px; 
-  border-radius:6px; 
-  display:none; 
-  flex-direction:column; 
-  box-shadow:0 4px 6px rgba(0,0,0,0.2); 
-}
+.profile { position:relative; cursor:pointer; display:flex; align-items:center; padding-right:30px; }
+.profile img { width:45px; height:45px; border-radius:50%; object-fit:cover; margin-left:25px; }
+.dropdown { position:absolute; right:0; top:50px; background:#fff; color:#333; min-width:160px; border-radius:6px; display:none; flex-direction:column; box-shadow:0 4px 6px rgba(0,0,0,0.2);}
 .dropdown a { padding:10px; text-decoration:none; color:#333; border-bottom:1px solid #eee; }
 .dropdown a:hover { background:#f0f0f0; }
 
@@ -96,15 +73,7 @@ h2 { text-align:center; color:#06b6d4; margin-bottom:20px; }
 
 /* Grid Buttons */
 .grid { display:grid; grid-template-columns: repeat(auto-fit,minmax(80px,1fr)); gap:10px; margin-bottom:10px; }
-.grid button {
-  padding:10px;
-  border:none;
-  border-radius:6px;
-  cursor:pointer;
-  background:#1f2937;
-  color:#e7eaf0;
-  font-weight:bold;
-}
+.grid button { padding:10px; border:none; border-radius:6px; cursor:pointer; background:#1f2937; color:#e7eaf0; font-weight:bold; }
 .grid button.selected { background:#06b6d4; color:#000; }
 
 input, select {
@@ -136,11 +105,23 @@ button#submitBtn:disabled { background:#555; cursor:not-allowed; }
 
 .msg { margin-top:10px; font-size:14px; min-height:20px; }
 .amount-display { margin-bottom:10px; font-weight:bold; text-align:center; }
+
+/* Footer */
+footer {
+  background:#1b2735;
+  padding:10px;
+  text-align:center;
+  margin-top:20px;
+}
+footer .nav { display:flex; justify-content:center; gap:10px; margin-bottom:10px; }
+footer button { padding:6px 10px; border:none; border-radius:6px; background:#06b6d4; color:#000; cursor:pointer; }
 </style>
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
 import { getFirestore, collection, addDoc, serverTimestamp, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-storage.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAyhjOsIXNAkBglpRllt0OZIOJYpdB_9-8",
@@ -151,10 +132,10 @@ const firebaseConfig = {
   appId: "1:657717928489:web:70431ebc9afb7002d4b238",
   measurementId: "G-TDK78BQ8SQ"
 };
-
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+const storage = getStorage(app);
 
 const diamondAmounts = [
   {d:10,p:25},{d:50,p:115},{d:100,p:230},{d:200,p:460},{d:500,p:1130},
@@ -167,16 +148,14 @@ const paymentMethods = {
   "Rocket Personal":["017151186847"],
   "Upay Personal":["01715118684"],
   "Nagad Agent":["01919961919"],
-  "bKash Payment":["01971744060","01911611637"]
+  "bKash Payment":["01971744060","01911611637"],
+  "Binance (USDT)":["216953638"]
 };
 
-let selectedAmount=null, selectedPaymentMethod=null, selectedAccount=null;
+let selectedAmount=null, selectedPaymentMethod=null, selectedAccount=null, screenshotFile=null;
 
 window.addEventListener("load",()=>{
-  // Sidebar toggle
-  document.querySelector(".menu-toggle").addEventListener("click",()=>{
-    document.getElementById("sidebar").classList.toggle("active");
-  });
+  document.querySelector(".menu-toggle").addEventListener("click",()=>document.getElementById("sidebar").classList.toggle("active"));
   const profileMenu=document.getElementById("profileMenu");
   const dropdownMenu=document.getElementById("dropdownMenu");
   profileMenu.addEventListener("click",()=> dropdownMenu.style.display = dropdownMenu.style.display==="flex"?"none":"flex");
@@ -184,7 +163,7 @@ window.addEventListener("load",()=>{
   document.getElementById("logoutBtn").addEventListener("click",doLogout);
   document.getElementById("logoutBtn2").addEventListener("click",doLogout);
 
-  // Diamond grid
+  // diamond buttons
   const grid=document.getElementById("diamondGrid");
   diamondAmounts.forEach(a=>{
     const btn=document.createElement("button");
@@ -193,12 +172,11 @@ window.addEventListener("load",()=>{
     grid.appendChild(btn);
   });
 
-  // Payment methods
+  // payment methods
   const methodSelect=document.getElementById("paymentMethod");
   Object.keys(paymentMethods).forEach(m=>{
     const opt=document.createElement("option");
-    opt.value=m;
-    opt.textContent=m;
+    opt.value=m; opt.textContent=m;
     methodSelect.appendChild(opt);
   });
   methodSelect.addEventListener("change",()=>{
@@ -206,11 +184,7 @@ window.addEventListener("load",()=>{
     showAccount(selectedPaymentMethod);
   });
 
-  // Profile input only numbers + +
-  const profileInput=document.getElementById("profileId");
-  profileInput.addEventListener("input",()=>{
-    profileInput.value=profileInput.value.replace(/[^0-9\+]/g,'');
-  });
+  document.getElementById("screenshot").addEventListener("change",(e)=>screenshotFile=e.target.files[0]);
 });
 
 function doLogout(){ signOut(auth).then(()=>window.location.href="login.html"); }
@@ -227,21 +201,19 @@ function showAccount(method){
   accountBox.innerHTML="";
   if(!method||!paymentMethods[method]) return;
   selectedAccount=paymentMethods[method][0];
+
   if(paymentMethods[method].length>1){
     const select=document.createElement("select");
     paymentMethods[method].forEach(acc=>{
       const opt=document.createElement("option");
-      opt.value=acc;
-      opt.textContent=acc;
+      opt.value=acc; opt.textContent=acc;
       select.appendChild(opt);
     });
     select.addEventListener("change",()=>selectedAccount=select.value);
     accountBox.appendChild(select);
   } else {
     const input=document.createElement("input");
-    input.type="text";
-    input.value=selectedAccount;
-    input.readOnly=true;
+    input.type="text"; input.value=selectedAccount; input.readOnly=true;
     accountBox.appendChild(input);
   }
   const copyBtn=document.createElement("button");
@@ -261,11 +233,18 @@ window.submitOrder=async()=>{
   if(!selectedPaymentMethod){ msg.textContent="⚠️ Select Payment Method"; return;}
   if(!txid){ msg.textContent="⚠️ Enter Transaction ID"; return;}
 
-  submitBtn.disabled = true; // বাটন ডিসেবল
+  submitBtn.disabled = true;
 
   onAuthStateChanged(auth, async(user)=>{
     if(user){
       try{
+        let screenshotUrl="";
+        if(screenshotFile){
+          const storageRef=ref(storage,`screenshots/${user.uid}_${Date.now()}_${screenshotFile.name}`);
+          await uploadBytes(storageRef,screenshotFile);
+          screenshotUrl=await getDownloadURL(storageRef);
+        }
+
         await addDoc(collection(db,"orders"),{
           email:user.email,
           profileId,
@@ -273,38 +252,21 @@ window.submitOrder=async()=>{
           method:selectedPaymentMethod,
           account:selectedAccount,
           txid,
+          screenshot:screenshotUrl,
           status:"pending",
           createdAt:serverTimestamp(),
           userId:user.uid
         });
+
         msg.textContent="✅ Order submitted!";
+        setTimeout(()=>window.location.href="order-history.html",1200);
 
-        // ফর্ম ফাঁকা করা
-        document.getElementById("profileId").value="";
-        document.getElementById("txid").value="";
-        document.getElementById("paymentMethod").value="";
-        document.getElementById("accountBox").innerHTML="";
-        document.getElementById("amountDisplay").textContent="";
-        document.querySelectorAll("#diamondGrid button").forEach(b=>b.classList.remove("selected"));
-        selectedAmount=null;
-        selectedPaymentMethod=null;
-        selectedAccount=null;
-
-        // ১ সেকেন্ড পরে রিডাইরেক্ট
-        setTimeout(()=>window.location.href="order-history.html",1000);
-
-      }catch(e){ 
-        msg.textContent="❌ "+e.message; 
-        submitBtn.disabled=false; // Error হলে আবার enable
-      }
-    } else {
-      alert("Please login first");
-      window.location.href="login.html";
-    }
+      }catch(e){ msg.textContent="❌ "+e.message; submitBtn.disabled=false; }
+    } else { alert("Please login first"); window.location.href="login.html"; }
   });
 }
 
-// Avatar লোড
+// Avatar load
 onAuthStateChanged(auth, async (user) => {
   if (user) {
     try {
@@ -332,11 +294,24 @@ onAuthStateChanged(auth, async (user) => {
     </div>
   </div>
 </header>
+
 <div class="sidebar" id="sidebar">
+  <a href="index.html">🏠 Home</a>
   <a href="dashboard.html">📊 Dashboard</a>
   <a href="profile.html">👤 Profile</a>
-  <a href="user-managment.html">📋 User Request</a>
+  <a href="order.html">➕ Order</a>
   <a href="order-history.html">📜 History</a>
+  <a href="admin.html">🛠 Admin</a>
+  <a href="support.html">💬 Support</a>
+  <a href="faq.html">❓ FAQ</a>
+  <a href="about.html">ℹ About Us</a>
+  <a href="privacy.html">🔒 Privacy Policy</a>
+  <a href="terms.html">📄 Terms & Conditions</a>
+  <a href="refund.html">💰 Refund Policy</a>
+  <a href="login.html">🔑 Login</a>
+  <a href="register.html">📝 Register</a>
+  <a href="forgot.html">❔ Forgot Password</a>
+  <a href="reset.html">♻ Reset Password</a>
   <a href="#" id="logoutBtn2">🚪 Logout</a>
 </div>
 
@@ -353,14 +328,26 @@ onAuthStateChanged(auth, async (user) => {
   <select id="paymentMethod">
     <option value="">Select Method</option>
   </select>
-
-  <div id="accountBox"></div>
+  <div id="accountBox" class="copy-box"></div>
 
   <label>Transaction ID</label>
   <input type="text" id="txid" placeholder="Enter Transaction ID">
 
+  <label>Upload Screenshot (optional)</label>
+  <input type="file" id="screenshot" accept="image/*">
+
   <button id="submitBtn" onclick="submitOrder()">Submit Order</button>
   <p class="msg" id="msg"></p>
 </main>
+
+<footer>
+  <div class="nav">
+    <button onclick="location.href='support.html'">Support</button>
+    <button onclick="location.href='order.html'">Order</button>
+    <button onclick="location.href='order-history.html'">History</button>
+    <button onclick="location.href='faq.html'">FAQ</button>
+  </div>
+  <p>© SARKAR TELECOM - 2022-2026</p>
+</footer>
 </body>
 </html>
