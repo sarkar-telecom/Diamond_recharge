@@ -63,29 +63,31 @@
     flex:1;
     margin-left:0;
     padding:15px;
-    min-height: calc(100vh - 60px - 80px); /* header + footer */
+    min-height: calc(100vh - 60px - 120px); /* header + footer */
     transition: margin-left 0.3s ease;
   }
   main.shift { margin-left:250px; }
 
   /* ===== Footer ===== */
   footer {
-    height:80px;
     background:#1b2735;
-    text-align:center;
-    padding:15px 10px;
-    flex-shrink:0;
+    padding:20px 10px;
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:space-between;
+    gap:10px;
   }
-  .footer-nav { display:flex; justify-content:center; flex-wrap:wrap; gap:10px; margin-bottom:10px; }
-  .footer-nav a { text-decoration:none; color:#fff; background:#06b6d4; padding:8px 14px; border-radius:20px; font-size:14px; transition:0.3s; }
-  .footer-nav a:hover { background:#0891b2; }
-  .copyright { font-size:13px; color:#aaa; }
+  .footer-section { display:flex; flex-direction:column; gap:6px; }
+  .footer-section a { text-decoration:none; color:#fff; font-size:14px; transition:0.3s; }
+  .footer-section a:hover { color:#06b6d4; }
+  .footer-bottom { width:100%; text-align:center; font-size:13px; color:#aaa; margin-top:10px; }
 
   /* ===== Responsive ===== */
   @media(max-width:768px){
     main.shift { margin-left:0; }
     .sidebar { width:200px; }
     .sidebar.active { left:0; }
+    footer { flex-direction:column; align-items:center; }
   }
 </style>
 
@@ -203,16 +205,28 @@ onAuthStateChanged(auth, async(user)=>{
 </div>
 
 <footer>
-  <div class="footer-nav">
+  <!-- Support Links -->
+  <div class="footer-section">
+    <strong>Support</strong>
+    <a href="support.html">💬 Support</a>
+    <a href="order.html">➕ Order</a>
+    <a href="order-history.html">📜 History</a>
+    <a href="faq.html">❓ FAQ</a>
+  </div>
+
+  <!-- Information Links -->
+  <div class="footer-section">
+    <strong>Information</strong>
     <a href="about.html">ℹ About Us</a>
     <a href="privacy.html">🔒 Privacy Policy</a>
     <a href="terms.html">📄 Terms & Conditions</a>
     <a href="refund.html">💎 Refund Policy</a>
     <a href="sitemap.html">🌐 Sitemap</a>
-    <a href="support.html">💬 Support</a>
   </div>
-  <div class="copyright">
-    © SARKAR TELECOM - 2025
+
+  <!-- Branding / Copyright -->
+  <div class="footer-section footer-bottom">
+    © SARKAR TELECOM - 2025 | Fast & Secure Mobile Recharge Service
   </div>
 </footer>
 
