@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Login - SARKAR TELECOM</title>
+<title>Login - Diamond Recharge</title>
 <link rel="icon" type="image/png" href="images/favicon.png">
 
 <style>
@@ -48,10 +48,11 @@ footer{background:#1b2735;padding:20px 15px;display:flex;justify-content:space-b
 @media(max-width:768px){footer{flex-direction:row;flex-wrap:nowrap;justify-content:space-between;}.footer-wrapper{flex-direction:row;flex-wrap:nowrap;justify-content:space-between;}.footer-section{min-width:80px;flex:1;margin-bottom:0;}}
 </style>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 
+<script>
+// Firebase Config
 const firebaseConfig = {
   apiKey: "AIzaSyAyhjOsIXNAkBglpRllt0OZIOJYpdB_9-8",
   authDomain: "diamond-recharge-f7f59.firebaseapp.com",
@@ -61,66 +62,52 @@ const firebaseConfig = {
   appId: "1:657717928489:web:70431ebc9afb7002d4b238",
   measurementId: "G-TDK78BQ8SQ"
 };
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
 
 // Sidebar toggle
 document.addEventListener("DOMContentLoaded",()=>{
-  const sidebar=document.getElementById("sidebar");
-  document.querySelector(".menu-toggle").addEventListener("click",()=>{sidebar.classList.toggle("active");});
+  document.querySelector(".menu-toggle").addEventListener("click",()=>{
+    document.getElementById("sidebar").classList.toggle("active");
+  });
 });
 
 // Show/Hide Password
-function togglePassword(){const pass=document.getElementById("password");pass.type=pass.type==="password"?"text":"password";}
+function togglePassword(){
+  const pass = document.getElementById("password");
+  pass.type = pass.type==="password"?"text":"password";
+}
+
+// Email Login
+function emailLogin(){
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+  const remember = document.getElementById("remember").checked;
+
+  auth.signInWithEmailAndPassword(email,password)
+  .then(()=>{
+    if(remember) localStorage.setItem("rememberEmail",email);
+    window.location.href = "dashboard.html";
+  })
+  .catch(err=>alert(err.message));
+}
 
 // Google Login
-async function googleLogin(){
-  try{
-    const provider=new GoogleAuthProvider();
-    await signInWithPopup(auth,provider);
-    window.location.href="dashboard.html";
-  }catch(err){alert(err.message);}
+function googleLogin(){
+  const provider = new firebase.auth.GoogleAuthProvider();
+  auth.signInWithPopup(provider)
+  .then(()=> window.location.href="dashboard.html")
+  .catch(err=>alert(err.message));
 }
 
-// Forgot Password
-async function forgotPassword(){
-  const email=prompt("Enter your email for password reset:");
+// Forgot / Reset Password
+function forgotPassword(){
+  const email = prompt("Enter your email for password reset:");
   if(email){
-    try{await sendPasswordResetEmail(auth,email);alert("Password reset email sent!");}
-    catch(err){alert(err.message);}
+    auth.sendPasswordResetEmail(email)
+    .then(()=> alert("Password reset email sent!"))
+    .catch(err=>alert(err.message));
   }
-}
-
-// Email/Password Login
-async function emailLogin(e){
-  e.preventDefault();
-  const emailField=document.getElementById("email");
-  const passwordField=document.getElementById("password");
-  const remember=document.getElementById("remember").checked;
-  const emailError=document.getElementById("emailError");
-  const passError=document.getElementById("passError");
-
-  emailError.style.display="none";
-  passError.style.display="none";
-  let valid=true;
-
-  const emailVal=emailField.value.trim();
-  const emailRegex=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if(!emailVal){emailError.textContent="Email is required";emailError.style.display="block";valid=false;}
-  else if(!emailRegex.test(emailVal)){emailError.textContent="Invalid email format";emailError.style.display="block";valid=false;}
-
-  const passVal=passwordField.value.trim();
-  if(!passVal){passError.textContent="Password is required";passError.style.display="block";valid=false;}
-  else if(passVal.length<6){passError.textContent="Password must be at least 6 characters";passError.style.display="block";valid=false;}
-
-  if(!valid) return;
-
-  try{
-    await signInWithEmailAndPassword(auth,emailVal,passVal);
-    if(remember) localStorage.setItem("rememberEmail",emailVal);
-    window.location.href="dashboard.html";
-  }catch(err){passError.textContent=err.message;passError.style.display="block";}
 }
 </script>
 </head>
@@ -128,14 +115,13 @@ async function emailLogin(e){
 
 <header>
   <button class="menu-toggle">☰</button>
-  <div class="site-title">SARKAR TELECOM</div>
+  <div class="site-title">Diamond Recharge</div>
   <div class="profile" id="profileMenu">
     <img src="https://via.placeholder.com/40" alt="Profile">
     <div class="dropdown">
       <a href="profile.html">👤 Profile</a>
       <a href="dashboard.html">📊 Dashboard</a>
       <a href="order.html">➕ Order</a>
-      <a href="#" onclick="googleLogin()">Login with Google</a>
     </div>
   </div>
 </header>
@@ -155,25 +141,15 @@ async function emailLogin(e){
 <main>
   <div class="login-container">
     <h2>Login</h2>
-    <form onsubmit="emailLogin(event)">
-      <label>Email</label>
-      <input type="email" id="email" required>
-      <div class="error-msg" id="emailError"></div>
-
-      <label>Password</label>
-      <input type="password" id="password" required>
-      <div class="error-msg" id="passError"></div>
-      <span class="show-pass" onclick="togglePassword()">Show Password</span>
-
-      <div class="options">
-        <label><input type="checkbox" id="remember"> Remember me</label>
-        <a href="#" onclick="forgotPassword()">Forgot?</a>
-      </div>
-
-      <button type="submit">Login</button>
-      <button type="button" class="google-btn" onclick="googleLogin()">Login with Google</button>
-    </form>
-
+    <input type="email" id="email" placeholder="Email">
+    <input type="password" id="password" placeholder="Password">
+    <span class="show-pass" onclick="togglePassword()">Show Password</span>
+    <div class="options">
+      <label><input type="checkbox" id="remember"> Remember me</label>
+      <a href="#" onclick="forgotPassword()">Forgot?</a>
+    </div>
+    <button onclick="emailLogin()">Login</button>
+    <button class="google-btn" onclick="googleLogin()">Login with Google</button>
     <div class="bottom-links">
       <a href="register.html">Register</a>
       <a href="#" onclick="forgotPassword()">Reset Password</a>
@@ -197,7 +173,7 @@ async function emailLogin(e){
       <a href="refund.html">💎 Refund Policy</a>
     </div>
     <div class="footer-section footer-branding">
-      <strong>SARKAR TELECOM</strong>
+      <strong>Diamond Recharge</strong>
       <p>Fast & Secure Mobile Recharge Service</p>
       <p>© 2025 All Rights Reserved ®</p>
     </div>
