@@ -4,9 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>User Dashboard - SARKAR TELECOM</title>
-<link rel="icon" type="image/png" href="images/favicon.png">
 <style>
-/* ================= BODY ================= */
 body {
   margin:0;
   font-family: Arial, Helvetica, sans-serif;
@@ -17,8 +15,7 @@ body {
   min-height:100vh;
   overflow-x:hidden;
 }
-
-/* ================= HEADER ================= */
+/* Header */
 header {
   display:flex;
   justify-content:space-between;
@@ -30,168 +27,53 @@ header {
   top:0;
   z-index:1000;
 }
-.menu-toggle {
-  font-size:24px;
-  cursor:pointer;
-  background:none;
-  border:none;
-  color:#fff;
-}
-.site-title {
-  font-weight:bold;
-  font-size:18px;
-  flex:1;
-  text-align:center;
-}
-.profile {
-  position:relative;
-  cursor:pointer;
-}
-.profile img {
-  width:40px;
-  height:40px;
-  border-radius:50%;
-  object-fit:cover;
-  border:2px solid #06b6d4;
-}
-.dropdown {
-  position:absolute;
-  right:0;
-  top:50px;
-  background:#1c2431;
-  color:#fff;
-  min-width:180px;
-  border-radius:8px;
-  display:none;
-  flex-direction:column;
-  box-shadow:0 4px 6px rgba(0,0,0,0.2);
-  z-index:1001;
-}
-.dropdown a {
-  padding:10px;
-  text-decoration:none;
-  color:#fff;
-  border-bottom:1px solid #2a3445;
-  display:block;
-}
+.menu-toggle { font-size:24px; cursor:pointer; background:none; border:none; color:#fff; }
+.site-title { font-weight:bold; font-size:18px; flex:1; text-align:center; }
+.profile { position:relative; cursor:pointer; }
+.profile img { width:40px; height:40px; border-radius:50%; object-fit:cover; border:2px solid #06b6d4; }
+/* Dropdown */
+.dropdown { position:absolute; right:0; top:50px; background:#1c2431; color:#fff; min-width:180px; border-radius:8px; display:none; flex-direction:column; box-shadow:0 4px 6px rgba(0,0,0,0.2); z-index:1001; }
+.dropdown a { padding:10px; text-decoration:none; color:#fff; border-bottom:1px solid #2a3445; display:block; }
 .dropdown a:hover { background:#d62828; }
-
-/* ================= SIDEBAR ================= */
-.sidebar {
-  position:fixed;
-  left:-250px;
-  top:0;
-  width:250px;
-  height:100%;
-  background:#1c2431;
-  padding-top:60px;
-  transition:left 0.3s ease;
-  z-index:999;
-  overflow-y:auto;
-}
+/* Sidebar */
+.sidebar { position:fixed; left:-250px; top:0; width:250px; height:100%; background:#1c2431; padding-top:60px; transition:left 0.3s ease; z-index:999; overflow-y:auto; }
 .sidebar.active { left:0; }
-.sidebar a {
-  display:block;
-  padding:12px 20px;
-  text-decoration:none;
-  color:#fff;
-  border-bottom:1px solid #2a3445;
-  font-size:14px;
-}
+.sidebar a { display:block; padding:12px 20px; text-decoration:none; color:#fff; border-bottom:1px solid #2a3445; font-size:14px; }
 .sidebar a:hover { background:#2f3c52; }
-.logout-btn {
-  display:block;
-  width:90%;
-  margin:15px auto;
-  padding:12px;
-  background:#d62828;
-  color:#fff;
-  border:none;
-  border-radius:8px;
-  font-size:15px;
-  cursor:pointer;
-  text-align:center;
-}
+.logout-btn { display:block; width:90%; margin:15px auto; padding:12px; background:#d62828; color:#fff; border:none; border-radius:8px; font-size:15px; cursor:pointer; text-align:center; }
 .logout-btn:hover { background:#b91c1c; }
-
-/* ================= MAIN ================= */
-main {
-  margin-top:60px;
-  padding:15px;
-  margin-left:0;
-  transition: margin-left 0.3s ease;
-  flex:1;
-}
-
-/* ================= USER INFO CARDS ================= */
-.user-cards {
-  display:flex;
-  flex-wrap:wrap;
-  gap:5px;
-  margin-top:10px;
-}
-.user-card {
-  background:#0f1115;
-  border:5px solid #2b3347;
-  border-radius:5px;
-  padding:10px 10px;
-  flex:1 1 150px;
-  text-align:center;
-  height:30px; /* compact height */
-}
-.user-card h3 {
-  margin:4px 4pz;
-  font-size:14px;
-  color:#06b6d4;
-}
-.user-card p {
-  margin:2px 2px;
-  font-size:20px;
-  color:#fff;
-}
-.user-card img {
-  width:120px;
-  height:120px;
-  border-radius:50%;
-  border:5px solid #06b6d4;
-  object-fit:cover;
-  margin-bottom:4px;
-}
-
-/* ================= FOOTER ================= */
-footer {
-  background:#1b2735;
-  padding:20px 15px;
-}
-.footer-container {
-  display:flex;
-  justify-content:space-between;
-  flex-wrap:wrap;
-}
-.footer-section {
-  display:flex;
-  flex-direction:column;
-  gap:5px;
-  flex:1;
-  min-width:120px;
-  margin-bottom:15px;
-}
+/* Main */
+main { margin-top:60px; padding:15px; margin-left:0; transition: margin-left 0.3s ease; flex:1; }
+/* User Cards */
+.user-cards { display:flex; flex-direction:column; gap:10px; margin-top:10px; }
+.user-card { display:flex; align-items:center; gap:10px; padding:8px 12px; border-radius:8px; height:60px; }
+.user-card img { width:50px; height:50px; border-radius:50%; border:2px solid #fff; object-fit:cover; }
+.user-card h3 { margin:0; font-size:14px; color:#fff; flex:0 0 80px; text-align:left; }
+.user-card p { margin:0; font-size:13px; font-weight:bold; flex:1; }
+/* Color-coded cards */
+.card-avatar { background:#0b1a2b; border-left:5px solid #06b6d4; }
+.card-name { background:#1c1f26; border-left:5px solid #3b82f6; }
+.card-role { background:#1c1f26; border-left:5px solid #f97316; }
+.card-balance { background:#1c1f26; border-left:5px solid #22c55e; }
+.card-email { background:#1c1f26; border-left:5px solid #3b82f6; }
+.card-phone { background:#1c1f26; border-left:5px solid #facc15; }
+/* Footer */
+footer { background:#1b2735; padding:20px 15px; }
+.footer-container { display:flex; justify-content:space-between; flex-wrap:wrap; }
+.footer-section { display:flex; flex-direction:column; gap:5px; flex:1; min-width:120px; margin-bottom:15px; }
 .footer-section h3 { margin:0 0 5px 0; font-size:16px; }
 .footer-section p, .footer-section a { font-size:14px; color:#fff; text-decoration:none; }
 .footer-section a:hover { color:#06b6d4; }
-
 @media(max-width:768px){
   .sidebar { left:-250px; }
   .sidebar.active { left:0; }
   main { margin-left:0; }
-  .user-cards { flex-direction:column; }
-  .footer-container { flex-direction:row; flex-wrap:wrap; }
 }
 </style>
 </head>
 <body>
 
-<!-- HEADER -->
+<!-- Header -->
 <header>
   <button class="menu-toggle">☰</button>
   <div class="site-title">SARKAR TELECOM</div>
@@ -206,7 +88,7 @@ footer {
   </div>
 </header>
 
-<!-- SIDEBAR -->
+<!-- Sidebar -->
 <div class="sidebar" id="sidebar">
   <a href="index.html">🏠 Home</a>
   <a href="dashboard.html">📊 Dashboard</a>
@@ -217,19 +99,19 @@ footer {
   <button class="logout-btn" id="logoutBtn2">🚪 Logout</button>
 </div>
 
-<!-- MAIN -->
+<!-- Main -->
 <main>
   <div class="user-cards">
-    <div class="user-card" id="cardAvatar"><img src="https://via.placeholder.com/50"><h3>Avatar</h3></div>
-    <div class="user-card"><h3>Name</h3><p id="userName">Loading...</p></div>
-    <div class="user-card"><h3>Role</h3><p id="userRole">Loading...</p></div>
-    <div class="user-card"><h3>Balance</h3><p id="userBalance">0</p></div>
-    <div class="user-card"><h3>Email</h3><p id="userEmail">Loading...</p></div>
-    <div class="user-card"><h3>Phone</h3><p id="userPhone">Loading...</p></div>
+    <div class="user-card card-avatar" id="cardAvatar"><img src="https://via.placeholder.com/50"><h3>Avatar</h3></div>
+    <div class="user-card card-name"><h3>Name</h3><p id="userName">Loading...</p></div>
+    <div class="user-card card-role"><h3>Role</h3><p id="userRole">Loading...</p></div>
+    <div class="user-card card-balance"><h3>Balance</h3><p id="userBalance">0</p></div>
+    <div class="user-card card-email"><h3>Email</h3><p id="userEmail">Loading...</p></div>
+    <div class="user-card card-phone"><h3>Phone</h3><p id="userPhone">Loading...</p></div>
   </div>
 </main>
 
-<!-- FOOTER -->
+<!-- Footer -->
 <footer>
   <div class="footer-container">
     <div class="footer-section">
@@ -255,8 +137,8 @@ footer {
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-import { getAuth, onAuthStateChanged, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-import { getFirestore, doc, onSnapshot, updateDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+import { getFirestore, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAyhjOsIXNAkBglpRllt0OZIOJYpdB_9-8",
@@ -307,7 +189,6 @@ onAuthStateChanged(auth, (user)=>{
 
       profilePic.src = avatar;
       cardAvatar.querySelector("img").src = avatar;
-      cardAvatar.querySelector("h3").textContent = "Avatar";
       userName.textContent = name;
       userRole.textContent = role;
       userBalance.textContent = balance;
