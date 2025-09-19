@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - SARKAR TELECOM</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- HEADER -->
+<div id="header-container"></div>
+
+<!-- SIDEBAR -->
+<div id="sidebar-container"></div>
+
+<!-- MAIN CONTENT -->
+<main>
+  <h1>👋 Welcome to your Dashboard</h1>
+  <p>এখানে আপনার রিচার্জ 💎 সাইটের ড্যাশবোর্ড কন্টেন্ট দেখানো হবে।</p>
+</main>
+
+<!-- FOOTER -->
+<div id="footer-container"></div>
+
+<script type="module">
+  import { initUserInfo } from "./user-info.js";
+
+  // Load components
+  fetch("header.html").then(res=>res.text()).then(html=>{
+    document.getElementById("header-container").innerHTML = html;
+  });
+  fetch("sidebar.html").then(res=>res.text()).then(html=>{
+    document.getElementById("sidebar-container").innerHTML = html;
+    initUserInfo(); // Initialize user info after sidebar is loaded
+  });
+  fetch("footer.html").then(res=>res.text()).then(html=>{
+    document.getElementById("footer-container").innerHTML = html;
+  });
+
+  // Sidebar toggle + dropdown
+  document.addEventListener("click",()=>{
+    const sidebar = document.getElementById("sidebar");
+    const profileMenu = document.getElementById("profileMenu");
+    const dropdownMenu = document.getElementById("dropdownMenu");
+    document.querySelector(".menu-toggle")?.addEventListener("click", ()=>{
+      sidebar?.classList.toggle("active");
+    });
+    profileMenu?.addEventListener("click", ()=>{
+      dropdownMenu.style.display = dropdownMenu.style.display==="block"?"none":"block";
+    });
+  });
+</script>
+</body>
+</html>
