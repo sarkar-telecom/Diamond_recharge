@@ -4,14 +4,21 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Order History - SARKAR TELECOM</title>
+<link rel="icon" type="image/png" href="images/favicon.png">
+
 <style>
+/* ================= BODY ================= */
 body {
   margin:0;
   font-family: Arial,sans-serif;
   background:#0f1824;
   color:#fff;
+  display:flex;
+  flex-direction:column;
+  min-height:100vh;
 }
-/* Header */
+
+/* ================= HEADER ================= */
 header {
   display:flex;
   justify-content:space-between;
@@ -26,22 +33,32 @@ header {
 .menu-toggle { font-size:24px; cursor:pointer; background:none; border:none; color:#fff; }
 .site-title { font-weight:bold; font-size:18px; flex:1; text-align:center; }
 .profile { position:relative; cursor:pointer; display:flex; align-items:center; padding-right:30px; }
-.profile img { width:40px; height:40px; border-radius:50%; object-fit:cover; margin-left:25px; }
-.dropdown { position:absolute; right:0; top:50px; background:#1c2431; color:#fff; min-width:160px; border-radius:6px; display:none; flex-direction:column; box-shadow:0 4px 6px rgba(0,0,0,0.2); }
-.dropdown a { padding:10px; text-decoration:none; color:#fff; border-bottom:1px solid #2a3445; }
+.profile img { width:40px; height:40px; border-radius:50%; object-fit:cover; margin-left:10px; }
+.dropdown { position:absolute; right:0; top:50px; background:#1c2431; color:#fff; min-width:180px; border-radius:8px; display:none; flex-direction:column; box-shadow:0 4px 6px rgba(0,0,0,0.2); z-index:1001; }
+.dropdown a { padding:10px; text-decoration:none; color:#fff; border-bottom:1px solid #2a3445; display:block; }
 .dropdown a:hover { background:#2f3c52; }
-/* Sidebar */
+
+/* ================= SIDEBAR ================= */
 .sidebar { position:fixed; left:-250px; top:0; width:250px; height:100%; background:#1c2431; padding-top:60px; transition:left 0.3s ease; z-index:999; overflow-y:auto; }
 .sidebar.active { left:0; }
-.sidebar a { display:block; padding:12px 20px; text-decoration:none; color:#fff; border-bottom:1px solid #2a3445; }
+.sidebar a { display:block; padding:12px 20px; text-decoration:none; color:#fff; border-bottom:1px solid #2a3445; font-size:14px; }
 .sidebar a:hover { background:#2f3c52; }
+
+/* ================= LOGOUT BUTTON ================= */
 .logout-btn { display:block; width:90%; margin:15px auto; padding:12px; background:#d62828; color:#fff; border:none; border-radius:8px; font-size:15px; cursor:pointer; text-align:center; }
 .logout-btn:hover { background:#b91c1c; }
-/* Main content */
-main { margin-top:70px; padding:15px; }
-/* Search */
+
+/* ================= MAIN ================= */
+main { margin-top:70px; padding:15px; margin-left:0; flex:1; transition:margin-left 0.3s ease; }
+
+/* ================= USER CARD ================= */
+.user-card { background:#0f1115; border:1px solid #2b3347; border-radius:12px; padding:10px; display:flex; align-items:center; gap:10px; margin:15px; flex-direction:column; text-align:center; }
+.user-card img { width:70px; height:70px; border-radius:50%; border:3px solid #06b6d4; object-fit:cover; }
+.user-card h3 { margin:4px 0; font-size:16px; color:#06b6d4; }
+.user-card p { margin:2px 0; font-size:13px; color:#fff; }
+
+/* ================= SEARCH & TABLE ================= */
 #searchBox { width:100%; padding:8px; margin-bottom:10px; border-radius:6px; border:1px solid #333; background:#171a21; color:#fff; box-sizing:border-box; }
-/* Table */
 table { width:100%; border-collapse:collapse; table-layout:fixed; }
 th, td { padding:6px 8px; border:1px solid #333; text-align:center; font-size:12px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 th { background:#1f2937; }
@@ -49,27 +66,56 @@ td { background:#171a21; }
 .status-pending { color:#facc15; font-weight:bold; }
 .status-completed { color:#22c55e; font-weight:bold; }
 .status-failed, .status-cancelled { color:#ef4444; font-weight:bold; }
-/* Pagination */
 .pagination { text-align:center; margin-top:10px; }
 .pagination button { margin:2px; padding:4px 6px; border:none; border-radius:6px; cursor:pointer; background:#1f2937; color:#fff; font-size:12px; }
 .pagination button.active { background:#06b6d4; color:#000; }
 .pagination button:hover { background:#2f3c52; }
-/* Footer */
+
+/* ================= FOOTER ================= */
 footer {
   background:#1b2735;
-  text-align:center;
-  padding:15px 10px;
-  margin-top:20px;
-  font-size:13px;
-  color:#bbb;
+  padding:20px 15px;
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  flex-wrap:wrap;
+  gap:15px;
+  flex-shrink:0;
 }
-/* Responsive: scroll table */
+.footer-wrapper {
+  display:flex;
+  justify-content:space-between;
+  flex:1;
+  flex-wrap:wrap;
+}
+.footer-section {
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  min-width:120px;
+}
+.footer-section a {
+  text-decoration:none;
+  color:#fff;
+  font-size:14px;
+  transition:0.3s;
+}
+.footer-section a:hover { color:#06b6d4; }
+.footer-branding p { margin:2px 0; font-size:13px; color:#ccc; }
+
+/* ================= RESPONSIVE ================= */
+@media(max-width:768px){
+  footer { flex-direction:column; justify-content:center; align-items:center; text-align:center; }
+  .footer-wrapper { flex-direction:column; justify-content:center; align-items:center; }
+  .footer-section { min-width:80px; flex:1; margin-bottom:10px; }
+}
 @media screen and (max-width:600px){ table { display:block; overflow-x:auto; white-space:nowrap; } }
 </style>
+
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
-import { getFirestore, collection, query, where, orderBy, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+import { getFirestore, collection, query, where, orderBy, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAyhjOsIXNAkBglpRllt0OZIOJYpdB_9-8",
@@ -80,28 +126,36 @@ const firebaseConfig = {
   appId: "1:657717928489:web:70431ebc9afb7002d4b238",
   measurementId: "G-TDK78BQ8SQ"
 };
+
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-// Sidebar toggle
+// ================= SIDEBAR TOGGLE & DROPDOWN =================
 document.addEventListener("DOMContentLoaded", ()=>{
-  document.querySelector(".menu-toggle").addEventListener("click", ()=>{
-    document.getElementById("sidebar").classList.toggle("active");
-  });
+  const sidebar = document.getElementById("sidebar");
   const profileMenu = document.getElementById("profileMenu");
   const dropdownMenu = document.getElementById("dropdownMenu");
-  profileMenu.addEventListener("click", ()=> { dropdownMenu.style.display = dropdownMenu.style.display==="flex"?"none":"flex"; });
+
+  document.querySelector(".menu-toggle").addEventListener("click", ()=>{
+    sidebar.classList.toggle("active");
+  });
+
+  profileMenu.addEventListener("click", ()=>{
+    dropdownMenu.style.display = dropdownMenu.style.display==="flex"?"none":"flex";
+  });
 });
 
-// Logout
-function doLogout() { signOut(auth).then(()=>window.location.href="login.html"); }
+// ================= LOGOUT =================
+function doLogout(){ signOut(auth).then(()=>window.location.href="login.html"); }
 document.addEventListener("DOMContentLoaded", ()=>{
-  document.getElementById("logoutBtn").addEventListener("click", doLogout);
-  document.getElementById("logoutBtn2").addEventListener("click", doLogout);
+  const btn1 = document.getElementById("logoutBtn");
+  const btn2 = document.getElementById("logoutBtn2");
+  btn1 && btn1.addEventListener("click", doLogout);
+  btn2 && btn2.addEventListener("click", doLogout);
 });
 
-// Orders
+// ================= ORDERS =================
 let allOrders=[], currentPage=1, perPage=20;
 function formatTime(ts){ 
   if(!ts?.toDate) return "-"; 
@@ -159,17 +213,32 @@ document.addEventListener("DOMContentLoaded", ()=>{
   document.getElementById("searchBox").addEventListener("input", filterOrders);
 });
 
-// Load Orders and Avatar from Firestore
+// ================= LOAD USER & ORDERS =================
 onAuthStateChanged(auth, async(user)=>{
   if(user){
-    // Avatar
     const userDoc = doc(db,"users",user.uid);
     const snap = await getDoc(userDoc);
     const img=document.getElementById("profilePic");
     if(snap.exists() && snap.data().avatar){ img.src = snap.data().avatar; }
     else{ img.src="https://via.placeholder.com/40"; }
 
-    // Orders
+    const userBox = document.getElementById("userBox");
+    const avatar = snap.exists() && snap.data().avatar ? snap.data().avatar : "https://via.placeholder.com/70";
+    const name = snap.exists() && snap.data().name ? snap.data().name : user.displayName || "Guest";
+    const role = snap.exists() && snap.data().role ? snap.data().role : "User";
+    const phone = snap.exists() && snap.data().phone ? snap.data().phone : "";
+    const email = user.email;
+    const balance = snap.exists() && snap.data().balance ? snap.data().balance : 0;
+    userBox.innerHTML=`
+      <img src="${avatar}" alt="Avatar">
+      <h3>${name}</h3>
+      <p>${role}</p>
+      <p>${phone}</p>
+      <p>${email}</p>
+      <p>Balance: ${balance}</p>
+    `;
+
+    // Load Orders
     const ordersRef = collection(db,"orders");
     const q = query(ordersRef, where("userId","==",user.uid), orderBy("createdAt","desc"));
     const snapshot = await getDocs(q);
@@ -181,35 +250,35 @@ onAuthStateChanged(auth, async(user)=>{
 </script>
 </head>
 <body>
+
+<!-- HEADER -->
 <header>
   <button class="menu-toggle">☰</button>
   <div class="site-title">SARKAR TELECOM</div>
   <div class="profile" id="profileMenu">
     <img id="profilePic" src="https://via.placeholder.com/40" alt="Profile">
     <div class="dropdown" id="dropdownMenu">
-      <a href="profile.html">👤 Profile</a>
-      <a href="order.html">💎 Order Page</a>
+      <a href="profile.html">⚙️ Profile</a>
+      <a href="order.html">➕ Order</a>
+      <a href="order-history.html">📜 History</a>
       <a href="#" id="logoutBtn">🚪 Logout</a>
     </div>
   </div>
 </header>
 
+<!-- SIDEBAR -->
 <div class="sidebar" id="sidebar">
   <a href="index.html">🏠 Home</a>
   <a href="dashboard.html">📊 Dashboard</a>
-  <a href="profile.html">👤 Profile</a>
+  <a href="profile.html">⚙️ Profile</a>
   <a href="order.html">➕ Order</a>
   <a href="order-history.html">📜 History</a>
-  <a href="admin.html">🛠 Admin</a>
-  <a href="support.html">💬 Support</a>
-  <a href="faq.html">❓ FAQ</a>
-  <a href="about.html">ℹ About Us</a>
-  <a href="privacy.html">🔒 Privacy Policy</a>
-  <a href="terms.html">📄 Terms & Conditions</a>
-  <a href="refund.html">💰 Refund Policy</a>
+  <a href="admin.html">🛠 Admin Panel</a>
   <button id="logoutBtn2" class="logout-btn">🚪 Logout</button>
+  <div class="user-card" id="userBox">Loading user...</div>
 </div>
 
+<!-- MAIN CONTENT -->
 <main>
   <input type="text" id="searchBox" placeholder="Search Profile ID / Amount / Method / Account / TXID / Status">
   <table>
@@ -230,14 +299,31 @@ onAuthStateChanged(auth, async(user)=>{
   <div class="pagination" id="pagination"></div>
 </main>
 
+<!-- FOOTER -->
 <footer>
-  <div class="footer-nav">
-    <a href="support.html">💬 Support</a>
-    <a href="order.html">➕ Order</a>
-    <a href="order-history.html">📜 History</a>
-    <a href="faq.html">❓ FAQ</a>
+  <div class="footer-wrapper">
+    <div class="footer-section">
+      <strong>Support</strong>
+      <a href="support.html">💬 Support</a>
+      <a href="faq.html">❓ FAQ</a>
+      <a href="sitemap.html">🌐 Sitemap</a>
+    </div>
+    
+    <div class="footer-section">
+      <strong>Information</strong>
+      <a href="about.html">ℹ️ About Us</a>
+      <a href="privacy.html">🔒 Privacy Policy</a>
+      <a href="terms.html">📄 Terms & Conditions</a>
+      <a href="refund.html">💎 Refund Policy</a>
+    </div>
+    
+    <div class="footer-section footer-branding">
+      <strong>SARKAR TELECOM</strong>
+      <p>Fast & Secure Mobile Recharge Service</p>
+      <p>© 2025 All Rights Reserved ®</p>
+    </div>
   </div>
-  <div class="copyright">© SARKAR TELECOM - 2022-2026</div>
 </footer>
+
 </body>
 </html>
