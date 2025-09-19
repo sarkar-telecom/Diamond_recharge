@@ -3,8 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Profile - SARKAR TELECOM</title>
+<title>SARKAR TELECOM</title>
+<link rel="icon" type="image/png" href="images/favicon.png">
+
 <style>
+/* ================= BODY ================= */
 body {
   margin:0;
   font-family: Arial,sans-serif;
@@ -14,43 +17,290 @@ body {
   flex-direction:column;
   min-height:100vh;
 }
-header{
-  display:flex; justify-content:space-between; align-items:center;
-  background:#1b2735; padding:10px 15px; position:fixed; width:100%; top:0; z-index:1000;
+
+/* ================= HEADER ================= */
+header {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  background:#1b2735;
+  padding:10px 15px;
+  position:fixed;
+  width:100%;
+  top:0;
+  z-index:1000;
 }
-.menu-toggle{font-size:24px; cursor:pointer; background:none; border:none; color:#fff;}
-.site-title{font-weight:bold; font-size:18px; flex:1; text-align:center;}
-.profile{position:relative; cursor:pointer; display:flex; align-items:center; padding-right:30px;}
-.profile img{width:40px; height:40px; border-radius:50%; object-fit:cover; margin-left:10px;}
-.dropdown{position:absolute; right:0; top:50px; background:#1c2431; color:#fff; min-width:180px; border-radius:8px; display:none; flex-direction:column; box-shadow:0 4px 6px rgba(0,0,0,0.2); z-index:1001;}
-.dropdown a{padding:10px; text-decoration:none; color:#fff; border-bottom:1px solid #2a3445; display:block;}
-.dropdown a:hover{background:#d62828;}
-.sidebar{position:fixed; left:-250px; top:0; width:250px; height:100%; background:#1c2431; padding-top:80px; transition:left 0.3s ease; z-index:999; overflow-y:auto;}
-.sidebar.active{left:0;}
-.sidebar a{display:block; padding:12px 20px; text-decoration:none; color:#fff; border-bottom:1px solid #2a3445; font-size:14px;}
-.sidebar a:hover{background:#2f3c52;}
-.logout-btn{display:block; width:90%; margin:15px auto; padding:12px; background:#d62828; color:#fff; border:none; border-radius:8px; font-size:15px; cursor:pointer; text-align:center;}
-.logout-btn:hover{background:#b91c1c;}
-main{margin-top:60px; padding:20px; flex:1;}
-.profile-card{background:#1c2431; padding:20px; border-radius:12px; max-width:600px; margin:20px auto;}
-.profile-card img{width:100px; height:100px; border-radius:50%; display:block; margin:0 auto 10px;}
-.profile-card h2{text-align:center; margin-bottom:20px;}
-.form-group{margin-bottom:15px;}
-label{display:block; margin-bottom:5px; font-size:14px;}
-input{width:100%; padding:8px; border-radius:6px; border:none; font-size:14px; box-sizing:border-box;}
-input[readonly]{background:#2a3445; color:#ccc;}
-button{background:#007bff; border:none; color:#fff; padding:10px 16px; border-radius:6px; cursor:pointer; font-size:14px;}
-button:hover{background:#0056b3;}
-footer{background:#1b2735; padding:20px 15px; display:flex; justify-content:space-between; flex-wrap:wrap;}
-.footer-section{display:flex; flex-direction:column; gap:6px; min-width:120px;}
-.footer-section a{text-decoration:none; color:#fff; font-size:14px;}
-.footer-section a:hover{color:#06b6d4;}
-.footer-branding p{margin:2px 0; font-size:13px; color:#ccc;}
-@media(max-width:768px){.footer-section{min-width:80px; flex:1;}}
+.menu-toggle {
+  font-size:24px;
+  cursor:pointer;
+  background:none;
+  border:none;
+  color:#fff;
+}
+.site-title {
+  font-weight:bold;
+  font-size:18px;
+  flex:1;
+  text-align:center;
+}
+.profile {
+  position:relative;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  padding-right:30px;
+}
+.profile img {
+  width:40px;
+  height:40px;
+  border-radius:50%;
+  object-fit:cover;
+  margin-left:10px;
+}
+.dropdown {
+  position:absolute;
+  right:0;
+  top:50px;
+  background:#1c2431;
+  color:#fff;
+  min-width:180px;
+  border-radius:8px;
+  display:none;
+  flex-direction:column;
+  box-shadow:0 4px 6px rgba(0,0,0,0.2);
+  z-index:1001;
+}
+.dropdown a {
+  padding:10px;
+  text-decoration:none;
+  color:#fff;
+  border-bottom:1px solid #2a3445;
+  display:block;
+}
+.dropdown a:hover {
+  background:#d62828;
+}
+
+/* ================= SIDEBAR ================= */
+.sidebar {
+  position:fixed;
+  left:-250px;
+  top:0;
+  width:250px;
+  height:100%;
+  background:#1c2431;
+  padding-top:60px;
+  transition:left 0.3s ease;
+  z-index:999;
+  overflow-y:auto;
+}
+.sidebar.active {
+  left:0;
+}
+.sidebar a {
+  display:block;
+  padding:12px 20px;
+  text-decoration:none;
+  color:#fff;
+  border-bottom:1px solid #2a3445;
+  font-size:14px;
+}
+.sidebar a:hover {
+  background:#2f3c52;
+}
+
+/* ================= LOGOUT BUTTON ================= */
+.logout-btn {
+  display:block;
+  width:90%;
+  margin:15px auto;
+  padding:12px;
+  background:#d62828;
+  color:#fff;
+  border:none;
+  border-radius:8px;
+  font-size:15px;
+  cursor:pointer;
+  text-align:center;
+}
+.logout-btn:hover {
+  background:#b91c1c;
+}
+
+/* ================= MAIN ================= */
+main {
+  margin-top:60px;
+  padding:15px;
+  margin-left:0; /* Overlay style */
+  transition: margin-left 0.3s ease;
+  flex:1;
+}
+
+/* ================= USER CARD ================= */
+.user-card {
+  background:#0f1115;
+  border:1px solid #2b3347;
+  border-radius:12px;
+  padding:10px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:6px;
+  margin:15px;
+  text-align:center;
+}
+.user-card img {
+  width:70px;
+  height:70px;
+  border-radius:50%;
+  border:3px solid #06b6d4;
+  object-fit:cover;
+}
+.user-card h3 {
+  margin:4px 0;
+  font-size:16px;
+  color:#06b6d4;
+}
+.user-card p {
+  margin:2px 0;
+  font-size:13px;
+  color:#fff;
+}
+
+/* ================= FOOTER ================= */
+footer {
+  background:#1b2735;
+  padding:20px 15px;
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  flex-wrap:nowrap;
+  gap:15px;
+  flex-shrink:0;
+}
+.footer-wrapper {
+  display:flex;
+  justify-content:space-between;
+  flex:1;
+  flex-wrap:nowrap;
+}
+.footer-section {
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  min-width:120px;
+}
+.footer-section a {
+  text-decoration:none;
+  color:#fff;
+  font-size:14px;
+  transition:0.3s;
+}
+.footer-section a:hover {
+  color:#06b6d4;
+}
+.footer-branding p {
+  margin:2px 0;
+  font-size:13px;
+  color:#ccc;
+}
+
+/* ================= RESPONSIVE ================= */
+@media(max-width:768px){
+  footer {
+    flex-direction:row;
+    flex-wrap:nowrap; /* Keep 3 columns even on mobile */
+    justify-content:space-between;
+  }
+  .footer-wrapper {
+    flex-direction:row;
+    flex-wrap:nowrap;
+    justify-content:space-between;
+  }
+  .footer-section {
+    min-width:80px;
+    flex:1;
+    margin-bottom:0;
+  }
+}
 </style>
+
+<script type="module">
+// ================= FIREBASE =================
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAyhjOsIXNAkBglpRllt0OZIOJYpdB_9-8",
+  authDomain: "diamond-recharge-f7f59.firebaseapp.com",
+  projectId: "diamond-recharge-f7f59",
+  storageBucket: "diamond-recharge-f7f59.appspot.com",
+  messagingSenderId: "657717928489",
+  appId: "1:657717928489:web:70431ebc9afb7002d4b238",
+  measurementId: "G-TDK78BQ8SQ"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+// ================= SIDEBAR TOGGLE =================
+document.addEventListener("DOMContentLoaded", ()=>{
+  const sidebar = document.getElementById("sidebar");
+  const profileMenu = document.getElementById("profileMenu");
+  const dropdownMenu = document.getElementById("dropdownMenu");
+
+  document.querySelector(".menu-toggle").addEventListener("click", ()=>{
+    sidebar.classList.toggle("active");
+  });
+
+  profileMenu.addEventListener("click", ()=>{
+    dropdownMenu.style.display = dropdownMenu.style.display==="block"?"none":"block";
+  });
+});
+
+// ================= LOGOUT =================
+function doLogout(){ signOut(auth).then(()=>window.location.href="login.html"); }
+document.addEventListener("DOMContentLoaded", ()=>{
+  const btn1 = document.getElementById("logoutBtn");
+  const btn2 = document.getElementById("logoutBtn2");
+  btn1 && btn1.addEventListener("click", doLogout);
+  btn2 && btn2.addEventListener("click", doLogout);
+});
+
+// ================= LOAD USER =================
+onAuthStateChanged(auth, async(user)=>{
+  if(user){
+    const userDoc = doc(db,"users",user.uid);
+    const snap = await getDoc(userDoc);
+    const data = snap.exists()?snap.data():{};
+    const avatar = data.avatar || user.photoURL || "https://via.placeholder.com/70";
+    const name = data.name || user.displayName || "Guest User";
+    const role = data.role || "User";
+    const email = user.email || "";
+    const phone = data.phone || "N/A";
+    const balance = data.balance !== undefined?data.balance:"0";
+
+    document.getElementById("profilePic").src = avatar;
+    const userBox = document.getElementById("userBox");
+    userBox.innerHTML = `
+      <img src="${avatar}" alt="Avatar">
+      <h3>${name}</h3>
+      <p>🧖‍♂️ Role: ${role}</p>
+      <p>📞 ${phone}</p>
+      <p>✉ ${email}</p>
+      <p>💎 Balance: ${balance}</p>
+    `;
+  }else{
+    window.location.href="login.html";
+  }
+});
+</script>
+
 </head>
 <body>
-
+<!-- HEADER -->
 <header>
   <button class="menu-toggle">☰</button>
   <div class="site-title">SARKAR TELECOM</div>
@@ -58,62 +308,76 @@ footer{background:#1b2735; padding:20px 15px; display:flex; justify-content:spac
     <img id="profilePic" src="https://via.placeholder.com/40" alt="Profile">
     <div class="dropdown" id="dropdownMenu">
       <a href="profile.html">⚙️ Profile</a>
-      <a href="dashboard.html">📊 Dashboard</a>
+      <a href="order.html">➕ Order</a>
       <a href="order-history.html">📜 History</a>
       <a href="#" id="logoutBtn">🚪 Logout</a>
     </div>
   </div>
 </header>
 
+<!-- SIDEBAR -->
 <div class="sidebar" id="sidebar">
   <a href="index.html">🏠 Home</a>
   <a href="dashboard.html">📊 Dashboard</a>
   <a href="profile.html">⚙️ Profile</a>
-  <a href="user-managment.html">📋 User Requests</a>
+  <a href="order.html">➕ Order</a>
   <a href="order-history.html">📜 History</a>
+  <a href="admin.html">🛠 Admin Panel</a>
+
   <button id="logoutBtn2" class="logout-btn">🚪 Logout</button>
+
+  <div class="user-card" id="userBox">Loading user...</div>
 </div>
 
+<!-- MAIN CONTENT -->
 <main>
-  <div class="profile-card">
-    <img id="avatarPreview" src="https://via.placeholder.com/100" alt="Avatar">
-    <h2 id="name">Loading...</h2>
-    <div class="form-group">
-      <label for="email">Email</label>
-      <input type="email" id="email">
+    <div class="profile-card">
+      <div style="text-align:center;">
+        <img id="avatarPreview" src="https://via.placeholder.com/100" alt="Avatar">
+        <h2 id="name">Loading...</h2>
+      </div>
+      
+      <!-- Editable Fields -->
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email">
+      </div>
+      <div class="form-group">
+        <label for="phone">Phone</label>
+        <input type="text" id="phone">
+      </div>
+      <div class="form-group">
+        <label for="avatar">Avatar URL</label>
+        <input type="text" id="avatar">
+      </div>
+      <button id="saveBtn">Save Changes</button>
+
+      <hr style="margin:20px 0; border:1px solid #2a3445;">
+
+      <!-- Read-only Fields -->
+      <div class="form-group">
+        <label>Role</label>
+        <input type="text" id="role" readonly>
+      </div>
+      <div class="form-group">
+        <label>Balance</label>
+        <input type="text" id="balance" readonly>
+      </div>
+      <div class="form-group">
+        <label>Tier</label>
+        <input type="text" id="tier" readonly>
+      </div>
+      <div class="form-group">
+        <label>Weekly Total</label>
+        <input type="text" id="weeklyTotal" readonly>
+      </div>
+      <div class="form-group">
+        <label>Weekly Diamonds</label>
+        <input type="text" id="weeklyDiamonds" readonly>
+      </div>
     </div>
-    <div class="form-group">
-      <label for="phone">Phone</label>
-      <input type="text" id="phone">
-    </div>
-    <div class="form-group">
-      <label for="avatar">Avatar URL</label>
-      <input type="text" id="avatar">
-    </div>
-    <button id="saveBtn">Save Changes</button>
-    <hr style="margin:20px 0; border:1px solid #2a3445;">
-    <div class="form-group">
-      <label>Role</label>
-      <input type="text" id="role" readonly>
-    </div>
-    <div class="form-group">
-      <label>Balance</label>
-      <input type="text" id="balance" readonly>
-    </div>
-    <div class="form-group">
-      <label>Tier</label>
-      <input type="text" id="tier" readonly>
-    </div>
-    <div class="form-group">
-      <label>Weekly Total</label>
-      <input type="text" id="weeklyTotal" readonly>
-    </div>
-    <div class="form-group">
-      <label>Weekly Diamonds</label>
-      <input type="text" id="weeklyDiamonds" readonly>
-    </div>
-  </div>
-</main>
+  </main>
+
 <!-- FOOTER -->
 <footer>
   <div class="footer-wrapper">
@@ -139,75 +403,111 @@ footer{background:#1b2735; padding:20px 15px; display:flex; justify-content:spac
     </div>
   </div>
 </footer>
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-import { getAuth, onAuthStateChanged, signOut, updateEmail, updateProfile } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+  <!-- Firebase -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+    import { 
+      getAuth, onAuthStateChanged, signOut, updateEmail, updateProfile 
+    } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyAyhjOsIXNAkBglpRllt0OZIOJYpdB_9-8",
-  authDomain: "diamond-recharge-f7f59.firebaseapp.com",
-  projectId: "diamond-recharge-f7f59",
-  storageBucket: "diamond-recharge-f7f59.appspot.com",
-  messagingSenderId: "657717928489",
-  appId: "1:657717928489:web:70431ebc9afb7002d4b238",
-  measurementId: "G-TDK78BQ8SQ"
-};
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+    const firebaseConfig = {
+      apiKey: "AIzaSyAyhjOsIXNAkBglpRllt0OZIOJYpdB_9-8",
+      authDomain: "diamond-recharge-f7f59.firebaseapp.com",
+      projectId: "diamond-recharge-f7f59",
+      storageBucket: "diamond-recharge-f7f59.firebasestorage.app",
+      messagingSenderId: "657717928489",
+      appId: "1:657717928489:web:70431ebc9afb7002d4b238",
+      measurementId: "G-TDK78BQ8SQ"
+    };
 
-document.querySelector(".menu-toggle").addEventListener("click", ()=>{
-  document.getElementById("sidebar").classList.toggle("active");
-});
-document.getElementById("profileMenu").addEventListener("click", ()=>{
-  const dropdown = document.getElementById("dropdownMenu");
-  dropdown.style.display = dropdown.style.display==="flex"?"none":"flex";
-});
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
 
-let currentUserId = null;
-onAuthStateChanged(auth, async(user)=>{
-  if(user){
-    currentUserId=user.uid;
-    document.getElementById("profilePic").src=user.photoURL||"https://via.placeholder.com/40";
-    const docRef=doc(db,"users",user.uid);
-    const docSnap=await getDoc(docRef);
-    if(docSnap.exists()){
-      const data=docSnap.data();
-      document.getElementById("name").textContent=data.name||"Guest User";
-      document.getElementById("email").value=data.email||user.email||"";
-      document.getElementById("phone").value=data.phone||"";
-      document.getElementById("avatar").value=data.avatar||user.photoURL||"";
-      document.getElementById("avatarPreview").src=data.avatar||user.photoURL||"https://via.placeholder.com/100";
-      document.getElementById("role").value=data.role||"User";
-      document.getElementById("balance").value=data.balance??0;
-      document.getElementById("tier").value=data.tier??0;
-      document.getElementById("weeklyTotal").value=data.weeklyTotal??0;
-      document.getElementById("weeklyDiamonds").value=data.weeklyDiamonds??0;
+    // Sidebar toggle
+    document.querySelector(".menu-toggle").addEventListener("click", () => {
+      document.getElementById("sidebar").classList.toggle("active");
+    });
+
+    // Profile dropdown
+    const profileMenu = document.getElementById("profileMenu");
+    const dropdownMenu = document.getElementById("dropdownMenu");
+    profileMenu.addEventListener("click", () => {
+      dropdownMenu.style.display = dropdownMenu.style.display === "flex" ? "none" : "flex";
+    });
+
+    // Load profile
+    let currentUserId = null;
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        currentUserId = user.uid;
+        document.getElementById("profilePic").src = user.photoURL || "https://via.placeholder.com/40";
+
+        const docRef = doc(db, "users", user.uid);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+
+          document.getElementById("name").textContent = data.name || "No Name";
+          document.getElementById("email").value = data.email || user.email || "";
+          document.getElementById("phone").value = data.phone || "";
+          document.getElementById("avatar").value = data.avatar || user.photoURL || "";
+          document.getElementById("avatarPreview").src = data.avatar || user.photoURL || "https://via.placeholder.com/100";
+
+          document.getElementById("role").value = data.role || "";
+          document.getElementById("balance").value = data.balance ?? 0;
+          document.getElementById("tier").value = data.tier ?? 0;
+          document.getElementById("weeklyTotal").value = data.weeklyTotal ?? 0;
+          document.getElementById("weeklyDiamonds").value = data.weeklyDiamonds ?? 0;
+        }
+      } else {
+        window.location.href = "login.html";
+      }
+    });
+
+    // Save changes
+    document.getElementById("saveBtn").addEventListener("click", async () => {
+      if (!currentUserId) return;
+
+      const newEmail = document.getElementById("email").value;
+      const phone = document.getElementById("phone").value;
+      const avatar = document.getElementById("avatar").value;
+
+      try {
+        // Firebase Auth update
+        if (auth.currentUser) {
+          if (newEmail && newEmail !== auth.currentUser.email) {
+            await updateEmail(auth.currentUser, newEmail);
+          }
+          if (avatar && avatar !== auth.currentUser.photoURL) {
+            await updateProfile(auth.currentUser, { photoURL: avatar });
+          }
+        }
+
+        // Firestore update
+        await updateDoc(doc(db, "users", currentUserId), {
+          email: newEmail,
+          phone,
+          avatar
+        });
+
+        alert("Profile updated successfully!");
+        document.getElementById("avatarPreview").src = avatar || "https://via.placeholder.com/100";
+        document.getElementById("profilePic").src = avatar || "https://via.placeholder.com/40";
+      } catch (err) {
+        alert("Error updating profile: " + err.message);
+      }
+    });
+
+    // Logout
+    function doLogout() {
+      signOut(auth).then(() => {
+        window.location.href = "login.html";
+      });
     }
-  } else { window.location.href="login.html"; }
-});
-
-document.getElementById("saveBtn").addEventListener("click", async()=>{
-  if(!currentUserId) return;
-  const newEmail=document.getElementById("email").value;
-  const phone=document.getElementById("phone").value;
-  const avatar=document.getElementById("avatar").value;
-  try{
-    if(auth.currentUser){
-      if(newEmail && newEmail!==auth.currentUser.email) await updateEmail(auth.currentUser,newEmail);
-      if(avatar && avatar!==auth.currentUser.photoURL) await updateProfile(auth.currentUser,{photoURL:avatar});
-    }
-    await updateDoc(doc(db,"users",currentUserId),{email:newEmail, phone, avatar});
-    alert("Profile updated successfully!");
-    document.getElementById("avatarPreview").src=avatar||"https://via.placeholder.com/100";
-    document.getElementById("profilePic").src=avatar||"https://via.placeholder.com/40";
-  }catch(err){ alert("Error: "+err.message);}
-});
-
-function doLogout(){ signOut(auth).then(()=>{window.location.href="login.html";}); }
-document.getElementById("logoutBtn").addEventListener("click",doLogout);
-document.getElementById("logoutBtn2").addEventListener("click",doLogout);
-</script>
+    document.getElementById("logoutBtn").addEventListener("click", doLogout);
+    document.getElementById("logoutBtn2").addEventListener("click", doLogout);
+  </script>
 </body>
 </html>
