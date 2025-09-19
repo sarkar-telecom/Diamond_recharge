@@ -78,38 +78,48 @@ footer {
   display:flex;
   justify-content:space-between;
   align-items:flex-start;
-  flex-wrap:wrap;
+  flex-wrap:nowrap; /* keep 3 columns in one line */
   gap:15px;
   flex-shrink:0;
 }
+
 .footer-wrapper {
   display:flex;
   justify-content:space-between;
   flex:1;
-  flex-wrap:wrap;
+  flex-wrap:nowrap; /* keep 3 columns in one line */
 }
+
 .footer-section {
   display:flex;
   flex-direction:column;
   gap:6px;
   min-width:120px;
+  flex:1; /* proportional width */
 }
+
 .footer-section a {
   text-decoration:none;
   color:#fff;
   font-size:14px;
   transition:0.3s;
 }
+
 .footer-section a:hover { color:#06b6d4; }
+
 .footer-branding p { margin:2px 0; font-size:13px; color:#ccc; }
 
 /* ================= RESPONSIVE ================= */
 @media(max-width:768px){
-  footer { flex-direction:column; justify-content:center; align-items:center; text-align:center; }
-  .footer-wrapper { flex-direction:column; justify-content:center; align-items:center; }
-  .footer-section { min-width:80px; flex:1; margin-bottom:10px; }
-}
-@media screen and (max-width:600px){ table { display:block; overflow-x:auto; white-space:nowrap; } }
+  footer, .footer-wrapper {
+    flex-wrap:nowrap; /* tetap 3 columns even on mobile */
+    overflow-x:auto; /* allow horizontal scroll if needed */
+  }
+  .footer-section {
+    min-width:120px; /* keep columns visible */
+    flex:0 0 auto; /* maintain width */
+  }
+ }
 </style>
 
 <script type="module">
