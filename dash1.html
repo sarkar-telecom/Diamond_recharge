@@ -6,6 +6,7 @@
 <title>User Dashboard - SARKAR TELECOM</title>
 <link rel="icon" type="image/png" href="images/favicon.png">
 <style>
+/* ================= BODY ================= */
 body {
   margin:0;
   font-family: Arial, Helvetica, sans-serif;
@@ -16,48 +17,70 @@ body {
   min-height:100vh;
   overflow-x:hidden;
 }
-/* HEADER */
+
+/* ================= HEADER ================= */
 header {
   display:flex;
   justify-content:space-between;
   align-items:center;
   background:#1b2735;
-  padding:10px 20px;
+  padding:10px 15px;
   position:fixed;
   width:100%;
   top:0;
   z-index:1000;
 }
-header .site-title { font-weight:bold; font-size:18px; }
-header .menu-toggle { font-size:24px; cursor:pointer; color:#fff; background:none; border:none; }
-.profile-dropdown { position: relative; cursor:pointer; }
-.profile-dropdown img { width:40px; height:40px; border-radius:50%; object-fit:cover; border:2px solid #06b6d4; }
-.profile-dropdown .dropdown-content {
+.menu-toggle {
+  font-size:24px;
+  cursor:pointer;
+  background:none;
+  border:none;
+  color:#fff;
+}
+.site-title {
+  font-weight:bold;
+  font-size:18px;
+  flex:1;
+  text-align:center;
+}
+.profile {
+  position:relative;
+  cursor:pointer;
+}
+.profile img {
+  width:40px;
+  height:40px;
+  border-radius:50%;
+  object-fit:cover;
+  border:2px solid #06b6d4;
+}
+.dropdown {
   position:absolute;
-  top:50px;
   right:0;
+  top:50px;
   background:#1c2431;
   color:#fff;
   min-width:180px;
-  display:flex;
-  flex-direction:column;
   border-radius:8px;
   display:none;
+  flex-direction:column;
   box-shadow:0 4px 6px rgba(0,0,0,0.2);
+  z-index:1001;
 }
-.profile-dropdown .dropdown-content a {
+.dropdown a {
   padding:10px;
   text-decoration:none;
   color:#fff;
   border-bottom:1px solid #2a3445;
+  display:block;
 }
-.profile-dropdown .dropdown-content a:hover { background:#d62828; }
+.dropdown a:hover { background:#d62828; }
 
-/* SIDEBAR */
-#sidebar {
+/* ================= SIDEBAR ================= */
+.sidebar {
   position:fixed;
+  left:-250px;
   top:0;
-  left:-260px;
   width:250px;
   height:100%;
   background:#1c2431;
@@ -66,24 +89,17 @@ header .menu-toggle { font-size:24px; cursor:pointer; color:#fff; background:non
   z-index:999;
   overflow-y:auto;
 }
-#sidebar.active { left:0; }
-#sidebar .user-card {
-  background:#0f1115;
-  border:1px solid #2b3347;
-  border-radius:12px;
-  padding:6px;
-  margin:10px;
-  text-align:center;
+.sidebar.active { left:0; }
+.sidebar a {
+  display:block;
+  padding:12px 20px;
+  text-decoration:none;
+  color:#fff;
+  border-bottom:1px solid #2a3445;
+  font-size:14px;
 }
-#sidebar .user-card img { width:60px; height:60px; border-radius:50%; border:2px solid #06b6d4; object-fit:cover; }
-#sidebar .user-card h3 { margin:4px 0; font-size:14px; color:#06b6d4; }
-#sidebar .user-card p { margin:2px 0; font-size:12px; color:#fff; }
-#sidebar nav ul { list-style:none; padding:0; margin:0; }
-#sidebar nav ul li { border-bottom:1px solid #2a3445; }
-#sidebar nav ul li a { display:block; padding:12px 20px; color:#fff; text-decoration:none; font-size:14px; }
-#sidebar nav ul li a:hover { background:#2f3c52; }
-/* Sidebar logout button previous template style */
-#sidebar #logoutBtn {
+.sidebar a:hover { background:#2f3c52; }
+.logout-btn {
   display:block;
   width:90%;
   margin:15px auto;
@@ -96,40 +112,53 @@ header .menu-toggle { font-size:24px; cursor:pointer; color:#fff; background:non
   cursor:pointer;
   text-align:center;
 }
-#sidebar #logoutBtn:hover { background:#b91c1c; }
+.logout-btn:hover { background:#b91c1c; }
 
-/* MAIN */
+/* ================= MAIN ================= */
 main {
   margin-top:60px;
+  padding:15px;
   margin-left:0;
-  padding:20px;
-  transition:margin-left 0.3s ease;
+  transition: margin-left 0.3s ease;
   flex:1;
 }
-#sidebar.active ~ main { margin-left:250px; }
-.dashboard .cards {
+
+/* ================= USER INFO CARDS ================= */
+.user-cards {
   display:flex;
-  gap:15px;
   flex-wrap:wrap;
+  gap:15px;
   margin-top:20px;
 }
-.dashboard .card {
+.user-card {
   background:#0f1115;
   border:1px solid #2b3347;
   border-radius:12px;
-  padding:15px;
-  flex:1 1 180px;
+  padding:8px 12px;
+  flex:1 1 160px;
   text-align:center;
-  transition:0.3s;
-  height:120px;
+  height:90px; /* compact height */
 }
-.dashboard .card:hover { background:#1c2431; }
-.dashboard .card h2 { margin:0 0 5px 0; color:#06b6d4; font-size:16px; }
-.dashboard .card p { margin:0; font-size:14px; color:#fff; }
-.avatar-upload { margin-top:15px; text-align:center; }
-.avatar-upload input[type=file] { display:block; margin:10px auto; }
+.user-card h3 {
+  margin:4px 0;
+  font-size:14px;
+  color:#06b6d4;
+}
+.user-card p {
+  margin:2px 0;
+  font-size:12px;
+  color:#fff;
+}
+.user-card img {
+  width:50px;
+  height:50px;
+  border-radius:50%;
+  border:2px solid #06b6d4;
+  object-fit:cover;
+  margin-bottom:4px;
+}
 
-/* FOOTER */
+/* ================= FOOTER ================= */
 footer {
   background:#1b2735;
   padding:20px 15px;
@@ -139,29 +168,36 @@ footer {
   justify-content:space-between;
   flex-wrap:wrap;
 }
-.footer-section { display:flex; flex-direction:column; gap:5px; flex:1; min-width:120px; margin-bottom:15px; }
+.footer-section {
+  display:flex;
+  flex-direction:column;
+  gap:5px;
+  flex:1;
+  min-width:120px;
+  margin-bottom:15px;
+}
 .footer-section h3 { margin:0 0 5px 0; font-size:16px; }
 .footer-section p, .footer-section a { font-size:14px; color:#fff; text-decoration:none; }
 .footer-section a:hover { color:#06b6d4; }
 
-@media (max-width:768px) {
-  #sidebar { left:-260px; }
-  #sidebar.active { left:0; }
+@media(max-width:768px){
+  .sidebar { left:-250px; }
+  .sidebar.active { left:0; }
   main { margin-left:0; }
-  header .site-title { font-size:16px; }
-  .dashboard .cards { flex-direction:column; }
+  .user-cards { flex-direction:column; }
   .footer-container { flex-direction:row; flex-wrap:wrap; }
 }
 </style>
 </head>
 <body>
 
+<!-- HEADER -->
 <header>
   <button class="menu-toggle">☰</button>
   <div class="site-title">SARKAR TELECOM</div>
-  <div class="profile-dropdown" id="profileMenu">
+  <div class="profile" id="profileMenu">
     <img id="profilePic" src="https://via.placeholder.com/40" alt="Profile">
-    <div class="dropdown-content" id="dropdownMenu">
+    <div class="dropdown" id="dropdownMenu">
       <a href="profile.html">⚙️ Profile</a>
       <a href="order.html">➕ Order</a>
       <a href="order-history.html">📜 History</a>
@@ -170,38 +206,30 @@ footer {
   </div>
 </header>
 
-<div id="sidebar">
-  <div class="user-card" id="userBox">Loading user...</div>
-  <nav>
-    <ul>
-      <li><a href="index.html">🏠 Home</a></li>
-      <li><a href="dashboard.html">📊 Dashboard</a></li>
-      <li><a href="profile.html">⚙️ Profile</a></li>
-      <li><a href="order.html">➕ Order</a></li>
-      <li><a href="order-history.html">📜 History</a></li>
-      <li><a href="admin.html">🛠 Admin Panel</a></li>
-    </ul>
-  </nav>
-  <button id="logoutBtn2">🚪 Logout</button>
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar">
+  <a href="index.html">🏠 Home</a>
+  <a href="dashboard.html">📊 Dashboard</a>
+  <a href="profile.html">⚙️ Profile</a>
+  <a href="order.html">➕ Order</a>
+  <a href="order-history.html">📜 History</a>
+  <a href="admin.html">🛠 Admin Panel</a>
+  <button class="logout-btn" id="logoutBtn2">🚪 Logout</button>
 </div>
 
+<!-- MAIN -->
 <main>
-  <section class="dashboard">
-    <h1>Welcome, <span id="userName">User</span>!</h1>
-    <div class="cards">
-      <div class="card"><h2>💎 Balance</h2><p id="userBalance">0</p></div>
-      <div class="card"><h2>📞 Phone</h2><p id="userPhone">-</p></div>
-      <div class="card"><h2>✉ Email</h2><p id="userEmail">-</p></div>
-      <div class="card"><h2>🧖‍♂️ Role</h2><p id="userRole">User</p></div>
-    </div>
-    <div class="avatar-upload">
-      <label for="avatarInput">Update Avatar:</label>
-      <input type="file" id="avatarInput" accept="image/*">
-      <button id="uploadAvatarBtn">Upload</button>
-    </div>
-  </section>
+  <div class="user-cards">
+    <div class="user-card" id="cardAvatar"><img src="https://via.placeholder.com/50"><h3>Avatar</h3></div>
+    <div class="user-card"><h3>Name</h3><p id="userName">Loading...</p></div>
+    <div class="user-card"><h3>Role</h3><p id="userRole">Loading...</p></div>
+    <div class="user-card"><h3>Balance</h3><p id="userBalance">0</p></div>
+    <div class="user-card"><h3>Email</h3><p id="userEmail">Loading...</p></div>
+    <div class="user-card"><h3>Phone</h3><p id="userPhone">Loading...</p></div>
+  </div>
 </main>
 
+<!-- FOOTER -->
 <footer>
   <div class="footer-container">
     <div class="footer-section">
@@ -229,7 +257,6 @@ footer {
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 import { getFirestore, doc, onSnapshot, updateDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-storage.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAyhjOsIXNAkBglpRllt0OZIOJYpdB_9-8",
@@ -242,20 +269,17 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
-const storage = getStorage(app);
 
 const sidebar = document.getElementById("sidebar");
 const profileMenu = document.getElementById("profileMenu");
 const dropdownMenu = document.getElementById("dropdownMenu");
 const profilePic = document.getElementById("profilePic");
-const userBox = document.getElementById("userBox");
+const cardAvatar = document.getElementById("cardAvatar");
 const userName = document.getElementById("userName");
-const userBalance = document.getElementById("userBalance");
-const userPhone = document.getElementById("userPhone");
-const userEmail = document.getElementById("userEmail");
 const userRole = document.getElementById("userRole");
-const avatarInput = document.getElementById("avatarInput");
-const uploadAvatarBtn = document.getElementById("uploadAvatarBtn");
+const userBalance = document.getElementById("userBalance");
+const userEmail = document.getElementById("userEmail");
+const userPhone = document.getElementById("userPhone");
 
 // Sidebar toggle
 document.querySelector(".menu-toggle").addEventListener("click", ()=>{ sidebar.classList.toggle("active"); });
@@ -268,54 +292,31 @@ function doLogout(){ signOut(auth).then(()=> location.reload()); }
 document.getElementById("logoutBtn").addEventListener("click", doLogout);
 document.getElementById("logoutBtn2").addEventListener("click", doLogout);
 
-// Load user info real-time from Firebase
+// Load user info
 onAuthStateChanged(auth, (user)=>{
   if(user){
     const userRef = doc(db,"users",user.uid);
-    onSnapshot(userRef, (docSnap)=>{
+    onSnapshot(userRef,(docSnap)=>{
       const data = docSnap.exists()?docSnap.data():{};
-      const avatar = data.avatar || user.photoURL;
+      const avatar = data.avatar || user.photoURL || "https://via.placeholder.com/50";
       const name = data.name || user.displayName || "Guest User";
       const role = data.role || "User";
-      const email = user.email || "";
-      const phone = data.phone || "N/A";
+      const email = user.email || "-";
+      const phone = data.phone || "-";
       const balance = data.balance || 0;
 
       profilePic.src = avatar;
-      userBox.innerHTML = `
-        <img src="${avatar}" alt="User">
-        <h3>${name}</h3>
-        <p>📞 ${phone}</p>
-        <p>✉ ${email}</p>
-        <p>🧖‍♂️ Role: ${role}</p>
-        <p>💎 Balance: ${balance}৳</p>
-      `;
+      cardAvatar.querySelector("img").src = avatar;
+      cardAvatar.querySelector("h3").textContent = "Avatar";
       userName.textContent = name;
-      userBalance.textContent = balance;
-      userPhone.textContent = phone;
-      userEmail.textContent = email;
       userRole.textContent = role;
+      userBalance.textContent = balance;
+      userEmail.textContent = email;
+      userPhone.textContent = phone;
     });
   } else {
     profilePic.src = "https://via.placeholder.com/40";
-    userBox.innerHTML = `<h3>Not Logged In</h3><p><a href="login.html">🔑 Login</a></p>`;
-    userName.textContent = "Guest";
   }
-});
-
-// Avatar upload
-uploadAvatarBtn.addEventListener("click", async()=>{
-  const file = avatarInput.files[0];
-  const user = auth.currentUser;
-  if(file && user){
-    const storageRef = ref(storage, `avatars/${user.uid}`);
-    await uploadBytes(storageRef, file);
-    const downloadURL = await getDownloadURL(storageRef);
-    await updateDoc(doc(db,"users",user.uid), {avatar: downloadURL});
-    await updateProfile(user, {photoURL: downloadURL});
-    profilePic.src = downloadURL;
-    alert("Avatar updated successfully!");
-  } else { alert("Please select a file first."); }
 });
 </script>
 
