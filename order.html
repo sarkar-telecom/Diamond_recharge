@@ -57,6 +57,7 @@ footer { background:#1b2735; padding:20px 10px; text-align:center; }
 .footer-nav a:hover { background:#0891b2; }
 .copyright { font-size:13px; color:#aaa; }
 </style>
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
@@ -224,6 +225,8 @@ onAuthStateChanged(auth, async(user)=>{
       <p>${email}</p>
       <p>Balance: ${balance}</p>
     `;
+  } else {
+    window.location.href="login.html";
   }
 });
 </script>
@@ -237,6 +240,7 @@ onAuthStateChanged(auth, async(user)=>{
     <div class="dropdown" id="dropdownMenu">
       <a href="profile.html">👤 Profile</a>
       <a href="order.html">➕ Order</a>
+      <a href="order-history.html">📜 History</a>
       <a href="#" id="logoutBtn">🚪 Logout</a>
     </div>
   </div>
