@@ -114,25 +114,31 @@ footer{background:#1b2735; padding:20px 15px; display:flex; justify-content:spac
     </div>
   </div>
 </main>
-
+<!-- FOOTER -->
 <footer>
-  <div class="footer-section">
-    <h4>Links</h4>
-    <a href="index.html">Home</a>
-    <a href="dashboard.html">Dashboard</a>
-    <a href="profile.html">Profile</a>
-    <a href="order-history.html">History</a>
-  </div>
-  <div class="footer-section">
-    <h4>Support</h4>
-    <a href="contact.html">Contact</a>
-    <a href="faq.html">FAQ</a>
-  </div>
-  <div class="footer-branding">
-    <p>© 2025 SARKAR TELECOM</p>
+  <div class="footer-wrapper">
+    <div class="footer-section">
+      <strong>Support</strong>
+      <a href="support.html">💬 Support</a>
+      <a href="faq.html">❓ FAQ</a>
+      <a href="sitemap.html">🌐 Sitemap</a>
+    </div>
+    
+    <div class="footer-section">
+      <strong>Information</strong>
+      <a href="about.html">ℹ️ About Us</a>
+      <a href="privacy.html">🔒 Privacy Policy</a>
+      <a href="terms.html">📄 Terms & Conditions</a>
+      <a href="refund.html">💎 Refund Policy</a>
+    </div>
+    
+    <div class="footer-section footer-branding">
+      <strong>SARKAR TELECOM</strong>
+      <p>Fast & Secure Mobile Recharge Service</p>
+      <p>© 2025 All Rights Reserved ®</p>
+    </div>
   </div>
 </footer>
-
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut, updateEmail, updateProfile } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
