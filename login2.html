@@ -30,54 +30,8 @@ header {
   top:0;
   z-index:1000;
 }
-.menu-toggle {
-  font-size:24px;
-  cursor:pointer;
-  background:none;
-  border:none;
-  color:#fff;
-}
-.site-title {
-  font-weight:bold;
-  font-size:18px;
-  flex:1;
-  text-align:center;
-}
-.profile {
-  position:relative;
-  cursor:pointer;
-  display:flex;
-  align-items:center;
-  padding-right:30px;
-}
-.profile img {
-  width:40px;
-  height:40px;
-  border-radius:50%;
-  object-fit:cover;
-  margin-left:10px;
-}
-.dropdown {
-  position:absolute;
-  right:0;
-  top:50px;
-  background:#1c2431;
-  color:#fff;
-  min-width:180px;
-  border-radius:8px;
-  display:none;
-  flex-direction:column;
-  box-shadow:0 4px 6px rgba(0,0,0,0.2);
-  z-index:1001;
-}
-.dropdown a {
-  padding:10px;
-  text-decoration:none;
-  color:#fff;
-  border-bottom:1px solid #2a3445;
-  display:block;
-}
-.dropdown a:hover { background:#d62828; }
+.menu-toggle { font-size:24px; cursor:pointer; background:none; border:none; color:#fff; }
+.site-title { font-weight:bold; font-size:18px; flex:1; text-align:center; }
 
 /* ================= SIDEBAR ================= */
 .sidebar {
@@ -93,14 +47,15 @@ header {
   overflow-y:auto;
 }
 .sidebar.active { left:0; }
-.sidebar a {
-  display:block;
-  padding:12px 20px;
-  text-decoration:none;
-  color:#fff;
-  border-bottom:1px solid #2a3445;
-}
+.sidebar a { display:block; padding:12px 20px; text-decoration:none; color:#fff; border-bottom:1px solid #2a3445; }
 .sidebar a:hover { background:#2f3c52; }
+
+/* ================= DROPDOWN ================= */
+.profile { position:relative; cursor:pointer; display:flex; align-items:center; padding-right:30px; }
+.profile img { width:40px; height:40px; border-radius:50%; object-fit:cover; margin-left:10px; }
+.dropdown { position:absolute; right:0; top:50px; background:#1c2431; color:#fff; min-width:180px; border-radius:8px; display:none; flex-direction:column; box-shadow:0 4px 6px rgba(0,0,0,0.2); z-index:1001; }
+.dropdown a { padding:10px; text-decoration:none; color:#fff; border-bottom:1px solid #2a3445; display:block; }
+.dropdown a:hover { background:#d62828; }
 
 /* ================= MAIN LOGIN BOX ================= */
 main {
@@ -171,17 +126,8 @@ main {
 }
 .login-container .bottom-links a { color:#06b6d4; text-decoration:none; }
 .login-container .bottom-links a:hover { text-decoration:underline; }
-.show-pass {
-  cursor:pointer;
-  font-size:12px;
-  color:#06b6d4;
-}
-.error-msg {
-  color:#ef4444;
-  font-size:12px;
-  margin-bottom:5px;
-  display:none;
-}
+.show-pass { cursor:pointer; font-size:12px; color:#06b6d4; }
+.error-msg { color:#ef4444; font-size:12px; margin-bottom:5px; display:none; }
 
 /* ================= FOOTER ================= */
 footer {
@@ -200,18 +146,8 @@ footer {
   flex:1;
   flex-wrap:nowrap;
 }
-.footer-section {
-  display:flex;
-  flex-direction:column;
-  gap:6px;
-  min-width:120px;
-}
-.footer-section a {
-  text-decoration:none;
-  color:#fff;
-  font-size:14px;
-  transition:0.3s;
-}
+.footer-section { display:flex; flex-direction:column; gap:6px; min-width:120px; }
+.footer-section a { text-decoration:none; color:#fff; font-size:14px; transition:0.3s; }
 .footer-section a:hover { color:#06b6d4; }
 .footer-branding p { margin:2px 0; font-size:13px; color:#ccc; }
 
@@ -236,6 +172,7 @@ const firebaseConfig = {
   appId: "1:657717928489:web:70431ebc9afb7002d4b238",
   measurementId: "G-TDK78BQ8SQ"
 };
+
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
@@ -244,13 +181,6 @@ document.addEventListener("DOMContentLoaded", ()=>{
   const sidebar = document.getElementById("sidebar");
   document.querySelector(".menu-toggle").addEventListener("click", ()=>{
     sidebar.classList.toggle("active");
-  });
-
-  // Dropdown toggle
-  const profileMenu = document.getElementById("profileMenu");
-  const dropdownMenu = document.getElementById("dropdownMenu");
-  profileMenu?.addEventListener("click", ()=>{
-    if(dropdownMenu) dropdownMenu.style.display = dropdownMenu.style.display==="flex"?"none":"flex";
   });
 });
 
@@ -283,33 +213,24 @@ async function forgotPassword(){
 // Email login
 async function emailLogin(e){
   e.preventDefault();
-  const emailField = document.getElementById("email");
-  const passwordField = document.getElementById("password");
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value.trim();
   const remember = document.getElementById("remember").checked;
   const emailError = document.getElementById("emailError");
   const passError = document.getElementById("passError");
 
-  let valid = true;
   emailError.style.display="none";
   passError.style.display="none";
 
-  const emailVal = emailField.value.trim();
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if(!emailVal){ emailError.textContent="Email is required"; emailError.style.display="block"; valid=false; }
-  else if(!emailRegex.test(emailVal)){ emailError.textContent="Invalid email format"; emailError.style.display="block"; valid=false; }
-
-  const passVal = passwordField.value.trim();
-  if(!passVal){ passError.textContent="Password is required"; passError.style.display="block"; valid=false; }
-  else if(passVal.length<6){ passError.textContent="Password must be at least 6 characters"; passError.style.display="block"; valid=false; }
-
-  if(!valid) return;
+  if(!email){ emailError.textContent="Email is required"; emailError.style.display="block"; return; }
+  if(!password){ passError.textContent="Password is required"; passError.style.display="block"; return; }
 
   try{
-    await signInWithEmailAndPassword(auth,emailVal,passVal);
-    if(remember) localStorage.setItem("rememberEmail",emailVal);
+    await signInWithEmailAndPassword(auth,email,password);
+    if(remember) localStorage.setItem("rememberEmail",email);
     window.location.href="dashboard.html";
   }catch(err){
-    passError.textContent = err.message;
+    passError.textContent=err.message;
     passError.style.display="block";
   }
 }
@@ -324,9 +245,8 @@ async function emailLogin(e){
   <div class="profile" id="profileMenu">
     <img src="https://via.placeholder.com/40" alt="Profile">
     <div class="dropdown" id="dropdownMenu">
-      <a href="register.html">📝 Register</a>
-      <a href="#" onclick="forgotPassword()">🔑 Forgot Password</a>
-      <a href="#" onclick="googleLogin()">🌐 Google Login</a>
+      <a href="register.html">👤 Register</a>
+      <a href="#" onclick="forgotPassword()">🔑 Reset Password</a>
     </div>
   </div>
 </header>
@@ -348,7 +268,7 @@ async function emailLogin(e){
       <label>Email</label>
       <input type="email" id="email" required>
       <div class="error-msg" id="emailError"></div>
-      
+
       <label>Password</label>
       <input type="password" id="password" required>
       <div class="error-msg" id="passError"></div>
@@ -395,6 +315,16 @@ async function emailLogin(e){
     </div>
   </div>
 </footer>
+
+<script>
+document.addEventListener("DOMContentLoaded", ()=>{
+  const profileMenu = document.getElementById("profileMenu");
+  const dropdownMenu = document.getElementById("dropdownMenu");
+  profileMenu.addEventListener("click", ()=>{
+    dropdownMenu.style.display = dropdownMenu.style.display==="flex"?"none":"flex";
+  });
+});
+</script>
 
 </body>
 </html>
