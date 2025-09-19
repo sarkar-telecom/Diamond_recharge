@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>User Dashboard - SARKAR TELECOM</title>
+<link rel="icon" type="image/png" href="images/favicon.png">
+<style>
+body {
+  margin:0;
+  font-family: Arial, Helvetica, sans-serif;
+  background:#0f1824;
+  color:#fff;
+  display:flex;
+  flex-direction:column;
+  min-height:100vh;
+  overflow-x:hidden;
+}
+header {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  background:#1b2735;
+  padding:10px 20px;
+  position:fixed;
+  width:100%;
+  top:0;
+  z-index:1000;
+}
+header .site-title { font-weight:bold; font-size:18px; }
+header .menu-toggle { font-size:24px; cursor:pointer; color:#fff; background:none; border:none; }
+.profile-dropdown { position: relative; cursor:pointer; }
+.profile-dropdown img { width:40px; height:40px; border-radius:50%; object-fit:cover; }
+.profile-dropdown .dropdown-content {
+  position:absolute;
+  top:50px;
+  right:0;
+  background:#1c2431;
+  color:#fff;
+  min-width:180px;
+  display:flex;
+  flex-direction:column;
+  border-radius:8px;
+  display:none;
+  box-shadow:0 4px 6px rgba(0,0,0,0.2);
+}
+.profile-dropdown .dropdown-content a {
+  padding:10px;
+  text-decoration:none;
+  color:#fff;
+  border-bottom:1px solid #2a3445;
+}
+.profile-dropdown .dropdown-content a:hover { background:#d62828; }
+#sidebar {
+  position:fixed;
+  top:0;
+  left:-260px;
+  width:250px;
+  height:100%;
+  background:#1c2431;
+  padding-top:60px;
+  transition:left 0.3s ease;
+  z-index:999;
+  overflow-y:auto;
+}
+#sidebar.active { left:0; }
+#sidebar .user-card {
+  background:#0f1115;
+  border:1px solid #2b3347;
+  border-radius:12px;
+  padding:15px;
+  margin:10px;
+  text-align:center;
+}
+#sidebar .user-card img {
+  width:70px;
+  height:70px;
+  border-radius:50%;
+  border:3px solid #06b6d4;
+  object-fit:cover;
+}
+#sidebar .user-card h3 { margin:5px 0; font-size:16px; color:#06b6d4; }
+#sidebar .user-card p { margin:2px 0; font-size:13px; color:#fff; }
+#sidebar nav ul { list-style:none; padding:0; margin:0; }
+#sidebar nav ul li { border-bottom:1px solid #2a3445; }
+#sidebar nav ul li a { display:block; padding:12px 20px; color:#fff; text-decoration:none; }
+#sidebar nav ul li a:hover { background:#2f3c52; }
+#sidebar #logoutBtn {
+  width:90%;
+  margin:15px auto;
+  padding:12px;
+  background:#d62828;
+  color:#fff;
+  border:none;
+  border-radius:8px;
+  font-size:15px;
+  cursor:pointer;
+  display:block;
+  text-align:center;
+}
+#sidebar #logoutBtn:hover { background:#b91c1c; }
+main {
+  margin-top:60px;
+  margin-left:0;
+  padding:20px;
+  transition:margin-left 0.3s ease;
+  flex:1;
+}
+#sidebar.active ~ main { margin-left:250px; }
+.dashboard .cards {
+  display:flex;
+  gap:20px;
+  flex-wrap:wrap;
+  margin-top:20px;
+}
+.dashboard .card {
+  background:#0f1115;
+  border:1px solid #2b3347;
+  border-radius:12px;
+  padding:20px;
+  flex:1 1 200px;
+  text-align:center;
+  transition:0.3s;
+}
+.dashboard .card:hover { background:#1c2431; }
+.dashboard .card h2 { margin:0 0 10px 0; color:#06b6d4; }
+.dashboard .card p { margin:0; font-size:18px; color:#fff; }
+footer {
+  background:#1b2735;
+  padding:20px 15px;
+  display:flex;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:15px;
+}
+.footer-container {
+  display:flex;
+  justify-content:space-between;
+  width:100%;
+  flex-wrap:wrap;
+}
+.footer-section { display:flex; flex-direction:column; gap:5px; }
+.footer-section h3 { margin:0 0 5px 0; }
+.footer-section p, .footer-section a {
+  font-size:14px;
+  color:#fff;
+  text-decoration:none;
+}
+.footer-section a:hover { color:#06b6d4; }
+@media (max-width:768px) {
+  #sidebar { left:-260px; }
+  #sidebar.active { left:0; }
+  main { margin-left:0; }
+  header .site-title { font-size:16px; }
+  .dashboard .cards { flex-direction:column; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <button class="menu-toggle">☰</button>
+  <div class="site-title">SARKAR TELECOM</div>
+  <div class="profile-dropdown" id="profileMenu">
+    <img id="profilePic" src="https://via.placeholder.com/40" alt="Profile">
+    <div class="dropdown-content" id="dropdownMenu">
+      <a href="profile.html">⚙️ Profile</a>
+      <a href="order.html">➕ Order</a>
+      <a href="order-history.html">📜 History</a>
+      <a href="#" id="logoutBtn">🚪 Logout</a>
+    </div>
+  </div>
+</header>
+
+<div id="sidebar">
+  <div class="user-card" id="userBox">Loading user...</div>
+  <nav>
+    <ul>
+      <li><a href="index.html">🏠 Home</a></li>
+      <li><a href="dashboard.html">📊 Dashboard</a></li>
+      <li><a href="profile.html">⚙️ Profile</a></li>
+      <li><a href="order.html">➕ Order</a></li>
+      <li><a href="order-history.html">📜 History</a></li>
+      <li><a href="admin.html">🛠 Admin Panel</a></li>
+    </ul>
+  </nav>
+  <button id="logoutBtn2">🚪 Logout</button>
+</div>
+
+<main>
+  <section class="dashboard">
+    <h1>Welcome, <span id="userName">User</span>!</h1>
+    <div class="cards">
+      <div class="card"><h2>💎 Balance</h2><p id="userBalance">0</p></div>
+      <div class="card"><h2>📞 Phone</h2><p id="userPhone">-</p></div>
+      <div class="card"><h2>✉ Email</h2><p id="userEmail">-</p></div>
+      <div class="card"><h2>🧖‍♂️ Role</h2><p id="userRole">User</p></div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="footer-container">
+    <div class="footer-section">
+      <h3>Support</h3>
+      <a href="support.html">💬 Support</a>
+      <a href="faq.html">❓ FAQ</a>
+      <a href="sitemap.html">🌐 Sitemap</a>
+    </div>
+    <div class="footer-section">
+      <h3>Information</h3>
+      <a href="about.html">ℹ️ About Us</a>
+      <a href="privacy.html">🔒 Privacy Policy</a>
+      <a href="terms.html">📄 Terms & Conditions</a>
+      <a href="refund.html">💎 Refund Policy</a>
+    </div>
+    <div class="footer-section">
+      <h3>SARKAR TELECOM</h3>
+      <p>Fast & Secure Mobile Recharge Service</p>
+      <p>© 2025 All Rights Reserved ®</p>
+    </div>
+  </div>
+</footer>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+import { getFirestore, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAyhjOsIXNAkBglpRllt0OZIOJYpdB_9-8",
+  authDomain: "diamond-recharge-f7f59.firebaseapp.com",
+  projectId: "diamond-recharge-f7f59",
+  storageBucket: "diamond-recharge-f7f59.appspot.com",
+  messagingSenderId: "657717928489",
+  appId: "1:657717928489:web:70431ebc9afb7002d4b238"
+};
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+const sidebar = document.getElementById("sidebar");
+const profileMenu = document.getElementById("profileMenu");
+const dropdownMenu = document.getElementById("dropdownMenu");
+const profilePic = document.getElementById("profilePic");
+const userBox = document.getElementById("userBox");
+const userName = document.getElementById("userName");
+const userBalance = document.getElementById("userBalance");
+const userPhone = document.getElementById("userPhone");
+const userEmail = document.getElementById("userEmail");
+const userRole = document.getElementById("userRole");
+
+document.querySelector(".menu-toggle").addEventListener("click", ()=>{
+  sidebar.classList.toggle("active");
+});
+profileMenu.addEventListener("click", ()=>{
+  dropdownMenu.style.display = dropdownMenu.style.display==="flex"?"none":"flex";
+});
+function doLogout(){ signOut(auth).then(()=> location.reload()); }
+document.getElementById("logoutBtn").addEventListener("click", doLogout);
+document.getElementById("logoutBtn2").addEventListener("click", doLogout);
+
+onAuthStateChanged(auth, (user)=>{
+  if(user){
+    const userRef = doc(db,"users",user.uid);
+    onSnapshot(userRef, (docSnap)=>{
+      const data = docSnap.exists()?docSnap.data():{};
+      const avatar = data.avatar || user.photoURL || "https://via.placeholder.com/70";
+      const name = data.name || user.displayName || "Guest User";
+      const role = data.role || "User";
+      const email = user.email || "";
+      const phone = data.phone || "N/A";
+      const balance = data.balance || 0;
+
+      profilePic.src = avatar;
+      userBox.innerHTML = `
+        <img src="${avatar}" alt="User">
+        <h3>${name}</h3>
+        <p>📞 ${phone}</p>
+        <p>✉ ${email}</p>
+        <p>🧖‍♂️ Role: ${role}</p>
+        <p>💎 Balance: ${balance}৳</p>
+      `;
+      userName.textContent = name;
+      userBalance.textContent = balance;
+      userPhone.textContent = phone;
+      userEmail.textContent = email;
+      userRole.textContent = role;
+    });
+  } else {
+    profilePic.src = "https://via.placeholder.com/40";
+    userBox.innerHTML = `<h3>Not Logged In</h3><p><a href="login.html">🔑 Login</a></p>`;
+    userName.textContent = "Guest";
+  }
+});
+</script>
+
+</body>
+</html>
