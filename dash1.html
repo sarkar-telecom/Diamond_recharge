@@ -6,6 +6,7 @@
 <title>User Dashboard - SARKAR TELECOM</title>
 <link rel="icon" type="image/png" href="images/favicon.png">
 <style>
+/* ====== BODY ====== */
 body {
   margin:0;
   font-family: Arial, Helvetica, sans-serif;
@@ -16,6 +17,7 @@ body {
   min-height:100vh;
   overflow-x:hidden;
 }
+/* ====== HEADER ====== */
 header {
   display:flex;
   justify-content:space-between;
@@ -30,7 +32,7 @@ header {
 header .site-title { font-weight:bold; font-size:18px; }
 header .menu-toggle { font-size:24px; cursor:pointer; color:#fff; background:none; border:none; }
 .profile-dropdown { position: relative; cursor:pointer; }
-.profile-dropdown img { width:40px; height:40px; border-radius:50%; object-fit:cover; }
+.profile-dropdown img { width:40px; height:40px; border-radius:50%; object-fit:cover; border:2px solid #06b6d4; }
 .profile-dropdown .dropdown-content {
   position:absolute;
   top:50px;
@@ -51,6 +53,8 @@ header .menu-toggle { font-size:24px; cursor:pointer; color:#fff; background:non
   border-bottom:1px solid #2a3445;
 }
 .profile-dropdown .dropdown-content a:hover { background:#d62828; }
+
+/* ====== SIDEBAR ====== */
 #sidebar {
   position:fixed;
   top:0;
@@ -68,37 +72,39 @@ header .menu-toggle { font-size:24px; cursor:pointer; color:#fff; background:non
   background:#0f1115;
   border:1px solid #2b3347;
   border-radius:12px;
-  padding:15px;
+  padding:10px;
   margin:10px;
   text-align:center;
 }
 #sidebar .user-card img {
-  width:70px;
-  height:70px;
+  width:60px;
+  height:60px;
   border-radius:50%;
-  border:3px solid #06b6d4;
+  border:2px solid #06b6d4;
   object-fit:cover;
 }
-#sidebar .user-card h3 { margin:5px 0; font-size:16px; color:#06b6d4; }
-#sidebar .user-card p { margin:2px 0; font-size:13px; color:#fff; }
+#sidebar .user-card h3 { margin:5px 0; font-size:14px; color:#06b6d4; }
+#sidebar .user-card p { margin:2px 0; font-size:12px; color:#fff; }
 #sidebar nav ul { list-style:none; padding:0; margin:0; }
 #sidebar nav ul li { border-bottom:1px solid #2a3445; }
-#sidebar nav ul li a { display:block; padding:12px 20px; color:#fff; text-decoration:none; }
+#sidebar nav ul li a { display:block; padding:12px 20px; color:#fff; text-decoration:none; font-size:14px; }
 #sidebar nav ul li a:hover { background:#2f3c52; }
 #sidebar #logoutBtn {
   width:90%;
   margin:15px auto;
-  padding:12px;
+  padding:10px;
   background:#d62828;
   color:#fff;
   border:none;
   border-radius:8px;
-  font-size:15px;
+  font-size:14px;
   cursor:pointer;
   display:block;
   text-align:center;
 }
 #sidebar #logoutBtn:hover { background:#b91c1c; }
+
+/* ====== MAIN ====== */
 main {
   margin-top:60px;
   margin-left:0;
@@ -109,7 +115,7 @@ main {
 #sidebar.active ~ main { margin-left:250px; }
 .dashboard .cards {
   display:flex;
-  gap:20px;
+  gap:15px;
   flex-wrap:wrap;
   margin-top:20px;
 }
@@ -117,42 +123,43 @@ main {
   background:#0f1115;
   border:1px solid #2b3347;
   border-radius:12px;
-  padding:20px;
-  flex:1 1 200px;
+  padding:15px;
+  flex:1 1 180px;
   text-align:center;
   transition:0.3s;
+  height:120px;
 }
 .dashboard .card:hover { background:#1c2431; }
-.dashboard .card h2 { margin:0 0 10px 0; color:#06b6d4; }
-.dashboard .card p { margin:0; font-size:18px; color:#fff; }
+.dashboard .card h2 { margin:0 0 5px 0; color:#06b6d4; font-size:16px; }
+.dashboard .card p { margin:0; font-size:14px; color:#fff; }
+.avatar-upload {
+  margin-top:15px;
+  text-align:center;
+}
+.avatar-upload input[type=file] { display:block; margin:10px auto; }
+
+/* ====== FOOTER ====== */
 footer {
   background:#1b2735;
   padding:20px 15px;
-  display:flex;
-  justify-content:space-between;
-  flex-wrap:wrap;
-  gap:15px;
 }
 .footer-container {
   display:flex;
   justify-content:space-between;
-  width:100%;
   flex-wrap:wrap;
 }
-.footer-section { display:flex; flex-direction:column; gap:5px; }
-.footer-section h3 { margin:0 0 5px 0; }
-.footer-section p, .footer-section a {
-  font-size:14px;
-  color:#fff;
-  text-decoration:none;
-}
+.footer-section { display:flex; flex-direction:column; gap:5px; flex:1; min-width:120px; margin-bottom:15px; }
+.footer-section h3 { margin:0 0 5px 0; font-size:16px; }
+.footer-section p, .footer-section a { font-size:14px; color:#fff; text-decoration:none; }
 .footer-section a:hover { color:#06b6d4; }
+
 @media (max-width:768px) {
   #sidebar { left:-260px; }
   #sidebar.active { left:0; }
   main { margin-left:0; }
   header .site-title { font-size:16px; }
   .dashboard .cards { flex-direction:column; }
+  .footer-container { flex-direction:row; flex-wrap:wrap; }
 }
 </style>
 </head>
@@ -196,6 +203,11 @@ footer {
       <div class="card"><h2>✉ Email</h2><p id="userEmail">-</p></div>
       <div class="card"><h2>🧖‍♂️ Role</h2><p id="userRole">User</p></div>
     </div>
+    <div class="avatar-upload">
+      <label for="avatarInput">Update Avatar:</label>
+      <input type="file" id="avatarInput" accept="image/*">
+      <button id="uploadAvatarBtn">Upload</button>
+    </div>
   </section>
 </main>
 
@@ -224,8 +236,9 @@ footer {
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-import { getFirestore, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+import { getAuth, onAuthStateChanged, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+import { getFirestore, doc, onSnapshot, updateDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-storage.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAyhjOsIXNAkBglpRllt0OZIOJYpdB_9-8",
@@ -238,6 +251,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+const storage = getStorage(app);
 
 const sidebar = document.getElementById("sidebar");
 const profileMenu = document.getElementById("profileMenu");
@@ -249,17 +263,23 @@ const userBalance = document.getElementById("userBalance");
 const userPhone = document.getElementById("userPhone");
 const userEmail = document.getElementById("userEmail");
 const userRole = document.getElementById("userRole");
+const avatarInput = document.getElementById("avatarInput");
+const uploadAvatarBtn = document.getElementById("uploadAvatarBtn");
 
+// Sidebar toggle
 document.querySelector(".menu-toggle").addEventListener("click", ()=>{
   sidebar.classList.toggle("active");
 });
+// Dropdown toggle
 profileMenu.addEventListener("click", ()=>{
   dropdownMenu.style.display = dropdownMenu.style.display==="flex"?"none":"flex";
 });
+// Logout
 function doLogout(){ signOut(auth).then(()=> location.reload()); }
 document.getElementById("logoutBtn").addEventListener("click", doLogout);
 document.getElementById("logoutBtn2").addEventListener("click", doLogout);
 
+// Load user info real-time
 onAuthStateChanged(auth, (user)=>{
   if(user){
     const userRef = doc(db,"users",user.uid);
@@ -291,6 +311,23 @@ onAuthStateChanged(auth, (user)=>{
     profilePic.src = "https://via.placeholder.com/40";
     userBox.innerHTML = `<h3>Not Logged In</h3><p><a href="login.html">🔑 Login</a></p>`;
     userName.textContent = "Guest";
+  }
+});
+
+// Avatar upload
+uploadAvatarBtn.addEventListener("click", async()=>{
+  const file = avatarInput.files[0];
+  const user = auth.currentUser;
+  if(file && user){
+    const storageRef = ref(storage, `avatars/${user.uid}`);
+    await uploadBytes(storageRef, file);
+    const downloadURL = await getDownloadURL(storageRef);
+    await updateDoc(doc(db,"users",user.uid), {avatar: downloadURL});
+    await updateProfile(user, {photoURL: downloadURL});
+    profilePic.src = downloadURL;
+    alert("Avatar updated successfully!");
+  } else {
+    alert("Please select a file first.");
   }
 });
 </script>
