@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard - SARKAR TELECOM</title>
+<link rel="icon" type="image/png" href="images/favicon.png">
+<link rel="stylesheet" href="style.css">
+
+<script type="module">
+  // ================= FIREBASE CONFIG =================
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+  import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAyhjOsIXNAkBglpRllt0OZIOJYpdB_9-8",
+    authDomain: "diamond-recharge-f7f59.firebaseapp.com",
+    projectId: "diamond-recharge-f7f59",
+    storageBucket: "diamond-recharge-f7f59.appspot.com",
+    messagingSenderId: "657717928489",
+    appId: "1:657717928489:web:70431ebc9afb7002d4b238",
+    measurementId: "G-TDK78BQ8SQ"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  // ================= LOAD COMPONENTS =================
+  async function loadHTML(id, url) {
+    try {
+      const res = await fetch(url);
+      const html = await res.text();
+      document.getElementById(id).innerHTML = html;
+    } catch(e) {
+      console.error(`Failed to load ${url}:`, e);
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", async()=>{
+    await loadHTML("header-container", "header.html");
+    await loadHTML("sidebar-container", "sidebar.html");
+    await loadHTML("footer-container", "footer.html");
+
+    // ================= SIDEBAR TOGGLE =================
+    const sidebarToggle = document.querySelector(".menu-toggle");
+    sidebarToggle?.addEventListener("click", ()=>{
+      const sidebar = document.getElementById("sidebar");
+      sidebar.classList.toggle("active");
+    });
+
+    // ================= PROFILE DROPDOWN =================
+    const profileMenu = document.getElementById("profileMenu");
+    const dropdownMenu = document.getElementById("dropdownMenu");
+    profileMenu?.addEventListener("click", ()=>{
+      dropdownMenu.style.display = dropdownMenu.style.display==="block"?"none":"block";
+    });
+
+    // ================= LOGOUT =================
+    function doLogout(){ signOut(auth).then(()=>window.location.href="login.html"); }
+    document.getElementById("logoutBtn")?.addEventListener("click", doLogout);
+    document.getElementById("logoutBtn2")?.addEventListener("click", doLogout);
+
+    // ================= LOAD USER INFO =================
+    onAuthStateChanged(auth, async(user)=>{
+      if(user){
+        const snap = await getDoc(doc(db,"users",user.uid));
+        const data = snap.exists()?snap.data():{};
+        const avatar = data.avatar || user.photoURL || "https://via.placeholder.com/70";
+        const name = data.name || user.displayName || "Guest User";
+        const role = data.role || "User";
+        const email = user.email || "";
+        const phone = data.phone || "N/A";
+        const balance = data.balance !== undefined?data.balance:"0";
+
+        // Sidebar user-card
+        const userBox = document.getElementById("userBox");
+        if(userBox) userBox.innerHTML = `
+          <img src="${avatar}" alt="Avatar">
+          <h3>${name}</h3>
+          <p>🧖‍♂️ Role: ${role}</p>
+          <p>📞 ${phone}</p>
+          <p>✉ ${email}</p>
+          <p>💎 Balance: ${balance}</p>
+        `;
+
+        // Header profile pic
+        const profilePic = document.getElementById("profilePic");
+        if(profilePic) profilePic.src = avatar;
+
+        // Main user-card
+        const mainCard = document.getElementById("mainUserCard");
+        if(mainCard) mainCard.innerHTML = `
+          <img src="${avatar}" alt="Avatar">
+          <h3>${name}</h3>
+          <p>🧖‍♂️ Role: ${role}</p>
+          <p>📞 ${phone}</p>
+          <p>✉ ${email}</p>
+          <p>💎 Balance: ${balance}</p>
+        `;
+
+      } else {
+        window.location.href = "login.html";
+      }
+    });
+  });
+</script>
+</head>
+<body>
+
+<!-- HEADER -->
+<div id="header-container"></div>
+
+<!-- SIDEBAR -->
+<div id="sidebar-container"></div>
+
+<!-- MAIN CONTENT -->
+<main>
+  <h1>👋 Welcome to SARKAR TELECOM</h1>
+  <div class="user-card" id="mainUserCard">
+    🔄 Loading user info...
+  </div>
+
+  <div class="action-buttons">
+    <button onclick="location.href='order.html'">💎 Place Order</button>
+    <button onclick="location.href='order-history.html'">📜 Order History</button>
+    <button onclick="alert('Top-up Wallet feature coming soon!')">💰 Top-up Wallet</button>
+    <button onclick="alert('Rewards feature coming soon!')">🎁 Rewards</button>
+  </div>
+
+  <div class="transactions">
+    <h4>Recent Transactions</h4>
+    <table>
+      <thead>
+        <tr><th>Date</th><th>Type</th><th>Amount</th><th>Status</th></tr>
+      </thead>
+      <tbody id="txnBody">
+        <tr><td colspan="4" style="text-align:center;">No recent transactions</td></tr>
+      </tbody>
+    </table>
+  </div>
+</main>
+
+<!-- FOOTER -->
+<div id="footer-container"></div>
+
+</body>
+</html>
