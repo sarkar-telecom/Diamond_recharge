@@ -3,37 +3,64 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Firestore Announcement</title>
+  <title>📢 Announcement</title>
+  <style>
+    body {
+      background: #0f1824;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 40px;
+    }
+    h2 {
+      color: #00d4ff;
+      margin-bottom: 20px;
+    }
+    #announcement {
+      font-size: 18px;
+      background: #1c293b;
+      padding: 15px 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px #00d4ff88;
+      display: inline-block;
+      min-width: 250px;
+    }
+  </style>
+</head>
+<body>
+  <h2>📢 Announcement</h2>
+  <p id="announcement">⏳ লোড হচ্ছে...</p>
+
   <script type="module">
     // Firebase SDK import
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-    // আপনার Firebase config বসান
+    // আপনার Firebase config
     const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-      projectId: "YOUR_PROJECT_ID",
-      storageBucket: "YOUR_PROJECT_ID.appspot.com",
-      messagingSenderId: "YOUR_SENDER_ID",
-      appId: "YOUR_APP_ID"
+      apiKey: "AIzaSyAyhjOsIXNAkBglpRllt0OZIOJYpdB_9-8",
+      authDomain: "diamond-recharge-f7f59.firebaseapp.com",
+      projectId: "diamond-recharge-f7f59",
+      storageBucket: "diamond-recharge-f7f59.firebasestorage.app",
+      messagingSenderId: "657717928489",
+      appId: "1:657717928489:web:70431ebc9afb7002d4b238",
+      measurementId: "G-TDK78BQ8SQ"
     };
 
-    // Initialize Firebase
+    // Firebase init
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // Announcement লোড করা
+    // Announcement লোড ফাংশন
     async function loadAnnouncement() {
       try {
         const announcementRef = doc(db, "settings", "announcement");
         const docSnap = await getDoc(announcementRef);
 
         if (docSnap.exists()) {
-          console.log("Data loaded:", docSnap.data()); // Debug
-          document.getElementById("announcement").innerText = docSnap.data().text || "⚠️ টেক্সট নেই";
+          document.getElementById("announcement").innerText =
+            docSnap.data().text || "⚠️ Announcement text নেই";
         } else {
-          console.warn("❌ No such document!");
           document.getElementById("announcement").innerText = "❌ Announcement পাওয়া যায়নি";
         }
       } catch (error) {
@@ -42,12 +69,7 @@
       }
     }
 
-    // DOM ready হলে রান করবে
     document.addEventListener("DOMContentLoaded", loadAnnouncement);
   </script>
-</head>
-<body style="background:#0f1824; color:white; font-family:Arial; text-align:center; padding:20px;">
-  <h2>📢 Announcement</h2>
-  <p id="announcement">⏳ লোড হচ্ছে...</p>
 </body>
 </html>
