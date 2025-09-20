@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>User Dashboard - SARKAR TELECOM</title>
 <link rel="icon" type="image/png" href="images/favicon.png">
-
 <style>
 /* ================= BODY ================= */
 body {
@@ -17,21 +16,6 @@ body {
   flex-direction:column;
   min-height:100vh;
   overflow-x:hidden;
-}
-
-/* ================= ANNOUNCEMENT ================= */
-#announcementTicker {
-  width:100%;
-  background:#fffb00;
-  color:#000;
-  padding:10px 15px;
-  font-weight:bold;
-  overflow:hidden;
-  white-space:nowrap;
-  box-sizing:border-box;
-  position:fixed;
-  top:60px;
-  z-index:9999;
 }
 
 /* ================= HEADER ================= */
@@ -130,12 +114,20 @@ header {
 }
 .logout-btn:hover { background:#b91c1c; }
 
+/* ================= ANNOUNCEMENT ================= */
+#announcementBox {
+  background:#d62828;
+  color:#fff;
+  padding:10px;
+  text-align:center;
+  font-weight:bold;
+  margin-top:60px; /* header height */
+}
+
 /* ================= MAIN ================= */
 main {
-  margin-top:100px;
+  margin-top:10px;
   padding:15px;
-  margin-left:0;
-  transition: margin-left 0.3s ease;
   flex:1;
 }
 
@@ -144,44 +136,38 @@ main {
   display:flex;
   flex-wrap:wrap;
   gap:10px;
-  margin-top:10px;
   justify-content:center;
+  margin-top:10px;
 }
 .user-card {
-  background:#1c1f2b;
-  border-radius:12px;
-  padding:15px;
-  flex:1 1 150px;
-  text-align:center;
-  min-width:150px;
-  max-width:180px;
-  color:#fff;
-  box-shadow:0 0 10px rgba(0,0,0,0.5);
+  background: linear-gradient(135deg,#1e2a38,#0f1824);
+  border-radius: 10px;
+  padding: 10px;
+  width: 150px;
+  text-align: center;
+  flex: 0 0 auto;
+  height: 180px;
 }
 .user-card img {
   width:110px;
   height:110px;
   border-radius:50%;
   border:4px solid #06b6d4;
-  object-fit:cover;
-  margin-bottom:10px;
+  margin-bottom:5px;
 }
 .user-card h3 {
   font-size:16px;
   color:#06b6d4;
-  margin:4px 0;
-}
-.user-card p {
-  font-size:15px;
   margin:2px 0;
 }
-
-/* Colorful text */
-#userName { color:#f97316; font-weight:bold; }
-#userRole { color:#3b82f6; font-weight:bold; }
-#userBalance { color:#22c55e; font-weight:bold; }
-#userEmail { color:#facc15; }
-#userPhone { color:#e11d48; }
+.user-card p {
+  font-size:14px;
+  margin:2px 0;
+}
+.user-card .role { color:#f97316; }
+.user-card .balance { color:#22c55e; font-weight:bold; }
+.user-card .email { color:#3b82f6; }
+.user-card .phone { color:#facc15; }
 
 /* ================= FOOTER ================= */
 footer {
@@ -205,19 +191,17 @@ footer {
 .footer-section p, .footer-section a { font-size:14px; color:#fff; text-decoration:none; }
 .footer-section a:hover { color:#06b6d4; }
 
+/* ================= RESPONSIVE ================= */
 @media(max-width:768px){
+  .user-cards { flex-direction:column; align-items:center; }
   .sidebar { left:-250px; }
   .sidebar.active { left:0; }
   main { margin-left:0; }
-  .user-cards { flex-direction:column; align-items:center; }
-  .footer-container { flex-direction:column; align-items:center; }
+  .footer-container { flex-direction:row; flex-wrap:wrap; }
 }
 </style>
 </head>
 <body>
-
-<!-- ANNOUNCEMENT -->
-<div id="announcementTicker">Loading announcement...</div>
 
 <!-- HEADER -->
 <header>
@@ -245,15 +229,18 @@ footer {
   <button class="logout-btn" id="logoutBtn2">🚪 Logout</button>
 </div>
 
+<!-- ANNOUNCEMENT -->
+<div id="announcementBox">Loading announcement...</div>
+
 <!-- MAIN -->
 <main>
   <div class="user-cards">
-    <div class="user-card" id="cardAvatar"><img src="https://via.placeholder.com/110"><h3>Avatar</h3></div>
+    <div class="user-card"><img id="cardAvatar" src="https://via.placeholder.com/110"><h3>Avatar</h3></div>
     <div class="user-card"><h3>Name</h3><p id="userName">Loading...</p></div>
-    <div class="user-card"><h3>Role</h3><p id="userRole">Loading...</p></div>
-    <div class="user-card"><h3>Balance</h3><p id="userBalance">0</p></div>
-    <div class="user-card"><h3>Email</h3><p id="userEmail">Loading...</p></div>
-    <div class="user-card"><h3>Phone</h3><p id="userPhone">Loading...</p></div>
+    <div class="user-card"><h3>Role</h3><p class="role" id="userRole">Loading...</p></div>
+    <div class="user-card"><h3>Balance</h3><p class="balance" id="userBalance">0</p></div>
+    <div class="user-card"><h3>Email</h3><p class="email" id="userEmail">Loading...</p></div>
+    <div class="user-card"><h3>Phone</h3><p class="phone" id="userPhone">Loading...</p></div>
   </div>
 </main>
 
@@ -284,9 +271,8 @@ footer {
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-import { getFirestore, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+import { getFirestore, doc, onSnapshot, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-// Firebase config
 const firebaseConfig = {
   apiKey: "AIzaSyAyhjOsIXNAkBglpRllt0OZIOJYpdB_9-8",
   authDomain: "diamond-recharge-f7f59.firebaseapp.com",
@@ -309,9 +295,7 @@ const userRole = document.getElementById("userRole");
 const userBalance = document.getElementById("userBalance");
 const userEmail = document.getElementById("userEmail");
 const userPhone = document.getElementById("userPhone");
-const ticker = document.getElementById("announcementTicker");
-
-let currentUserName = "Guest";
+const announcementBox = document.getElementById("announcementBox");
 
 // Sidebar toggle
 document.querySelector(".menu-toggle").addEventListener("click", ()=>{ sidebar.classList.toggle("active"); });
@@ -325,14 +309,15 @@ document.getElementById("logoutBtn").addEventListener("click", doLogout);
 document.getElementById("logoutBtn2").addEventListener("click", doLogout);
 
 // Load user info
-onAuthStateChanged(auth, (user)=>{
+onAuthStateChanged(auth, async(user)=>{
+  const username = user?.displayName || "Guest";
+  
   if(user){
-    currentUserName = user.displayName || "User";
     const userRef = doc(db,"users",user.uid);
     onSnapshot(userRef,(docSnap)=>{
       const data = docSnap.exists()?docSnap.data():{};
       const avatar = data.avatar || user.photoURL || "https://via.placeholder.com/110";
-      const name = data.name || user.displayName || "Guest User";
+      const name = data.name || username;
       const role = data.role || "User";
       const email = user.email || "-";
       const phone = data.phone || "-";
@@ -340,47 +325,33 @@ onAuthStateChanged(auth, (user)=>{
 
       profilePic.src = avatar;
       cardAvatar.querySelector("img").src = avatar;
-      cardAvatar.querySelector("h3").textContent = "Avatar";
       userName.textContent = name;
       userRole.textContent = role;
       userBalance.textContent = balance;
       userEmail.textContent = email;
       userPhone.textContent = phone;
-
-      loadAnnouncement();
     });
   } else {
     profilePic.src = "https://via.placeholder.com/40";
-    loadAnnouncement();
+    cardAvatar.querySelector("img").src = "https://via.placeholder.com/110";
+    userName.textContent = "Guest";
+    userRole.textContent = "-";
+    userBalance.textContent = "-";
+    userEmail.textContent = "-";
+    userPhone.textContent = "-";
+  }
+
+  // Load announcement from Firestore
+  const announcementRef = doc(db, "settings", "announcement");
+  const announcementSnap = await getDoc(announcementRef);
+  if(announcementSnap.exists()){
+    let text = announcementSnap.data().text || "No announcement";
+    text = text.replace("(Username)", username);
+    announcementBox.textContent = text;
+  } else {
+    announcementBox.textContent = "No announcement";
   }
 });
-
-// Load announcement
-function loadAnnouncement(){
-  const announcementRef = doc(db,"settings","announcement");
-  onSnapshot(announcementRef,(docSnap)=>{
-    if(docSnap.exists()){
-      let text = docSnap.data().text || "Welcome!";
-      text = text.replace("(Username)", currentUserName);
-      ticker.textContent = text;
-      startTickerAnimation();
-    } else {
-      ticker.textContent = "Welcome!";
-    }
-  });
-}
-
-// Simple marquee animation
-function startTickerAnimation(){
-  let pos = ticker.offsetWidth;
-  function animate(){
-    pos--;
-    ticker.style.transform = `translateX(${pos}px)`;
-    if(pos < -ticker.scrollWidth){ pos = ticker.offsetWidth; }
-    requestAnimationFrame(animate);
-  }
-  animate();
-}
 </script>
 
 </body>
