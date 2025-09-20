@@ -6,6 +6,7 @@
 <title>User Dashboard - SARKAR TELECOM</title>
 <link rel="icon" type="image/png" href="images/favicon.png">
 <style>
+/* ================= BODY ================= */
 body {
   margin:0;
   font-family: Arial, Helvetica, sans-serif;
@@ -46,7 +47,15 @@ header {
 .logout-btn:hover { background:#b91c1c; }
 
 /* ================= ANNOUNCEMENT ================= */
-#announcementBox { background:#facc15; color:#000; padding:10px; text-align:center; font-weight:bold; margin-top:60px; font-size:14px; }
+#announcementBox {
+  background:#facc15;
+  color:#000;
+  font-weight:bold;
+  padding:10px;
+  text-align:center;
+  margin-top:60px;
+  font-size:14px;
+}
 
 /* ================= MAIN ================= */
 main { margin-top:10px; padding:15px; flex:1; }
@@ -55,45 +64,69 @@ main { margin-top:10px; padding:15px; flex:1; }
 .user-cards {
   display:flex;
   flex-wrap:wrap;
+  gap:10px;
   justify-content:center;
-  gap:15px;
   margin-top:10px;
 }
 .user-card {
-  background: linear-gradient(135deg,#1e2a38,#0f1824);
-  border-radius: 10px;
-  padding: 15px;
-  width:200px;
+  background:linear-gradient(135deg,#1f2937,#111827);
+  border-radius:12px;
+  padding:10px;
+  flex:1 1 150px;
   text-align:center;
-  height:auto;
+  height:160px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  box-shadow:0 4px 10px rgba(0,0,0,0.5);
+  transition: transform 0.2s;
 }
-.user-card img { width:110px; height:110px; border-radius:50%; border:4px solid #06b6d4; margin-bottom:8px; }
-.user-card h3 { font-size:18px; color:#06b6d4; margin:5px 0; }
-.user-card p { font-size:16px; margin:3px 0; }
-.user-card .role { color:#f97316; }
-.user-card .balance { color:#22c55e; font-weight:bold; }
-.user-card .email { color:#3b82f6; }
-.user-card .phone { color:#facc15; }
+.user-card:hover { transform: translateY(-4px); }
+.user-card img { width:110px; height:110px; border-radius:50%; border:3px solid #06b6d4; object-fit:cover; margin-bottom:8px; }
+.user-card h3 { margin:2px 0; font-size:16px; color:#06b6d4; }
+.user-card p { margin:2px 0; font-size:14px; font-weight:bold; }
+#userName { color:#00ffff; font-size:18px; }  
+#userRole { color:#ff7f00; font-size:16px; }  
+#userBalance { color:#22c55e; font-weight:bold; font-size:16px; } 
+#userEmail { color:#3b82f6; }   
+#userPhone { color:#facc15; }  
 
 /* ================= FOOTER ================= */
-footer { background:#1b2735; padding:20px 15px; }
-.footer-container { display:flex; justify-content:space-between; flex-wrap:wrap; }
-.footer-section { display:flex; flex-direction:column; gap:5px; flex:1; min-width:120px; margin-bottom:15px; }
+footer {
+  background:#1b2735;
+  padding:20px 15px;
+}
+.footer-container {
+  display:flex;
+  justify-content:space-between;
+  flex-wrap:wrap;
+}
+.footer-section {
+  display:flex;
+  flex-direction:column;
+  gap:5px;
+  flex:1;
+  min-width:120px;
+  margin-bottom:15px;
+}
 .footer-section h3 { margin:0 0 5px 0; font-size:16px; }
 .footer-section p, .footer-section a { font-size:14px; color:#fff; text-decoration:none; }
 .footer-section a:hover { color:#06b6d4; }
 
+/* ================= RESPONSIVE FIX ================= */
 @media(max-width:768px){
-  .user-cards { flex-direction:column; align-items:center; }
   .sidebar { left:-250px; }
   .sidebar.active { left:0; }
   main { margin-left:0; }
-  .footer-container { flex-direction:row; flex-wrap:wrap; }
+  .user-cards { flex-direction:row; flex-wrap:wrap; justify-content:center; }
+  .user-card { flex:1 1 120px; height:150px; }
 }
 </style>
 </head>
 <body>
 
+<!-- HEADER -->
 <header>
   <button class="menu-toggle">☰</button>
   <div class="site-title">SARKAR TELECOM</div>
@@ -108,6 +141,7 @@ footer { background:#1b2735; padding:20px 15px; }
   </div>
 </header>
 
+<!-- SIDEBAR -->
 <div class="sidebar" id="sidebar">
   <a href="index.html">🏠 Home</a>
   <a href="dashboard.html">📊 Dashboard</a>
@@ -118,19 +152,22 @@ footer { background:#1b2735; padding:20px 15px; }
   <button class="logout-btn" id="logoutBtn2">🚪 Logout</button>
 </div>
 
+<!-- ANNOUNCEMENT -->
 <div id="announcementBox">Loading announcement...</div>
 
+<!-- MAIN -->
 <main>
   <div class="user-cards">
-    <div class="user-card"><img id="cardAvatar" src="https://via.placeholder.com/110"><h3>Avatar</h3></div>
+    <div class="user-card" id="cardAvatar"><img src="https://via.placeholder.com/110"><h3>Avatar</h3></div>
     <div class="user-card"><h3>Name</h3><p id="userName">Loading...</p></div>
-    <div class="user-card"><h3>Role</h3><p class="role" id="userRole">Loading...</p></div>
-    <div class="user-card"><h3>Balance</h3><p class="balance" id="userBalance">0</p></div>
-    <div class="user-card"><h3>Email</h3><p class="email" id="userEmail">Loading...</p></div>
-    <div class="user-card"><h3>Phone</h3><p class="phone" id="userPhone">Loading...</p></div>
+    <div class="user-card"><h3>Role</h3><p id="userRole">Loading...</p></div>
+    <div class="user-card"><h3>Balance</h3><p id="userBalance">0</p></div>
+    <div class="user-card"><h3>Email</h3><p id="userEmail">Loading...</p></div>
+    <div class="user-card"><h3>Phone</h3><p id="userPhone">Loading...</p></div>
   </div>
 </main>
 
+<!-- FOOTER -->
 <footer>
   <div class="footer-container">
     <div class="footer-section">
@@ -227,7 +264,7 @@ onAuthStateChanged(auth, async(user)=>{
     userPhone.textContent = "-";
   }
 
-  // Announcement
+  // Load announcement
   const announcementRef = doc(db,"settings","announcement");
   const announcementSnap = await getDoc(announcementRef);
   if(announcementSnap.exists()){
@@ -239,6 +276,5 @@ onAuthStateChanged(auth, async(user)=>{
   }
 });
 </script>
-
 </body>
 </html>
