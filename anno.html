@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Firestore Announcement</title>
+  <script type="module">
+    // Firebase SDK import
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    // আপনার Firebase config বসান
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_PROJECT_ID.appspot.com",
+      messagingSenderId: "YOUR_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // Announcement লোড করা
+    async function loadAnnouncement() {
+      try {
+        const announcementRef = doc(db, "settings", "announcement");
+        const docSnap = await getDoc(announcementRef);
+
+        if (docSnap.exists()) {
+          console.log("Data loaded:", docSnap.data()); // Debug
+          document.getElementById("announcement").innerText = docSnap.data().text || "⚠️ টেক্সট নেই";
+        } else {
+          console.warn("❌ No such document!");
+          document.getElementById("announcement").innerText = "❌ Announcement পাওয়া যায়নি";
+        }
+      } catch (error) {
+        console.error("Firestore Error:", error);
+        document.getElementById("announcement").innerText = "🔥 ডাটা লোডে সমস্যা হয়েছে";
+      }
+    }
+
+    // DOM ready হলে রান করবে
+    document.addEventListener("DOMContentLoaded", loadAnnouncement);
+  </script>
+</head>
+<body style="background:#0f1824; color:white; font-family:Arial; text-align:center; padding:20px;">
+  <h2>📢 Announcement</h2>
+  <p id="announcement">⏳ লোড হচ্ছে...</p>
+</body>
+</html>
