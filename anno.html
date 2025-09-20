@@ -1,75 +1,291 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>📢 Announcement</title>
-  <style>
-    body {
-      background: #0f1824;
-      color: #fff;
-      font-family: Arial, sans-serif;
-      text-align: center;
-      padding: 40px;
-    }
-    h2 {
-      color: #00d4ff;
-      margin-bottom: 20px;
-    }
-    #announcement {
-      font-size: 18px;
-      background: #1c293b;
-      padding: 15px 20px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px #00d4ff88;
-      display: inline-block;
-      min-width: 250px;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>User Dashboard - SARKAR TELECOM</title>
+<link rel="icon" type="image/png" href="images/favicon.png">
+<style>
+/* ================= BODY ================= */
+body {
+  margin:0;
+  font-family: Arial, Helvetica, sans-serif;
+  background:#0f1824;
+  color:#fff;
+  display:flex;
+  flex-direction:column;
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+/* ================= HEADER ================= */
+header {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  background:#1b2735;
+  padding:10px 15px;
+  position:fixed;
+  width:100%;
+  top:0;
+  z-index:1000;
+}
+.menu-toggle { font-size:24px; cursor:pointer; background:none; border:none; color:#fff; }
+.site-title { font-weight:bold; font-size:18px; flex:1; text-align:center; }
+.profile { position:relative; cursor:pointer; }
+.profile img { width:40px; height:40px; border-radius:50%; object-fit:cover; border:2px solid #06b6d4; }
+.dropdown { position:absolute; right:0; top:50px; background:#1c2431; color:#fff; min-width:180px; border-radius:8px; display:none; flex-direction:column; box-shadow:0 4px 6px rgba(0,0,0,0.2); z-index:1001; }
+.dropdown a { padding:10px; text-decoration:none; color:#fff; border-bottom:1px solid #2a3445; display:block; }
+.dropdown a:hover { background:#d62828; }
+
+/* ================= SIDEBAR ================= */
+.sidebar { position:fixed; left:-250px; top:0; width:250px; height:100%; background:#1c2431; padding-top:60px; transition:left 0.3s ease; z-index:999; overflow-y:auto; }
+.sidebar.active { left:0; }
+.sidebar a { display:block; padding:12px 20px; text-decoration:none; color:#fff; border-bottom:1px solid #2a3445; font-size:14px; }
+.sidebar a:hover { background:#2f3c52; }
+.logout-btn { display:block; width:90%; margin:15px auto; padding:12px; background:#d62828; color:#fff; border:none; border-radius:8px; font-size:15px; cursor:pointer; text-align:center; }
+.logout-btn:hover { background:#b91c1c; }
+
+/* ================= ANNOUNCEMENT ================= */
+#announcementBox {
+  background: linear-gradient(90deg,#facc15,#f97316,#ef4444);
+  color:#fff;
+  font-weight:bold;
+  padding:8px 0;
+  text-align:center;
+  margin-top:60px;
+  font-size:15px;
+  border-bottom:2px solid #fff;
+  box-shadow:0 2px 8px rgba(0,0,0,0.4);
+}
+#announcementBox marquee {
+  color:#fff;
+  font-size:16px;
+  text-shadow:0 0 6px rgba(0,0,0,0.6);
+}
+
+/* ================= MAIN ================= */
+main { margin-top:10px; padding:15px; flex:1; }
+
+/* ================= USER INFO CARDS ================= */
+.user-cards {
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  justify-content:center;
+  margin-top:10px;
+}
+.user-card {
+  background:linear-gradient(135deg,#1f2937,#111827);
+  border-radius:12px;
+  padding:10px;
+  flex:1 1 150px;
+  text-align:center;
+  height:160px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  box-shadow:0 4px 10px rgba(0,0,0,0.5);
+  transition: transform 0.2s;
+}
+.user-card:hover { transform: translateY(-4px); }
+.user-card img { width:110px; height:110px; border-radius:50%; border:3px solid #06b6d4; object-fit:cover; margin-bottom:8px; }
+.user-card h3 { margin:2px 0; font-size:16px; color:#06b6d4; }
+.user-card p { margin:2px 0; font-size:14px; font-weight:bold; }
+#userName { color:#00ffff; font-size:18px; }  
+#userRole { color:#ff7f00; font-size:16px; }  
+#userBalance { color:#22c55e; font-weight:bold; font-size:16px; } 
+#userEmail { color:#3b82f6; }   
+#userPhone { color:#facc15; }  
+
+/* ================= FOOTER ================= */
+footer {
+  background:#1b2735;
+  padding:20px 15px;
+}
+.footer-container {
+  display:flex;
+  justify-content:space-between;
+  flex-wrap:wrap;
+}
+.footer-section {
+  display:flex;
+  flex-direction:column;
+  gap:5px;
+  flex:1;
+  min-width:120px;
+  margin-bottom:15px;
+}
+.footer-section h3 { margin:0 0 5px 0; font-size:16px; }
+.footer-section p, .footer-section a { font-size:14px; color:#fff; text-decoration:none; }
+.footer-section a:hover { color:#06b6d4; }
+
+/* ================= RESPONSIVE FIX ================= */
+@media(max-width:768px){
+  .sidebar { left:-250px; }
+  .sidebar.active { left:0; }
+  main { margin-left:0; }
+  .user-cards { flex-direction:row; flex-wrap:wrap; justify-content:center; }
+  .user-card { flex:1 1 120px; height:150px; }
+}
+</style>
 </head>
 <body>
-  <h2>📢 Announcement</h2>
-  <p id="announcement">⏳ লোড হচ্ছে...</p>
 
-  <script type="module">
-    // Firebase SDK import
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+<!-- HEADER -->
+<header>
+  <button class="menu-toggle">☰</button>
+  <div class="site-title">SARKAR TELECOM</div>
+  <div class="profile" id="profileMenu">
+    <img id="profilePic" src="https://via.placeholder.com/40" alt="Profile">
+    <div class="dropdown" id="dropdownMenu">
+      <a href="profile.html">⚙️ Profile</a>
+      <a href="order.html">➕ Order</a>
+      <a href="order-history.html">📜 History</a>
+      <a href="#" id="logoutBtn">🚪 Logout</a>
+    </div>
+  </div>
+</header>
 
-    // আপনার Firebase config
-    const firebaseConfig = {
-      apiKey: "AIzaSyAyhjOsIXNAkBglpRllt0OZIOJYpdB_9-8",
-      authDomain: "diamond-recharge-f7f59.firebaseapp.com",
-      projectId: "diamond-recharge-f7f59",
-      storageBucket: "diamond-recharge-f7f59.firebasestorage.app",
-      messagingSenderId: "657717928489",
-      appId: "1:657717928489:web:70431ebc9afb7002d4b238",
-      measurementId: "G-TDK78BQ8SQ"
-    };
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar">
+  <a href="index.html">🏠 Home</a>
+  <a href="dashboard.html">📊 Dashboard</a>
+  <a href="profile.html">⚙️ Profile</a>
+  <a href="order.html">➕ Order</a>
+  <a href="order-history.html">📜 History</a>
+  <a href="admin.html">🛠 Admin Panel</a>
+  <button class="logout-btn" id="logoutBtn2">🚪 Logout</button>
+</div>
 
-    // Firebase init
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+<!-- ANNOUNCEMENT -->
+<div id="announcementBox">
+  <marquee behavior="scroll" direction="left" scrollamount="5" id="announcementText">
+    ⏳ লোড হচ্ছে...
+  </marquee>
+</div>
 
-    // Announcement লোড ফাংশন
-    async function loadAnnouncement() {
-      try {
-        const announcementRef = doc(db, "settings", "announcement");
-        const docSnap = await getDoc(announcementRef);
+<!-- MAIN -->
+<main>
+  <div class="user-cards">
+    <div class="user-card" id="cardAvatar"><img src="https://via.placeholder.com/110"><h3>Avatar</h3></div>
+    <div class="user-card"><h3>Name</h3><p id="userName">Loading...</p></div>
+    <div class="user-card"><h3>Role</h3><p id="userRole">Loading...</p></div>
+    <div class="user-card"><h3>Balance</h3><p id="userBalance">0</p></div>
+    <div class="user-card"><h3>Email</h3><p id="userEmail">Loading...</p></div>
+    <div class="user-card"><h3>Phone</h3><p id="userPhone">Loading...</p></div>
+  </div>
+</main>
 
-        if (docSnap.exists()) {
-          document.getElementById("announcement").innerText =
-            docSnap.data().text || "⚠️ Announcement text নেই";
-        } else {
-          document.getElementById("announcement").innerText = "❌ Announcement পাওয়া যায়নি";
-        }
-      } catch (error) {
-        console.error("Firestore Error:", error);
-        document.getElementById("announcement").innerText = "🔥 ডাটা লোডে সমস্যা হয়েছে";
-      }
-    }
+<!-- FOOTER -->
+<footer>
+  <div class="footer-container">
+    <div class="footer-section">
+      <h3>Support</h3>
+      <a href="support.html">💬 Support</a>
+      <a href="faq.html">❓ FAQ</a>
+      <a href="sitemap.html">🌐 Sitemap</a>
+    </div>
+    <div class="footer-section">
+      <h3>Information</h3>
+      <a href="about.html">ℹ️ About Us</a>
+      <a href="privacy.html">🔒 Privacy Policy</a>
+      <a href="terms.html">📄 Terms & Conditions</a>
+      <a href="refund.html">💎 Refund Policy</a>
+    </div>
+    <div class="footer-section">
+      <h3>SARKAR TELECOM</h3>
+      <p>Fast & Secure Mobile Recharge Service</p>
+      <p>© 2025 All Rights Reserved ®</p>
+    </div>
+  </div>
+</footer>
 
-    document.addEventListener("DOMContentLoaded", loadAnnouncement);
-  </script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+import { getFirestore, doc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAyhjOsIXNAkBglpRllt0OZIOJYpdB_9-8",
+  authDomain: "diamond-recharge-f7f59.firebaseapp.com",
+  projectId: "diamond-recharge-f7f59",
+  storageBucket: "diamond-recharge-f7f59.appspot.com",
+  messagingSenderId: "657717928489",
+  appId: "1:657717928489:web:70431ebc9afb7002d4b238"
+};
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+const sidebar = document.getElementById("sidebar");
+const profileMenu = document.getElementById("profileMenu");
+const dropdownMenu = document.getElementById("dropdownMenu");
+const profilePic = document.getElementById("profilePic");
+const cardAvatar = document.getElementById("cardAvatar");
+const userName = document.getElementById("userName");
+const userRole = document.getElementById("userRole");
+const userBalance = document.getElementById("userBalance");
+const userEmail = document.getElementById("userEmail");
+const userPhone = document.getElementById("userPhone");
+const announcementText = document.getElementById("announcementText");
+
+// Sidebar toggle
+document.querySelector(".menu-toggle").addEventListener("click", ()=>{ sidebar.classList.toggle("active"); });
+
+// Dropdown toggle
+profileMenu.addEventListener("click", ()=>{ dropdownMenu.style.display = dropdownMenu.style.display==="flex"?"none":"flex"; });
+
+// Logout
+function doLogout(){ signOut(auth).then(()=> location.reload()); }
+document.getElementById("logoutBtn").addEventListener("click", doLogout);
+document.getElementById("logoutBtn2").addEventListener("click", doLogout);
+
+// Load user info + announcement
+onAuthStateChanged(auth, async(user)=>{
+  const username = user?.displayName || "Guest";
+
+  if(user){
+    const userRef = doc(db,"users",user.uid);
+    onSnapshot(userRef,(docSnap)=>{
+      const data = docSnap.exists()?docSnap.data():{};
+      const avatar = data.avatar || user.photoURL || "https://via.placeholder.com/110";
+      const name = data.name || username;
+      const role = data.role || "User";
+      const email = user.email || "-";
+      const phone = data.phone || "-";
+      const balance = data.balance || 0;
+
+      profilePic.src = avatar;
+      cardAvatar.querySelector("img").src = avatar;
+      userName.textContent = name;
+      userRole.textContent = role;
+      userBalance.textContent = balance;
+      userEmail.textContent = email;
+      userPhone.textContent = phone;
+    });
+  } else {
+    profilePic.src = "https://via.placeholder.com/40";
+    cardAvatar.querySelector("img").src = "https://via.placeholder.com/110";
+    userName.textContent = "Guest";
+    userRole.textContent = "-";
+    userBalance.textContent = "-";
+    userEmail.textContent = "-";
+    userPhone.textContent = "-";
+  }
+
+  // Load announcement
+  const announcementRef = doc(db,"settings","announcement");
+  const announcementSnap = await getDoc(announcementRef);
+  if(announcementSnap.exists()){
+    let text = announcementSnap.data().text || "No announcement";
+    text = text.replace("(Username)", username);
+    announcementText.textContent = text;
+  } else {
+    announcementText.textContent = "No announcement";
+  }
+});
+</script>
 </body>
 </html>
