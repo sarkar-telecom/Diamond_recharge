@@ -1,236 +1,172 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en" x-data="app()" x-init="init()">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>User Profile - SARKAR TELECOM</title>
-  <link rel="icon" type="image/png" href="images/favicon.png">
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #0f1824;
-      color: #fff;
-    }
-    header {
-      background: #111c2f;
-      padding: 15px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      position: sticky;
-      top: 0;
-      z-index: 1000;
-    }
-    header h1 {
-      margin: 0;
-      font-size: 20px;
-      font-weight: bold;
-      color: #06b6d4;
-    }
-    #menu-toggle {
-      cursor: pointer;
-      font-size: 22px;
-    }
-    #sidebar {
-      width: 240px;
-      background: #162133;
-      height: 100vh;
-      position: fixed;
-      top: 0;
-      left: -240px;
-      transition: 0.3s;
-      padding-top: 60px;
-    }
-    #sidebar.active {
-      left: 0;
-    }
-    #sidebar ul {
-      list-style: none;
-      padding: 0;
-    }
-    #sidebar ul li {
-      padding: 12px 20px;
-      border-bottom: 1px solid #1e2a40;
-    }
-    #sidebar ul li a {
-      color: #fff;
-      text-decoration: none;
-      display: block;
-    }
-    .content {
-      margin-left: 0;
-      padding: 20px;
-      transition: 0.3s;
-    }
-    #sidebar.active ~ .content {
-      margin-left: 240px;
-    }
-    .profile-card {
-      background: #1a2539;
-      padding: 20px;
-      border-radius: 10px;
-      max-width: 600px;
-      margin: auto;
-      box-shadow: 0 0 10px rgba(0,0,0,0.4);
-    }
-    .profile-card img {
-      width: 100px;
-      height: 100px;
-      border-radius: 50%;
-      object-fit: cover;
-      display: block;
-      margin: 0 auto 15px;
-    }
-    .profile-card h2 {
-      text-align: center;
-      margin: 0;
-      color: #06b6d4;
-    }
-    .profile-info {
-      margin: 15px 0;
-      font-size: 14px;
-    }
-    .profile-info p {
-      margin: 8px 0;
-    }
-    form label {
-      display: block;
-      margin: 10px 0 5px;
-    }
-    form input {
-      width: 100%;
-      padding: 8px;
-      border: none;
-      border-radius: 5px;
-      margin-bottom: 10px;
-    }
-    button {
-      background: #06b6d4;
-      color: #fff;
-      padding: 10px 15px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-    button:hover {
-      background: #048ba8;
-    }
-  </style>
-</head>
-<body>
-  <header>
-    <h1>SARKAR TELECOM</h1>
-    <div id="menu-toggle">☰</div>
-  </header>
-
-  <div id="sidebar">
-    <ul>
-      <li><a href="dashboard.html">📊 Dashboard</a></li>
-      <li><a href="order.html">💎 Order</a></li>
-      <li><a href="history.html">📜 History</a></li>
-      <li><a href="profilex.html">👤 Profile</a></li>
-    </ul>
-  </div>
-
-  <div class="content">
-    <div class="profile-card">
-      <img id="user-avatar" src="images/default-avatar.png" alt="Avatar">
-      <h2 id="user-name">Loading...</h2>
-      <div class="profile-info">
-        <p><b>Email:</b> <span id="user-email"></span></p>
-        <p><b>Phone:</b> <span id="user-phone"></span></p>
-        <p><b>Role:</b> <span id="user-role"></span></p>
-        <p><b>Balance:</b> <span id="user-balance"></span></p>
-        <p><b>Tier:</b> <span id="user-tier"></span></p>
-        <p><b>Weekly Diamonds:</b> <span id="user-weeklyDiamonds"></span></p>
-        <p><b>Weekly Total:</b> <span id="user-weeklyTotal"></span></p>
-      </div>
-
-      <form id="profile-form">
-        <label for="name">Name</label>
-        <input type="text" id="name">
-        
-        <label for="email">Email</label>
-        <input type="email" id="email">
-        
-        <label for="phone">Phone</label>
-        <input type="text" id="phone">
-        
-        <label for="avatar">Avatar URL</label>
-        <input type="text" id="avatar">
-        
-        <button type="submit">Update Profile</button>
-      </form>
-    </div>
-  </div>
-
-  <script>
-    // Sidebar toggle
-    document.getElementById("menu-toggle").addEventListener("click", function() {
-      document.getElementById("sidebar").classList.toggle("active");
-    });
-  </script>
-
-  <!-- Firebase -->
+  <title>User Profile - Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.2/firebase-app.js";
+    import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.6.2/firebase-firestore.js";
+    import { getAuth, updatePassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.6.2/firebase-auth.js";
 
+    // Firebase Config
     const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "YOUR_PROJECT.firebaseapp.com",
-      projectId: "YOUR_PROJECT_ID",
+      apiKey: "AIzaSyAyhjOsIXNAkBglpRllt0OZIOJYpdB_9-8",
+      authDomain: "diamond-recharge-f7f59.firebaseapp.com",
+      projectId: "diamond-recharge-f7f59",
+      storageBucket: "diamond-recharge-f7f59.appspot.com",
+      messagingSenderId: "657717928489",
+      appId: "1:657717928489:web:70431ebc9afb7002d4b238",
+      measurementId: "G-TDK78BQ8SQ"
     };
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const auth = getAuth(app);
+    const appFirebase = initializeApp(firebaseConfig);
+    const db = getFirestore(appFirebase);
+    const auth = getAuth(appFirebase);
 
-    // Load User Info
-    onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        const ref = doc(db, "users", user.uid);
-        const snap = await getDoc(ref);
-        if (snap.exists()) {
-          const data = snap.data();
-          document.getElementById("user-avatar").src = data.avatar || "images/default-avatar.png";
-          document.getElementById("user-name").innerText = data.name;
-          document.getElementById("user-email").innerText = data.email;
-          document.getElementById("user-phone").innerText = data.phone;
-          document.getElementById("user-role").innerText = data.role;
-          document.getElementById("user-balance").innerText = data.balance;
-          document.getElementById("user-tier").innerText = data.tier;
-          document.getElementById("user-weeklyDiamonds").innerText = data.weeklyDiamonds;
-          document.getElementById("user-weeklyTotal").innerText = data.weeklyTotal;
+    window.app = () => ({
+      sidebarOpen: false,
+      user: { uid:'', avatar:'', name:'', email:'', phone:'' },
+      newPassword: '',
 
-          // Fill form
-          document.getElementById("name").value = data.name;
-          document.getElementById("email").value = data.email;
-          document.getElementById("phone").value = data.phone;
-          document.getElementById("avatar").value = data.avatar;
-        }
-      }
-    });
-
-    // Update Profile
-    document.getElementById("profile-form").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const user = auth.currentUser;
-      if (user) {
-        const ref = doc(db, "users", user.uid);
-        await updateDoc(ref, {
-          name: document.getElementById("name").value,
-          email: document.getElementById("email").value,
-          phone: document.getElementById("phone").value,
-          avatar: document.getElementById("avatar").value
+      async init() {
+        onAuthStateChanged(auth, async (user) => {
+          if(user){
+            this.user.uid = user.uid;
+            this.user.email = user.email;
+            const snap = await getDoc(doc(db, "users", user.uid));
+            if(snap.exists()) {
+              const data = snap.data();
+              this.user = {
+                ...this.user,
+                name: data.name || '',
+                phone: data.phone || '',
+                avatar: data.avatar || ''
+              };
+            }
+          }
         });
-        alert("Profile Updated!");
-        location.reload();
+      },
+
+      async updateProfile(){
+        try{
+          await updateDoc(doc(db,"users",this.user.uid), {
+            name: this.user.name,
+            phone: this.user.phone,
+            avatar: this.user.avatar
+          });
+          alert("Profile updated successfully!");
+        } catch(e){ alert(e.message) }
+      },
+
+      async changePassword(){
+        try{
+          if(!this.newPassword) return alert("Enter new password");
+          await updatePassword(auth.currentUser, this.newPassword);
+          alert("Password updated!");
+          this.newPassword = '';
+        } catch(e){ alert(e.message) }
       }
     });
   </script>
+</head>
+<body class="bg-gray-100 font-sans" x-data="{ sidebarOpen: false }">
+
+  <!-- Sidebar -->
+  <aside class="fixed inset-y-0 left-0 w-64 bg-white shadow-lg z-30 transform transition-transform duration-300 lg:translate-x-0" 
+         :class="{'-translate-x-full': !sidebarOpen, 'translate-x-0': sidebarOpen}">
+    <div class="p-6 text-2xl font-bold text-blue-500">
+      Dashboard
+    </div>
+    <nav class="mt-10">
+      <a href="dashboard.html" class="block px-6 py-2 text-gray-700 hover:bg-blue-50 rounded">Dashboard</a>
+      <a href="profilex.html" class="block px-6 py-2 text-gray-700 hover:bg-blue-50 rounded">Profile</a>
+      <a href="#" class="block px-6 py-2 text-gray-700 hover:bg-blue-50 rounded">User Request</a>
+      <a href="#" class="block px-6 py-2 text-gray-700 hover:bg-blue-50 rounded">History</a>
+      <form method="POST" action="/logout" class="px-6 py-2">
+        <button type="submit" class="w-full text-left text-red-500 hover:text-red-600">Logout</button>
+      </form>
+    </nav>
+  </aside>
+
+  <!-- Backdrop -->
+  <div class="fixed inset-0 bg-black bg-opacity-50 z-20 lg:hidden"
+       x-show="sidebarOpen" @click="sidebarOpen = false"
+       x-transition.opacity></div>
+
+  <!-- Main -->
+  <div class="flex-1 flex flex-col overflow-hidden lg:ml-64" x-data="app()" x-init="init()">
+
+    <!-- Header -->
+    <header class="flex items-center justify-between p-4 bg-white shadow-md">
+      <div class="flex items-center">
+        <button class="lg:hidden text-gray-600 mr-4" @click="sidebarOpen = true">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M4 6h16M4 12h16M4 18h16"/>
+          </svg>
+        </button>
+        <h1 class="text-xl font-semibold text-gray-700">Profile</h1>
+      </div>
+
+      <!-- Dropdown -->
+      <div class="relative" x-data="{ open: false }">
+        <button @click="open = !open" class="flex items-center space-x-2 focus:outline-none">
+          <span x-text="user.name || 'USER'"></span>
+          <img :src="user.avatar || '/images/profile/pm-1751766108059-cmp.webp'" class="w-10 h-10 rounded-full" alt="Avatar">
+        </button>
+        <div x-show="open" @click.away="open = false" x-transition
+             class="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-md py-2">
+          <a href="profilex.html" class="block px-4 py-2 text-gray-600 hover:text-blue-600">Profile</a>
+          <form method="POST" action="/logout">
+            <button type="submit" class="block px-4 py-2 text-red-500 hover:text-red-600 w-full text-left">Logout</button>
+          </form>
+        </div>
+      </div>
+    </header>
+
+    <!-- Profile Form -->
+    <main class="p-6">
+      <div class="bg-white shadow rounded-xl p-6 max-w-lg mx-auto">
+        <h2 class="text-xl font-semibold mb-4">Your Profile</h2>
+        <div class="flex flex-col items-center mb-4">
+          <img :src="user.avatar || '/images/profile/pm-1751766108059-cmp.webp'" class="w-24 h-24 rounded-full mb-2">
+        </div>
+        <div class="space-y-4">
+          <div>
+            <label>Avatar URL</label>
+            <input type="text" x-model="user.avatar" class="border px-4 py-2 w-full rounded">
+          </div>
+          <div>
+            <label>Name</label>
+            <input type="text" x-model="user.name" class="border px-4 py-2 w-full rounded">
+          </div>
+          <div>
+            <label>Email</label>
+            <input type="email" x-model="user.email" disabled class="border px-4 py-2 w-full rounded bg-gray-100">
+          </div>
+          <div>
+            <label>Phone</label>
+            <input type="text" x-model="user.phone" class="border px-4 py-2 w-full rounded">
+          </div>
+          <div>
+            <label>New Password</label>
+            <input type="password" x-model="newPassword" class="border px-4 py-2 w-full rounded" placeholder="Enter new password">
+            <button @click="changePassword()" class="mt-2 bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-600">Update Password</button>
+          </div>
+          <div class="text-center">
+            <button @click="updateProfile()" class="bg-green-500 text-white px-6 py-2 rounded hover:bg-green-600">Update Profile</button>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer class="p-4 bg-white shadow mt-auto text-center text-gray-500">
+      &copy; 2025 SARKAR TELECOM. All rights reserved.
+    </footer>
+  </div>
+
 </body>
 </html>
