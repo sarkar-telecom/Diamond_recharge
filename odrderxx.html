@@ -5,110 +5,44 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sarkar Telecom - Order Page</title>
 <style>
-body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background-color: #1a2a43;
-    color: #ecf0f1;
-    overflow-x: hidden;
-    font-size: 14px;
-}
-
-/* Loading overlay */
-.loading-overlay {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background-color: rgba(0,0,0,0.7);
-    display: flex; justify-content: center; align-items: center;
-    z-index: 9999; color: white; font-size: 20px;
-}
-
-/* Sidebar */
-.sidebar-overlay {
-    position: fixed;
-    top:0; left:0; width:100%; height:100%;
-    background-color: rgba(26,42,67,0.95);
-    display: none;
-    z-index: 900;
-}
-.sidebar-overlay.active { display:block; }
-
-.app-container { display: flex; flex-direction: row; min-height: 100vh; }
-
-.sidebar {
-    background-color: #1a2a43;
-    width: 200px; position: fixed; top: 0; left: 0; bottom: 0;
-    padding: 10px; box-sizing: border-box;
-    transform: translateX(-100%); transition: transform 0.3s ease-in-out;
-    z-index: 1000; border-right:1px solid #1a2a43;
-}
-.sidebar.active { transform: translateX(0); }
-.sidebar-header { display:flex; align-items:center; padding:0 10px; margin-bottom:20px; }
-.sidebar-header h2 { font-size:24px; font-weight:bold; color:#3498db; flex-grow:1; }
-.back-arrow { color:#ecf0f1; font-size:24px; cursor:pointer; }
-
-.nav-list { list-style:none; padding:0; margin:0; }
-.nav-item { display:flex; align-items:center; color:#ecf0f1; padding:12px 10px; margin-bottom:5px; border-radius:5px; cursor:pointer; transition:0.2s; }
-.nav-item:hover, .nav-item.active { background-color:#2c3e50; }
-.nav-item i { margin-right:15px; }
-
-/* Header */
-.header {
-    display:flex; justify-content:space-between; align-items:center;
-    padding: 5px 10px; 
-    background-color:#1a2a43;
-    box-sizing:border-box; position:sticky; top:0; z-index:50;
-    border-bottom:1px solid #1a2a43;
-}
-.header .menu-icon { font-size:24px; cursor:pointer; margin-right:10px; }
-.header-title { font-size:18px; flex-grow:1; font-weight: normal; }
-.profile-wrapper { position: relative; }
-.profile-icon { width:40px; height:40px; border-radius:50%; cursor:pointer; }
-
-/* Dropdown */
-.dropdown-menu {
-    position:absolute; top:50px; right:0; background-color:#2c3e50;
-    border-radius:5px; box-shadow:0 4px 8px rgba(0,0,0,0.3);
-    display:none; padding:10px 0; z-index:100;
-}
-.dropdown-menu.show { display:block; }
-.dropdown-item { display:flex; align-items:center; padding:10px 20px; color:#ecf0f1; cursor:pointer; transition:0.2s; }
-.dropdown-item:hover { background-color:#34495e; }
-.dropdown-item i { margin-right:10px; }
-
-/* Main content */
-.page-frame { 
-    background-color: #1a2a43; padding:20px; margin-left:200px;
-    min-height: 100vh; box-sizing: border-box;
-    display: flex; flex-direction: column; flex-grow: 1; 
-}
-.content { background-color:#f0f2f5; color:#333; padding:20px; border-radius:10px; flex-grow:1; }
-
-/* Stats */
-.stats-card { background-color:#fff; padding:15px; border-radius:10px; text-align:center; margin-bottom:20px; }
-.stats-card span { display:block; }
-
-/* Diamond selection */
-.diamond-option { display:inline-block; padding:10px 15px; margin:5px; border-radius:8px; border:1px solid #ccc; cursor:pointer; transition:0.2s; }
-.diamond-option.selected { background-color:#27ae60; color:#fff; border-color:#27ae60; }
-
-/* Button */
-button { padding:10px 20px; border:none; border-radius:5px; cursor:pointer; background-color:#3498db; color:#fff; transition:0.3s; }
-button:hover { background-color:#2980b9; }
-
-/* Footer */
-.footer {
-    text-align:center; padding:10px 0; color:#888; font-size:16px;
-    background-color:#1a2a43; border-top:1px solid #1a2a43;
-    margin-top:10px;
-}
-
-/* Responsive */
-@media(max-width:768px){
-    .page-frame { margin-left:0; padding:10px; }
-    .sidebar { transform: translateX(-100%); position: fixed; z-index:999; }
-    .sidebar.active { transform: translateX(0); }
-    .sidebar-overlay { display:none; }
-}
+body { margin:0; font-family:Arial,sans-serif; background:#1a2a43; color:#ecf0f1; font-size:14px; overflow-x:hidden;}
+.loading-overlay {position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);display:flex;justify-content:center;align-items:center;z-index:9999;color:#fff;font-size:20px;}
+.sidebar-overlay {position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(26,42,67,0.95);display:none;z-index:900;}
+.sidebar-overlay.active {display:block;}
+.app-container {display:flex;flex-direction:row;min-height:100vh;}
+.sidebar {background:#1a2a43;width:200px;position:fixed;top:0;left:0;bottom:0;padding:10px;box-sizing:border-box;transform:translateX(-100%);transition:transform 0.3s ease-in-out;z-index:1000;border-right:1px solid #1a2a43;}
+.sidebar.active {transform:translateX(0);}
+.sidebar-header {display:flex;align-items:center;padding:0 10px;margin-bottom:20px;}
+.sidebar-header h2 {font-size:24px;font-weight:bold;color:#3498db;flex-grow:1;}
+.back-arrow {color:#ecf0f1;font-size:24px;cursor:pointer;}
+.nav-list {list-style:none;padding:0;margin:0;}
+.nav-item {display:flex;align-items:center;color:#ecf0f1;padding:12px 10px;margin-bottom:5px;border-radius:5px;cursor:pointer;transition:0.2s;}
+.nav-item:hover, .nav-item.active {background-color:#2c3e50;}
+.nav-item i {margin-right:15px;}
+.header {display:flex;justify-content:space-between;align-items:center;padding:5px 10px;background:#1a2a43;box-sizing:border-box;position:sticky;top:0;z-index:50;border-bottom:1px solid #1a2a43;}
+.header .menu-icon {font-size:24px;cursor:pointer;margin-right:10px;}
+.header-title {font-size:18px;flex-grow:1;font-weight: normal;}
+.profile-wrapper {position: relative;}
+.profile-icon {width:40px;height:40px;border-radius:50%;cursor:pointer;}
+.dropdown-menu {position:absolute;top:50px;right:0;background:#2c3e50;border-radius:5px;box-shadow:0 4px 8px rgba(0,0,0,0.3);display:none;padding:10px 0;z-index:100;}
+.dropdown-menu.show {display:block;}
+.dropdown-item {display:flex;align-items:center;padding:10px 20px;color:#ecf0f1;cursor:pointer;transition:0.2s;}
+.dropdown-item:hover {background-color:#34495e;}
+.page-frame {background:#1a2a43;padding:20px;margin-left:200px;min-height:100vh;box-sizing:border-box;display:flex;flex-direction:column;flex-grow:1;}
+.content {background:#f0f2f5;color:#333;padding:20px;border-radius:10px;flex-grow:1;}
+.stats-card {background:#fff;padding:15px;border-radius:10px;text-align:center;margin-bottom:20px;}
+.stats-card span {display:block;}
+.diamond-option {display:inline-block;padding:10px 15px;margin:5px;border-radius:8px;border:1px solid #ccc;cursor:pointer;transition:0.2s;}
+.diamond-option.selected {background-color:#27ae60;color:#fff;border-color:#27ae60;}
+button {padding:10px 20px;border:none;border-radius:5px;cursor:pointer;background-color:#3498db;color:#fff;transition:0.3s;}
+button:hover {background-color:#2980b9;}
+.footer {text-align:center;padding:10px 0;color:#888;font-size:16px;background:#1a2a43;border-top:1px solid #1a2a43;margin-top:10px;}
+.login-container {display:flex;justify-content:center;align-items:center;position:fixed;top:0;left:0;width:100%;height:100%;background:#1a2a43;z-index:10000;}
+.login-box {background:#2c3e50;padding:20px;border-radius:10px;text-align:center;box-shadow:0 4px 15px rgba(0,0,0,0.5);width:90%;max-width:400px;}
+.login-box input {width:calc(100%-22px);padding:11px;margin-bottom:15px;border:1px solid #4a6681;background:#34495e;color:#ecf0f1;border-radius:5px;}
+.login-box button {width:100%;padding:12px;border:none;background:#3498db;color:#fff;border-radius:5px;cursor:pointer;font-size:16px;transition:0.3s;}
+.login-box button:hover {background:#2980b9;}
+@media(max-width:768px){.page-frame{margin-left:0;padding:10px;}.sidebar{transform:translateX(-100%);position:fixed;z-index:999;}.sidebar.active{transform:translateX(0);}.sidebar-overlay{display:none;}}
 </style>
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/10.6.2/firebase-app.js"></script>
@@ -120,13 +54,18 @@ button:hover { background-color:#2980b9; }
 <div class="loading-overlay" id="loadingOverlay">Loading...</div>
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
+<div class="login-container" id="loginContainer">
+    <div class="login-box">
+        <h2>Login to Sarkar Telecom</h2>
+        <input type="email" id="loginEmail" placeholder="Email">
+        <input type="password" id="loginPassword" placeholder="Password">
+        <button id="loginBtn">Login</button>
+    </div>
+</div>
+
 <div class="app-container" id="appContainer">
-    <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <h2>Main Dashboard</h2>
-            <i class="material-icons back-arrow" id="close-sidebar">arrow_back</i>
-        </div>
+        <div class="sidebar-header"><h2>Main Dashboard</h2><i class="material-icons back-arrow" id="closeSidebar">arrow_back</i></div>
         <ul class="nav-list">
             <li class="nav-item active"><i class="material-icons">dashboard</i><span>Dashboard</span></li>
             <li class="nav-item"><i class="material-icons">person</i><span>Profile</span></li>
@@ -138,18 +77,17 @@ button:hover { background-color:#2980b9; }
 
     <div class="page-frame">
         <header class="header">
-            <i class="material-icons menu-icon" id="open-sidebar">menu</i>
+            <i class="material-icons menu-icon" id="openSidebar">menu</i>
             <span class="header-title">Create User Request</span>
             <div class="profile-wrapper">
-                <img src="" alt="Profile" class="profile-icon" id="profileIcon">
+                <img src="" id="profileIcon" class="profile-icon">
                 <div class="dropdown-menu" id="dropdownMenu">
-                    <div class="dropdown-item" id="dropdownLogoutBtn"><i class="material-icons">logout</i><span>Logout</span></div>
+                    <div class="dropdown-item" id="dropdownLogoutBtn"><i class="material-icons">logout</i> Logout</div>
                 </div>
             </div>
         </header>
 
         <div class="content">
-            <!-- Stats -->
             <div class="stats-card">
                 <span>Weekly End User Requested Diamonds</span>
                 <span id="weeklyEndUser">0</span>
@@ -158,15 +96,12 @@ button:hover { background-color:#2980b9; }
                 <span>Current Bonus</span>
                 <span id="currentBonus">0%</span>
             </div>
-
-            <!-- Diamond Selection -->
             <div>
                 <span>Select Diamond Amount:</span>
                 <div id="diamondOptions"></div>
                 <button id="confirmBtn" style="margin-top:15px;">Confirm</button>
             </div>
         </div>
-
         <footer class="footer">© SARKAR TELECOM 2025-2026 ALL RIGHTS RESERVED ®</footer>
     </div>
 </div>
@@ -186,12 +121,19 @@ const db = firebase.firestore();
 
 const loadingOverlay = document.getElementById('loadingOverlay');
 const appContainer = document.getElementById('appContainer');
+const loginContainer = document.getElementById('loginContainer');
+const loginBtn = document.getElementById('loginBtn');
+const loginEmail = document.getElementById('loginEmail');
+const loginPassword = document.getElementById('loginPassword');
+
 const profileIcon = document.getElementById('profileIcon');
 const dropdownMenu = document.getElementById('dropdownMenu');
-const openSidebarBtn = document.getElementById('open-sidebar');
-const closeSidebarBtn = document.getElementById('close-sidebar');
+const openSidebarBtn = document.getElementById('openSidebar');
+const closeSidebarBtn = document.getElementById('closeSidebar');
 const sidebar = document.getElementById('sidebar');
 const sidebarOverlay = document.getElementById('sidebarOverlay');
+const logoutBtn = document.getElementById('logoutBtn');
+const dropdownLogoutBtn = document.getElementById('dropdownLogoutBtn');
 
 const weeklyEndUserElem = document.getElementById('weeklyEndUser');
 const currentBonusElem = document.getElementById('currentBonus');
@@ -199,25 +141,13 @@ const diamondOptionsDiv = document.getElementById('diamondOptions');
 const confirmBtn = document.getElementById('confirmBtn');
 
 let selectedDiamond = null;
-
-// Render diamond buttons
 [10,50,100,200,500,1000,2000,5000,10000,20000].forEach(amount=>{
     const div = document.createElement('div');
-    div.className = 'diamond-option';
-    div.textContent = amount+' Diamond';
-    div.addEventListener('click',()=>{
-        document.querySelectorAll('.diamond-option').forEach(el=>el.classList.remove('selected'));
-        div.classList.add('selected');
-        selectedDiamond = amount;
-    });
+    div.className = 'diamond-option'; div.textContent=amount+' Diamond';
+    div.addEventListener('click',()=>{ document.querySelectorAll('.diamond-option').forEach(el=>el.classList.remove('selected')); div.classList.add('selected'); selectedDiamond=amount; });
     diamondOptionsDiv.appendChild(div);
 });
-
-// Confirm button
-confirmBtn.addEventListener('click',()=>{
-    if(!selectedDiamond) { alert("Select a diamond amount first."); return; }
-    alert("You requested "+selectedDiamond+" diamonds!");
-});
+confirmBtn.addEventListener('click',()=>{ if(!selectedDiamond){alert("Select a diamond amount first.");return;} alert("You requested "+selectedDiamond+" diamonds!"); });
 
 // Sidebar toggle
 openSidebarBtn.addEventListener('click',()=>{ sidebar.classList.add('active'); sidebarOverlay.classList.add('active'); });
@@ -228,15 +158,23 @@ sidebarOverlay.addEventListener('click',()=>{ sidebar.classList.remove('active')
 profileIcon.addEventListener('click',e=>{ e.stopPropagation(); dropdownMenu.classList.toggle('show'); });
 document.addEventListener('click',()=>{ dropdownMenu.classList.remove('show'); });
 
-// Logout
-document.getElementById('logoutBtn').addEventListener('click',()=>{ auth.signOut(); });
-document.getElementById('dropdownLogoutBtn').addEventListener('click',()=>{ auth.signOut(); });
+// Login
+loginBtn.addEventListener('click',()=>{
+    const email=loginEmail.value,password=loginPassword.value;
+    if(email && password){
+        auth.signInWithEmailAndPassword(email,password).catch(err=>alert(err.message));
+    }else alert("Enter email and password.");
+});
 
-// Firebase auth state
-auth.onAuthStateChanged(async (user)=>{
+// Logout
+logoutBtn.addEventListener('click',()=>auth.signOut());
+dropdownLogoutBtn.addEventListener('click',()=>auth.signOut());
+
+// Auth state
+auth.onAuthStateChanged(async user=>{
     if(user){
+        loginContainer.style.display='none';
         appContainer.style.display='flex';
-        // Load profile avatar
         const doc = await db.collection("users").doc(user.uid).get();
         const data = doc.exists ? doc.data() : {};
         profileIcon.src = data.avatar || "https://i.ibb.co/L95nK3B/profile-pic.jpg";
@@ -248,9 +186,9 @@ auth.onAuthStateChanged(async (user)=>{
 
         loadingOverlay.style.display='none';
     }else{
+        loginContainer.style.display='flex';
         appContainer.style.display='none';
         loadingOverlay.style.display='none';
-        alert("You are not logged in!");
     }
 });
 </script>
