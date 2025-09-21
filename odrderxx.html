@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sarkar Telecom - Order Create</title>
+<title>Sarkar Telecom - Order Page</title>
 <style>
 body {
     margin: 0;
@@ -14,13 +14,6 @@ body {
     font-size: 14px;
 }
 
-/* Sidebar overlay */
-.sidebar-overlay {
-    position: fixed; top:0; left:0; width:100%; height:100%;
-    background-color: rgba(26,42,67,0.95);
-    display: none; z-index: 900;
-}
-
 /* Loading overlay */
 .loading-overlay {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -29,13 +22,21 @@ body {
     z-index: 9999; color: white; font-size: 20px;
 }
 
-/* Container */
-.app-container { display: none; flex-direction: row; min-height: 100vh; }
-
 /* Sidebar */
+.sidebar-overlay {
+    position: fixed;
+    top:0; left:0; width:100%; height:100%;
+    background-color: rgba(26,42,67,0.95);
+    display: none;
+    z-index: 900;
+}
+.sidebar-overlay.active { display:block; }
+
+.app-container { display: flex; flex-direction: row; min-height: 100vh; }
+
 .sidebar {
     background-color: #1a2a43;
-    width: 180px; position: fixed; top: 0; left: 0; bottom: 0;
+    width: 200px; position: fixed; top: 0; left: 0; bottom: 0;
     padding: 10px; box-sizing: border-box;
     transform: translateX(-100%); transition: transform 0.3s ease-in-out;
     z-index: 1000; border-right:1px solid #1a2a43;
@@ -44,15 +45,16 @@ body {
 .sidebar-header { display:flex; align-items:center; padding:0 10px; margin-bottom:20px; }
 .sidebar-header h2 { font-size:24px; font-weight:bold; color:#3498db; flex-grow:1; }
 .back-arrow { color:#ecf0f1; font-size:24px; cursor:pointer; }
+
 .nav-list { list-style:none; padding:0; margin:0; }
-.nav-item { display:flex; align-items:center; color:#ecf0f1; padding:15px 10px; margin-bottom:5px; border-radius:5px; cursor:pointer; transition:0.2s; }
+.nav-item { display:flex; align-items:center; color:#ecf0f1; padding:12px 10px; margin-bottom:5px; border-radius:5px; cursor:pointer; transition:0.2s; }
 .nav-item:hover, .nav-item.active { background-color:#2c3e50; }
 .nav-item i { margin-right:15px; }
 
 /* Header */
 .header {
     display:flex; justify-content:space-between; align-items:center;
-    padding: 2px 5px 12px 5px;
+    padding: 5px 10px; 
     background-color:#1a2a43;
     box-sizing:border-box; position:sticky; top:0; z-index:50;
     border-bottom:1px solid #1a2a43;
@@ -73,47 +75,45 @@ body {
 .dropdown-item:hover { background-color:#34495e; }
 .dropdown-item i { margin-right:10px; }
 
-/* Content */
-.content {
-    background-color:#1f2c4a; color:#ecf0f1; padding:20px; border-radius:10px; flex-grow:1;
+/* Main content */
+.page-frame { 
+    background-color: #1a2a43; padding:20px; margin-left:200px;
+    min-height: 100vh; box-sizing: border-box;
+    display: flex; flex-direction: column; flex-grow: 1; 
 }
-.stats-card { background-color:#2c3e50; padding:15px; margin-bottom:15px; border-radius:10px; text-align:center; }
+.content { background-color:#f0f2f5; color:#333; padding:20px; border-radius:10px; flex-grow:1; }
+
+/* Stats */
+.stats-card { background-color:#fff; padding:15px; border-radius:10px; text-align:center; margin-bottom:20px; }
 .stats-card span { display:block; }
-.stats-card .value { font-size:20px; font-weight:bold; margin-top:5px; color:#3498db; }
 
-.order-form-card { background-color:#2c3e50; padding:20px; border-radius:10px; margin-top:15px; }
-.order-form-card h3 { margin-top:0; margin-bottom:15px; color:#ecf0f1; }
-.order-form-card input[type="text"] {
-    width:100%; padding:10px; border-radius:5px; border:1px solid #4a6681; background:#34495e; color:#ecf0f1; margin-bottom:15px;
-}
-.diamond-selection { display:grid; grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); gap:10px; margin-bottom:15px; }
-.diamond-option { border:1px solid #4a6681; padding:10px; border-radius:5px; text-align:center; cursor:pointer; transition:0.2s; }
-.diamond-option.selected { background-color:#3498db; color:#fff; border-color:#3498db; }
+/* Diamond selection */
+.diamond-option { display:inline-block; padding:10px 15px; margin:5px; border-radius:8px; border:1px solid #ccc; cursor:pointer; transition:0.2s; }
+.diamond-option.selected { background-color:#27ae60; color:#fff; border-color:#27ae60; }
 
-/* Buttons */
-.btn { width:100%; padding:12px; border:none; border-radius:5px; font-size:16px; cursor:pointer; color:#fff; }
-.btn-confirm { background-color:#27ae60; }
-.btn-confirm:hover { background-color:#2ecc71; }
+/* Button */
+button { padding:10px 20px; border:none; border-radius:5px; cursor:pointer; background-color:#3498db; color:#fff; transition:0.3s; }
+button:hover { background-color:#2980b9; }
 
 /* Footer */
 .footer {
-    text-align:center; padding:5px 0; color:#888; font-size:16px;
+    text-align:center; padding:10px 0; color:#888; font-size:16px;
     background-color:#1a2a43; border-top:1px solid #1a2a43;
     margin-top:10px;
 }
 
 /* Responsive */
-@media (min-width: 768px){
-    .app-container { flex-direction: row; }
-    .sidebar { transform: translateX(0); position: relative; }
-    .header .menu-icon, .sidebar-header .back-arrow { display:none; }
-    .sidebar-overlay { display:none !important; }
+@media(max-width:768px){
+    .page-frame { margin-left:0; padding:10px; }
+    .sidebar { transform: translateX(-100%); position: fixed; z-index:999; }
+    .sidebar.active { transform: translateX(0); }
+    .sidebar-overlay { display:none; }
 }
 </style>
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-<script src="https://www.gstatic.com/firebasejs/8.1.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.1.0/firebase-auth.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.1.0/firebase-firestore.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.6.2/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.6.2/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.6.2/firebase-firestore.js"></script>
 </head>
 <body>
 
@@ -121,29 +121,29 @@ body {
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
 <div class="app-container" id="appContainer">
-
+    <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <h2>Main Dashboard</h2>
             <i class="material-icons back-arrow" id="close-sidebar">arrow_back</i>
         </div>
         <ul class="nav-list">
-            <li class="nav-item active" data-page="order"><i class="material-icons">dashboard</i><span>Order Create</span></li>
-            <li class="nav-item" data-page="profile"><i class="material-icons">person</i><span>Profile</span></li>
+            <li class="nav-item active"><i class="material-icons">dashboard</i><span>Dashboard</span></li>
+            <li class="nav-item"><i class="material-icons">person</i><span>Profile</span></li>
             <li class="nav-item"><i class="material-icons">card_giftcard</i><span>User Request</span></li>
             <li class="nav-item"><i class="material-icons">history</i><span>History</span></li>
-            <li class="nav-item" id="logout-sidebar-btn"><i class="material-icons">logout</i><span>Logout</span></li>
+            <li class="nav-item" id="logoutBtn"><i class="material-icons">logout</i><span>Logout</span></li>
         </ul>
     </div>
 
     <div class="page-frame">
         <header class="header">
             <i class="material-icons menu-icon" id="open-sidebar">menu</i>
-            <span class="header-title">Order Create - Dashboard</span>
+            <span class="header-title">Create User Request</span>
             <div class="profile-wrapper">
-                <img src="" alt="Profile" class="profile-icon" id="profile-icon">
-                <div class="dropdown-menu" id="dropdown-menu">
-                    <div class="dropdown-item" id="logout-dropdown-btn"><i class="material-icons">logout</i><span>Logout</span></div>
+                <img src="" alt="Profile" class="profile-icon" id="profileIcon">
+                <div class="dropdown-menu" id="dropdownMenu">
+                    <div class="dropdown-item" id="dropdownLogoutBtn"><i class="material-icons">logout</i><span>Logout</span></div>
                 </div>
             </div>
         </header>
@@ -152,23 +152,21 @@ body {
             <!-- Stats -->
             <div class="stats-card">
                 <span>Weekly End User Requested Diamonds</span>
-                <span class="value" id="weeklyEndUser">0</span>
+                <span id="weeklyEndUser">0</span>
             </div>
             <div class="stats-card">
-                <span>Current Bonus Amount</span>
-                <span class="value" id="currentBonus">0%</span>
+                <span>Current Bonus</span>
+                <span id="currentBonus">0%</span>
             </div>
 
-            <!-- Order Form -->
-            <div class="order-form-card">
-                <h3>Create User Request</h3>
-                <input type="text" id="phoneInput" placeholder="Transferee Phone / ID">
-                <div class="diamond-selection" id="diamondSelection">
-                    <!-- diamond buttons will be added by JS -->
-                </div>
-                <button class="btn btn-confirm" id="confirmBtn">Confirm</button>
+            <!-- Diamond Selection -->
+            <div>
+                <span>Select Diamond Amount:</span>
+                <div id="diamondOptions"></div>
+                <button id="confirmBtn" style="margin-top:15px;">Confirm</button>
             </div>
         </div>
+
         <footer class="footer">© SARKAR TELECOM 2025-2026 ALL RIGHTS RESERVED ®</footer>
     </div>
 </div>
@@ -183,50 +181,77 @@ const firebaseConfig = {
   appId: "1:657717928489:web:70431ebc9afb7002d4b238"
 };
 firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
 const db = firebase.firestore();
 
-// Sidebar & Dropdown
-const sidebar = document.getElementById('sidebar');
-const sidebarOverlay = document.getElementById('sidebarOverlay');
+const loadingOverlay = document.getElementById('loadingOverlay');
+const appContainer = document.getElementById('appContainer');
+const profileIcon = document.getElementById('profileIcon');
+const dropdownMenu = document.getElementById('dropdownMenu');
 const openSidebarBtn = document.getElementById('open-sidebar');
 const closeSidebarBtn = document.getElementById('close-sidebar');
-const profileIcon = document.getElementById('profile-icon');
-const dropdownMenu = document.getElementById('dropdown-menu');
-const logoutBtns = [document.getElementById('logout-sidebar-btn'), document.getElementById('logout-dropdown-btn')];
+const sidebar = document.getElementById('sidebar');
+const sidebarOverlay = document.getElementById('sidebarOverlay');
 
-openSidebarBtn.addEventListener('click',()=>{ sidebar.classList.add('active'); sidebarOverlay.style.display='block'; });
-closeSidebarBtn.addEventListener('click',()=>{ sidebar.classList.remove('active'); sidebarOverlay.style.display='none'; });
-sidebarOverlay.addEventListener('click',()=>{ sidebar.classList.remove('active'); sidebarOverlay.style.display='none'; });
-profileIcon.addEventListener('click',e=>{ e.stopPropagation(); dropdownMenu.classList.toggle('show'); });
-document.addEventListener('click',()=>{ dropdownMenu.classList.remove('show'); });
-
-// Firebase stats load
 const weeklyEndUserElem = document.getElementById('weeklyEndUser');
 const currentBonusElem = document.getElementById('currentBonus');
-db.collection("stats").doc("orderStats").onSnapshot(doc=>{
-    const data = doc.data() || {};
-    weeklyEndUserElem.textContent = data.weeklyEndUser || 0;
-    currentBonusElem.textContent = (data.currentBonus||0) + "%";
-});
+const diamondOptionsDiv = document.getElementById('diamondOptions');
+const confirmBtn = document.getElementById('confirmBtn');
 
-// Diamond selection
-const diamondSelectionDiv = document.getElementById('diamondSelection');
-const diamondAmounts = [10,50,100,200,500,1000,2000,5000,10000,20000];
-diamondAmounts.forEach(amount=>{
-    const btn = document.createElement('div');
-    btn.className='diamond-option';
-    btn.textContent=amount + " Diamond";
-    btn.addEventListener('click',()=>{ document.querySelectorAll('.diamond-option').forEach(d=>d.classList.remove('selected')); btn.classList.add('selected'); });
-    diamondSelectionDiv.appendChild(btn);
+let selectedDiamond = null;
+
+// Render diamond buttons
+[10,50,100,200,500,1000,2000,5000,10000,20000].forEach(amount=>{
+    const div = document.createElement('div');
+    div.className = 'diamond-option';
+    div.textContent = amount+' Diamond';
+    div.addEventListener('click',()=>{
+        document.querySelectorAll('.diamond-option').forEach(el=>el.classList.remove('selected'));
+        div.classList.add('selected');
+        selectedDiamond = amount;
+    });
+    diamondOptionsDiv.appendChild(div);
 });
 
 // Confirm button
-document.getElementById('confirmBtn').addEventListener('click',()=>{
-    const phone = document.getElementById('phoneInput').value;
-    const selectedDiamond = document.querySelector('.diamond-option.selected')?.textContent;
-    if(!phone) return alert("Enter phone or ID");
-    if(!selectedDiamond) return alert("Select a diamond amount");
-    alert(`Request confirmed for ${phone} - ${selectedDiamond}`);
+confirmBtn.addEventListener('click',()=>{
+    if(!selectedDiamond) { alert("Select a diamond amount first."); return; }
+    alert("You requested "+selectedDiamond+" diamonds!");
+});
+
+// Sidebar toggle
+openSidebarBtn.addEventListener('click',()=>{ sidebar.classList.add('active'); sidebarOverlay.classList.add('active'); });
+closeSidebarBtn.addEventListener('click',()=>{ sidebar.classList.remove('active'); sidebarOverlay.classList.remove('active'); });
+sidebarOverlay.addEventListener('click',()=>{ sidebar.classList.remove('active'); sidebarOverlay.classList.remove('active'); });
+
+// Dropdown toggle
+profileIcon.addEventListener('click',e=>{ e.stopPropagation(); dropdownMenu.classList.toggle('show'); });
+document.addEventListener('click',()=>{ dropdownMenu.classList.remove('show'); });
+
+// Logout
+document.getElementById('logoutBtn').addEventListener('click',()=>{ auth.signOut(); });
+document.getElementById('dropdownLogoutBtn').addEventListener('click',()=>{ auth.signOut(); });
+
+// Firebase auth state
+auth.onAuthStateChanged(async (user)=>{
+    if(user){
+        appContainer.style.display='flex';
+        // Load profile avatar
+        const doc = await db.collection("users").doc(user.uid).get();
+        const data = doc.exists ? doc.data() : {};
+        profileIcon.src = data.avatar || "https://i.ibb.co/L95nK3B/profile-pic.jpg";
+
+        // Load stats
+        const weeklySnap = await db.collection('stats').doc('weekly').get();
+        weeklyEndUserElem.textContent = weeklySnap.exists ? weeklySnap.data().weeklyEndUser || 0 : 0;
+        currentBonusElem.textContent = weeklySnap.exists ? (weeklySnap.data().currentBonus || 0)+'%' : '0%';
+
+        loadingOverlay.style.display='none';
+    }else{
+        appContainer.style.display='none';
+        loadingOverlay.style.display='none';
+        alert("You are not logged in!");
+    }
 });
 </script>
 </body>
