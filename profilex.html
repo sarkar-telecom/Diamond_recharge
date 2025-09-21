@@ -7,19 +7,17 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.2/firebase-app.js";
-    import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.6.2/firebase-firestore.js";
-    import { getAuth, updatePassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.6.2/firebase-auth.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+    import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged, updatePassword, updateProfile } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 
-    // Firebase Config
     const firebaseConfig = {
       apiKey: "AIzaSyAyhjOsIXNAkBglpRllt0OZIOJYpdB_9-8",
       authDomain: "diamond-recharge-f7f59.firebaseapp.com",
       projectId: "diamond-recharge-f7f59",
       storageBucket: "diamond-recharge-f7f59.appspot.com",
       messagingSenderId: "657717928489",
-      appId: "1:657717928489:web:70431ebc9afb7002d4b238",
-      measurementId: "G-TDK78BQ8SQ"
+      appId: "1:657717928489:web:70431ebc9afb7002d4b238"
     };
 
     const appFirebase = initializeApp(firebaseConfig);
@@ -32,33 +30,44 @@
       newPassword: '',
 
       async init() {
-        onAuthStateChanged(auth, async (user) => {
-          if(user){
-            this.user.uid = user.uid;
-            this.user.email = user.email;
-            const snap = await getDoc(doc(db, "users", user.uid));
-            if(snap.exists()) {
+        onAuthStateChanged(auth, async (u) => {
+          if(u){
+            this.user.uid = u.uid;
+            this.user.email = u.email;
+            this.user.avatar = u.photoURL || '';
+
+            const snap = await getDoc(doc(db, "users", u.uid));
+            if(snap.exists()){
               const data = snap.data();
               this.user = {
                 ...this.user,
                 name: data.name || '',
                 phone: data.phone || '',
-                avatar: data.avatar || ''
+                avatar: data.avatar || this.user.avatar
               };
             }
+          } else {
+            window.location.href = "login.html";
           }
         });
       },
 
       async updateProfile(){
         try{
+          // Update Firestore
           await updateDoc(doc(db,"users",this.user.uid), {
             name: this.user.name,
             phone: this.user.phone,
             avatar: this.user.avatar
           });
-          alert("Profile updated successfully!");
-        } catch(e){ alert(e.message) }
+
+          // Update Auth profile photo
+          if(auth.currentUser && this.user.avatar !== auth.currentUser.photoURL){
+            await updateProfile(auth.currentUser, { photoURL: this.user.avatar });
+          }
+
+          alert("Profile updated!");
+        } catch(e){ alert(e.message); }
       },
 
       async changePassword(){
@@ -67,15 +76,15 @@
           await updatePassword(auth.currentUser, this.newPassword);
           alert("Password updated!");
           this.newPassword = '';
-        } catch(e){ alert(e.message) }
+        } catch(e){ alert(e.message); }
       }
     });
   </script>
 </head>
-<body class="bg-gray-100 font-sans" x-data="{ sidebarOpen: false }">
+<body class="bg-gray-100 font-sans">
 
   <!-- Sidebar -->
-  <aside class="fixed inset-y-0 left-0 w-64 bg-white shadow-lg z-30 transform transition-transform duration-300 lg:translate-x-0" 
+  <aside class="fixed inset-y-0 left-0 w-64 bg-white shadow-lg z-30 transform transition-transform duration-300 lg:translate-x-0"
          :class="{'-translate-x-full': !sidebarOpen, 'translate-x-0': sidebarOpen}">
     <div class="p-6 text-2xl font-bold text-blue-500">
       Dashboard
@@ -90,11 +99,6 @@
       </form>
     </nav>
   </aside>
-
-  <!-- Backdrop -->
-  <div class="fixed inset-0 bg-black bg-opacity-50 z-20 lg:hidden"
-       x-show="sidebarOpen" @click="sidebarOpen = false"
-       x-transition.opacity></div>
 
   <!-- Main -->
   <div class="flex-1 flex flex-col overflow-hidden lg:ml-64" x-data="app()" x-init="init()">
@@ -115,7 +119,7 @@
       <div class="relative" x-data="{ open: false }">
         <button @click="open = !open" class="flex items-center space-x-2 focus:outline-none">
           <span x-text="user.name || 'USER'"></span>
-          <img :src="user.avatar || '/images/profile/pm-1751766108059-cmp.webp'" class="w-10 h-10 rounded-full" alt="Avatar">
+          <img :src="user.avatar || 'https://via.placeholder.com/40'" class="w-10 h-10 rounded-full" alt="Avatar">
         </button>
         <div x-show="open" @click.away="open = false" x-transition
              class="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-md py-2">
@@ -132,7 +136,7 @@
       <div class="bg-white shadow rounded-xl p-6 max-w-lg mx-auto">
         <h2 class="text-xl font-semibold mb-4">Your Profile</h2>
         <div class="flex flex-col items-center mb-4">
-          <img :src="user.avatar || '/images/profile/pm-1751766108059-cmp.webp'" class="w-24 h-24 rounded-full mb-2">
+          <img :src="user.avatar || 'https://via.placeholder.com/100'" class="w-24 h-24 rounded-full mb-2">
         </div>
         <div class="space-y-4">
           <div>
@@ -163,10 +167,6 @@
       </div>
     </main>
 
-    <footer class="p-4 bg-white shadow mt-auto text-center text-gray-500">
-      &copy; 2025 SARKAR TELECOM. All rights reserved.
-    </footer>
   </div>
-
 </body>
 </html>
