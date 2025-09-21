@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en" x-data="app()" x-init="init()">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Profile - Dashboard</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut, updateEmail, updateProfile, updatePassword } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+import { getFirestore, doc, onSnapshot, updateDoc } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAyhjOsIXNAkBglpRllt0OZIOJYpdB_9-8",
+  authDomain: "diamond-recharge-f7f59.firebaseapp.com",
+  projectId: "diamond-recharge-f7f59",
+  storageBucket: "diamond-recharge-f7f59.appspot.com",
+  messagingSenderId: "657717928489",
+  appId: "1:657717928489:web:70431ebc9afb7002d4b238",
+  measurementId: "G-TDK78BQ8SQ"
+};
+
+const appFirebase = initializeApp(firebaseConfig);
+const auth = getAuth(appFirebase);
+const db = getFirestore(appFirebase);
+
+window.app = () => ({
+  sidebarOpen: false,
+  dropdownOpen: false,
+  user: { uid:'', name:'', email:'', avatar:'', phone:'', role:'', balance:0, tier:0, weeklyTotal:0, weeklyDiamonds:0, approved:false },
+  newPassword:'',
+
+  async init() {
+    onAuthStateChanged(auth, (user) => {
+      if(!user){ window.location.href="login.html"; return; }
+      this.user.uid = user.uid;
+      this.user.email = user.email;
+      this.user.avatar = user.photoURL || "";
+
+      // Realtime Firestore data
+      const ref = doc(db, "users", user.uid);
+      onSnapshot(ref, (snap) => {
+        if(snap.exists()){ this.user = {...this.user, ...snap.data()}; }
+      });
+    });
+  },
+
+  async updateProfile() {
+    try {
+      if(!this.user.uid) return;
+
+      if(auth.currentUser){
+        if(this.user.email && this.user.email !== auth.currentUser.email){
+          await updateEmail(auth.currentUser, this.user.email);
+        }
+        if(this.user.avatar && this.user.avatar !== auth.currentUser.photoURL){
+          await updateProfile(auth.currentUser, {photoURL:this.user.avatar});
+        }
+      }
+
+      await updateDoc(doc(db,"users",this.user.uid), {
+        name: this.user.name,
+        phone: this.user.phone,
+        avatar: this.user.avatar
+      });
+
+      alert("✅ Profile updated!");
+    } catch(e){ alert("Error: "+e.message); }
+  },
+
+  async changePassword() {
+    try{
+      if(!this.newPassword) return alert("Enter new password");
+      await updatePassword(auth.currentUser, this.newPassword);
+      alert("✅ Password updated!");
+      this.newPassword='';
+    } catch(e){ alert("Error: "+e.message); }
+  },
+
+  async logout() {
+    await signOut(auth);
+    window.location.href="login.html";
+  }
+});
+</script>
+</head>
+
+<body class="bg-gray-100 font-sans">
+
+<!-- Sidebar -->
+<aside class="fixed inset-y-0 left-0 w-64 bg-white shadow-lg z-30 transform transition-transform duration-300 lg:translate-x-0"
+       :class="{'-translate-x-full': !sidebarOpen, 'translate-x-0': sidebarOpen}">
+  <div class="p-6 text-2xl font-bold text-blue-500">Dashboard</div>
+  <nav class="mt-10">
+    <a href="dashboard.html" class="block px-6 py-2 text-gray-700 hover:bg-blue-50 rounded">Dashboard</a>
+    <a href="profile.html" class="block px-6 py-2 text-gray-700 hover:bg-blue-50 rounded">Profile</a>
+    <a href="user-managment.html" class="block px-6 py-2 text-gray-700 hover:bg-blue-50 rounded">User Request</a>
+    <a href="order-history.html" class="block px-6 py-2 text-gray-700 hover:bg-blue-50 rounded">History</a>
+    <button @click="logout()" class="w-full text-left px-6 py-2 text-red-500 hover:text-red-600">Logout</button>
+  </nav>
+</aside>
+
+<!-- Backdrop -->
+<div class="fixed inset-0 bg-black bg-opacity-50 z-20 lg:hidden"
+     x-show="sidebarOpen" @click="sidebarOpen=false" x-transition.opacity></div>
+
+<!-- Main -->
+<div class="flex-1 flex flex-col overflow-hidden lg:ml-64">
+  <!-- Header -->
+  <header class="flex items-center justify-between p-4 bg-white shadow-md">
+    <div class="flex items-center">
+      <button class="lg:hidden text-gray-600 mr-4" @click="sidebarOpen=true">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+      </button>
+      <h1 class="text-xl font-semibold text-gray-700">Profile</h1>
+    </div>
+
+    <div class="relative">
+      <button @click="dropdownOpen = !dropdownOpen" class="flex items-center space-x-2 focus:outline-none">
+        <span x-text="user.name || 'USER'"></span>
+        <img :src="user.avatar || 'https://via.placeholder.com/40'" class="w-10 h-10 rounded-full" alt="Avatar">
+      </button>
+      <div x-show="dropdownOpen" @click.away="dropdownOpen=false" x-transition
+           class="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-md py-2">
+        <a href="profile.html" class="block px-4 py-2 text-gray-600 hover:text-blue-600">Profile</a>
+        <button @click="logout()" class="block px-4 py-2 text-red-500 hover:text-red-600 w-full text-left">Logout</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Profile Form -->
+  <main class="p-6">
+    <div class="bg-white shadow rounded-xl p-6 max-w-lg mx-auto">
+      <h2 class="text-xl font-semibold mb-4">Your Profile</h2>
+      <div class="flex flex-col items-center mb-4">
+        <img :src="user.avatar || 'https://via.placeholder.com/100'" class="w-24 h-24 rounded-full mb-2">
+        <h2 class="text-lg font-bold" x-text="user.name || 'Loading...'"></h2>
+      </div>
+      <div class="space-y-4">
+        <div><label>Avatar URL</label><input type="text" x-model="user.avatar" class="border px-4 py-2 w-full rounded"></div>
+        <div><label>Name</label><input type="text" x-model="user.name" class="border px-4 py-2 w-full rounded"></div>
+        <div><label>Email</label><input type="email" x-model="user.email" class="border px-4 py-2 w-full rounded bg-gray-100"></div>
+        <div><label>Phone</label><input type="text" x-model="user.phone" class="border px-4 py-2 w-full rounded"></div>
+
+        <div><label>Role</label><input type="text" :value="user.role" readonly class="border px-4 py-2 w-full rounded bg-gray-100"></div>
+        <div><label>Balance</label><input type="text" :value="user.balance" readonly class="border px-4 py-2 w-full rounded bg-gray-100"></div>
+        <div><label>Tier</label><input type="text" :value="user.tier" readonly class="border px-4 py-2 w-full rounded bg-gray-100"></div>
+        <div><label>Weekly Total</label><input type="text" :value="user.weeklyTotal" readonly class="border px-4 py-2 w-full rounded bg-gray-100"></div>
+        <div><label>Weekly Diamonds</label><input type="text" :value="user.weeklyDiamonds" readonly class="border px-4 py-2 w-full rounded bg-gray-100"></div>
+        <div><label>Approved</label><input type="text" :value="user.approved" readonly class="border px-4 py-2 w-full rounded bg-gray-100"></div>
+
+        <div>
+          <label>New Password</label>
+          <input type="password" x-model="newPassword" class="border px-4 py-2 w-full rounded" placeholder="Enter new password">
+          <button @click="changePassword()" class="mt-2 bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-600">Update Password</button>
+        </div>
+        <div class="text-center">
+          <button @click="updateProfile()" class="bg-green-500 text-white px-6 py-2 rounded hover:bg-green-600">Update Profile</button>
+        </div>
+      </div>
+    </main>
+
+    <footer class="p-4 bg-white shadow mt-auto text-center text-gray-500">
+      &copy; 2025 SARKAR TELECOM. All rights reserved.
+    </footer>
+  </div>
+
+</body>
+</html>
